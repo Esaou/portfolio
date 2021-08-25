@@ -2,59 +2,86 @@
 
 declare(strict_types=1);
 
-// class pour gérer la connection à la base de donnée
 namespace App\Service;
 
-// *** exemple fictif d'accès à la base de données
-final class Database
+use PDO;
+
+class Database
 {
-    private array $bdd;
-    private string $table;
+    private $dbName;
+    private $dbUser;
+    private $dbPass;
+    private $dbHost;
+    private $pdo;
+    private $database;
+    private $instance;
+    private $className;
 
-    public function __construct()
+
+    public function __construct(string $dbName = 'projet5', string $dbUser = 'root', string $dbPass = '', string $dbHost = 'localhost')
     {
-        /* A retirer - Début - Ne pas analyser ce code*/
-        // table user
-        $this->bdd['user']['jean@free.fr'] = ['id' => 1, 'email' => 'jean@free.fr', 'pseudo' => 'jean', 'password' => 'password'];
-        // table post
-        $this->bdd['post'][1] = ['id' => 1, 'title' => 'Article $1 du blog', 'text' => 'Lorem ipsum 1'];
-        $this->bdd['post'][25] = ['id' => 25, 'title' => 'Article $25 du blog', 'text' => 'Lorem ipsum 25'];
-        $this->bdd['post'][26] = ['id' => 26, 'title' => 'Article $26 du blog', 'text' => 'Lorem ipsum 26'];
-        // table comment
-        $this->bdd['comment'][1] = [
-            ['id' => 1, 'pseudo' => 'Maurice', 'text' => 'J\'aime bien', 'idPost' => '1'],
-            ['id' => 4, 'pseudo' => 'Eric', 'text' => 'bof !!!', 'idPost' => '1'],
-        ];
-        $this->bdd['comment'][25] = [
-            ['id' => 2, 'pseudo' => 'Marc', 'text' => 'Cool', 'idPost' => '25'],
-            ['id' => 3, 'pseudo' => 'Jean', 'text' => 'Je n\'ai pas compris', 'idPost' => '25'],
-        ];
-        $this->bdd['comment'][26] = null;
-        /* A retirer - Fin */
+        $this->dbName = $dbName;
+        $this->dbUser = $dbUser;
+        $this->dbPass = $dbPass;
+        $this->dbHost = $dbHost;
     }
 
-    /* A retirer - Début - Ne pas analyser ce code */
-    public function prepare(string $sql): void
+    private function getPDO(): object
     {
-        $table = explode('from', $sql);
-        $table = explode('where', $table[1]);
-        $this->table = trim($table[0]);
+        if ($this->pdo === null) {
+            $pdo = new PDO("mysql:dbname=$this->dbName;host=$this->dbHost", "$this->dbUser", "$this->dbPass");
+            $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            $this->pdo = $pdo;
+        }
+        return $this->pdo;
     }
 
-    public function execute(array $criteria = null): ?array
+    public function query($statement, string $className = null, bool $one = false)
     {
-        if ($criteria !== null) {
-            $criteria = array_shift($criteria);
-
-            if (!array_key_exists($criteria, $this->bdd[$this->table])) {
-                return null;
-            }
-            return $this->bdd[$this->table][$criteria];
+        $req = $this->getPDO()->query($statement);
+        if (
+            mb_strpos($statement, 'UPDATE') === 0 ||
+            mb_strpos($statement, 'INSERT') === 0 ||
+            mb_strpos($statement, 'DELETE') === 0) {
+            return $req;
+        }
+        if ($className === null) {
+            $req->setFetchMode(PDO::FETCH_OBJ);
+        } else {
+            $req->setFetchMode(PDO::FETCH_CLASS, $className);
+        }
+        if ($one) {
+            $datas = $req->fetch();
+        } else {
+            $datas = $req->fetchAll();
         }
 
-        return $this->bdd[$this->table];
+        return $datas;
     }
 
+    public function prepare($statement, array $attributes, string $className = null, bool $one = false)
+    {
+        $req = $this->getPDO()->prepare($statement);
+        $res = $req->execute($attributes);
+        if (
+            mb_strpos($statement, 'UPDATE') === 0 ||
+            mb_strpos($statement, 'INSERT') === 0 ||
+            mb_strpos($statement, 'DELETE') === 0) {
+            return $res;
+        }
+        $req->setFetchMode(PDO::FETCH_OBJ);
+        if ($className === null) {
+            $req->setFetchMode(PDO::FETCH_OBJ);
+        } else {
+            $req->setFetchMode(PDO::FETCH_CLASS, $className);
+        };
+        if ($one) {
+            $datas = $req->fetch();
+        } else {
+            $datas = $req->fetchAll();
+        }
+        return $datas;
+    }
 
-    /* A retirer - Fin */
 }
+

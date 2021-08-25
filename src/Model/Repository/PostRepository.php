@@ -38,8 +38,7 @@ final class PostRepository implements EntityRepositoryInterface
     public function findAll(): ?array
     {
         // SB ici faire l'hydratation des objets
-        $this->database->prepare('select * from post');
-        $data = $this->database->execute();
+        $data = $this->database->query('select * from post');
 
         if ($data === null) {
             return null;
@@ -48,7 +47,7 @@ final class PostRepository implements EntityRepositoryInterface
         // réfléchir à l'hydratation des entités;
         $posts = [];
         foreach ($data as $post) {
-            $posts[] = new Post((int)$post['id'], $post['title'], $post['text']);
+            $posts[] = new Post((int)$post->id, $post->title, $post->content);
         }
 
         return $posts;

@@ -4,19 +4,17 @@ declare(strict_types=1);
 
 namespace App\Model\Entity;
 
-use App\Model\Entity\Interfaces\EntityObjectInterface;
-
 final class Post
 {
     private int $id;
     private string $title;
-    private string $text;
+    private string $content;
 
-    public function __construct(int $id, string $title, string $text)
+    public function __construct(int $id, string $title, string $content)
     {
         $this->id = $id;
         $this->title = $title;
-        $this->text = $text;
+        $this->content = $content;
     }
 
     public function getId(): int
@@ -35,14 +33,20 @@ final class Post
         return $this;
     }
 
-    public function getText(): string
+    public function getContent(): string
     {
-        return $this->text;
+        return $this->content;
     }
 
-    public function setText(string $text): self
+    public function setContent(string $content): self
     {
-        $this->text = $text;
+        $this->content = $content;
         return $this;
+    }
+
+    public function __toString(){
+
+        return $this->title;
+
     }
 }

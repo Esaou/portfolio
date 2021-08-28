@@ -20,26 +20,63 @@ final class UserRepository implements EntityRepositoryInterface
 
     public function find(int $id): ?User
     {
-        return null;
+        $data = $this->database->query("select * from user where id=$id");
+        $data = current($data);
+
+        if ($data === false) {
+            return null;
+        }
+
+        return new User((int)$data['id'], $data['firstname'],$data['lastname'], $data['email'], $data['password']);
     }
 
     public function findOneBy(array $criteria, array $orderBy = null): ?User
     {
-        $this->database->prepare('select * from user where email=:email');
-        $data = $this->database->execute($criteria);
+        $data = $this->findBy($criteria,$orderBy);
+        $data = current($data);
 
-        // réfléchir à l'hydratation des entités;
-        return $data === null ? null : new user((int)$data['id'], $data['pseudo'], $data['email'], $data['password']);
+        return $data === false ? null : new User((int)$data['id'], $data['firstname'],$data['lastname'], $data['email'], $data['password']);
     }
 
     public function findBy(array $criteria, array $orderBy = null, int $limit = null, int $offset = null): ?array
     {
-        return null;
+        $where = $this->database->setCondition($criteria);
+
+        if ($orderBy == null){
+            $orderBy = "id desc";
+        }else{
+            $orderBy = $this->database->setOrderBy($orderBy);
+        }
+
+        if ($limit == null){
+            $limit = 1000000;
+        }
+        if ($offset == null){
+            $offset = 0;
+        }
+
+
+        $data = $this->database->prepare("select * from user where $where order by $orderBy limit $limit offset $offset",$criteria);
+
+        $data = json_decode(json_encode($data), true);
+
+        return $data === null ? null : $data;
     }
 
     public function findAll(): ?array
     {
-        return null;
+        $data = $this->database->query('select * from user');
+
+        if (empty($data)) {
+            return null;
+        }
+
+        $users = [];
+        foreach ($data as $user) {
+            $users[] = new User((int)$user->id, $user->firstname, $user->lastname,$user->email,$user->password);
+        }
+
+        return $users;
     }
 
     public function create(object $user): bool

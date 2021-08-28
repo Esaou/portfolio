@@ -4,19 +4,19 @@ declare(strict_types=1);
 
 namespace App\Model\Entity;
 
-use App\Model\Entity\Interfaces\EntityObjectInterface;
-
 final class User
 {
     private int $id;
     private string $email;
-    private string $pseudo;
+    private string $firstname;
+    private string $lastname;
     private string $password;
 
-    public function __construct(int $id, string $pseudo, string $email, string $password)
+    public function __construct(int $id, string $firstname,string $lastname, string $email, string $password)
     {
         $this->id = $id;
-        $this->pseudo = $pseudo;
+        $this->firstname = $firstname;
+        $this->lastname = $lastname;
         $this->email = $email;
         $this->password = $password;
     }
@@ -26,14 +26,25 @@ final class User
         return $this->id;
     }
 
-    public function getPseudo(): string
+    public function getFirstname(): string
     {
-        return $this->pseudo;
+        return $this->firstname;
     }
 
-    public function setPseudo(string $pseudo): self
+    public function setFirstname(string $firstname): self
     {
-        $this->pseudo = $pseudo;
+        $this->firstname = $firstname;
+        return $this;
+    }
+
+    public function getLastname(): string
+    {
+        return $this->lastname;
+    }
+
+    public function setLastname(string $lastname): self
+    {
+        $this->lastname = $lastname;
         return $this;
     }
 
@@ -57,5 +68,11 @@ final class User
     {
         $this->password = $password;
         return $this;
+    }
+
+    public function __toString(){
+
+        return $this->email;
+
     }
 }

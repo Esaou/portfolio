@@ -19,32 +19,57 @@ final class PostRepository implements EntityRepositoryInterface
 
     public function find(int $id): ?Post
     {
-        return null;
+        $data = $this->database->query("select * from post where id=$id");
+        $data = current($data);
+
+        if ($data === false) {
+            return null;
+        }
+
+        return new Post((int)$data->id, $data->title, $data->content);
     }
 
     public function findOneBy(array $criteria, array $orderBy = null): ?Post
     {
-        $this->database->prepare('select * from post where id=:id');
-        $data = $this->database->execute($criteria);
-        // réfléchir à l'hydratation des entités;
-        return $data === null ? $data : new Post($data['id'], $data['title'], $data['text']);
+
+        $data = $this->findBy($criteria,$orderBy);
+        $data = current($data);
+
+        return $data === false ? null : new Post((int)$data['id'], $data['title'], $data['content']);
     }
 
     public function findBy(array $criteria, array $orderBy = null, int $limit = null, int $offset = null): ?array
     {
-        return null;
+        $where = $this->database->setCondition($criteria);
+
+        if ($orderBy == null){
+            $orderBy = "id desc";
+        }else{
+            $orderBy = $this->database->setOrderBy($orderBy);
+        }
+
+        if ($limit == null){
+            $limit = 1000000;
+        }
+        if ($offset == null){
+            $offset = 0;
+        }
+
+
+        $data = $this->database->prepare("select * from post where $where order by $orderBy limit $limit offset $offset",$criteria);
+
+        $data = json_decode(json_encode($data), true);
+
+        return $data === null ? null : $data;
     }
 
     public function findAll(): ?array
     {
-        // SB ici faire l'hydratation des objets
         $data = $this->database->query('select * from post');
 
-        if ($data === null) {
+        if (empty($data)) {
             return null;
         }
-
-        // réfléchir à l'hydratation des entités;
         $posts = [];
         foreach ($data as $post) {
             $posts[] = new Post((int)$post->id, $post->title, $post->content);

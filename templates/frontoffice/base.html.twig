@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="fr">
+    <head>
+        <meta charset="utf-8">
+        <title>Blog {% block title %}{% endblock %}</title>
+        <link href="css/style.css" rel="stylesheet">
+    </head>
+
+    <body>
+        <!-- Navigation -->
+        <nav>
+            <h2>Menu</h2>
+            <a href="index.php?action=posts">Liste des posts</a><br>
+            <a href="index.php?action=post&id=500">Un post qui n'existe pas</a><br>
+            <a href="index.php?action=unknow">Une route qui n'existe pas</a><br>
+            <h2>Utilisateur</h2>
+            {% if session.user %}
+                <strong>{{ session.user.pseudo }}</strong>
+                {{ session.user.email }}
+                <a href="index.php?action=logout">se déconnecter</a><br>
+            {% else %}
+                <a href="index.php?action=login">se connecter</a><br>
+            {% endif %}
+        </nav>
+
+        <!-- Page Header -->
+        <header>            
+            <h1>Blog</h1>
+        </header>
+
+        <main>            
+            {% for message in flashes %} {# TODO Gérer les différents type de message flash #}
+                <h2 class="danger"> {{ message }} </h2>
+            {% endfor %}
+            {% block content %}{% endblock %}
+        </main>
+        
+        <footer class="footer text-center">
+            <h3>Copyright Toto</h3>
+        </footer>        
+    </body>
+</html>

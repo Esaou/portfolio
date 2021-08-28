@@ -12,11 +12,12 @@
 
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
 
-                        <li class="centrageMenu"><a href="index.php?action=posts" class="subtitle">Tous les posts</a></li>
+                        <li class="centrageMenu"><a href="index.php?action=posts" class="subtitle"><i class="far fa-clone" style="margin-right: 7px"></i> Tous les posts</a></li>
                         {% if session.user %}
                             <li class="centrageMenu"><a href="index.php?action=logout" class="subtitle">Déconnexion</a></li>
                         {% else %}
                             <li class="centrageMenu"><a href="index.php?action=login" class="subtitle">Connexion</a></li>
+                            <li class="centrageMenu"><a href="index.php?action=register" class="subtitle">Inscription</a></li>
                         {% endif %}
                     </ul>
 

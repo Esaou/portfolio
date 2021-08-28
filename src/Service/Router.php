@@ -72,8 +72,7 @@ final class Router
 
             return $controller->logoutAction();
         } elseif ($action === 'home') {
-
-            $controller = new HomeController($this->view);
+            $controller = new HomeController($this->view,$this->request,$this->session);
             return $controller->home();
 
             // *** @Route http://localhost:8000/?action=logout ***

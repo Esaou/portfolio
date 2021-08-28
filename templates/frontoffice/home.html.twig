@@ -2,4 +2,50 @@
 
 {% block content %}
 
+    <section class="container">
+
+        <article class="containerId">
+            <img src="/images/id.jpg" class="id">
+            <h2 class="nameHome text-black">Eric Saou</h2>
+        </article>
+        <hr/>
+        <article class="containerCitation">
+            <h5 class="citation text-black"><i class="far fa-lightbulb" style="margin-right: 7px"></i> Eric Saou, en temps et en heure !</h5>
+            <a href="/docs/cv.pdf" target="_blank" class="cv">Découvrez mon cv à jour</a>
+        </article>
+        <hr/>
+        <article class="containerContact">
+            <h5 class="citation text-black pb-4"><i class="far fa-envelope" style="margin-right: 7px"></i> Formulaire de contact</h5>
+            <form class="formContact" action="index.php?action=home" method="post">
+                <div class="form-group col-6">
+                    <label for="firstname">Prénom</label>
+                    <input type="text" required class="form-control" name="firstname" id="firstname">
+                </div>
+                <div class="form-group col-6">
+                    <label for="lastname">Nom</label>
+                    <input type="text" required class="form-control" name="lastname" id="lastname">
+                </div>
+                <div class="form-group col-12">
+                    <label for="email">Email</label>
+                    <input type="email" required class="form-control" name="email" id="email">
+                </div>
+                <div class="form-group col-12">
+                    <label for="content">Message</label>
+                    <textarea type="text" required style="min-height: 250px;" class="form-control" name="content" id="content"></textarea>
+                </div>
+                <div class="form-group col-12">
+                    <input type="checkbox" required name="rgpd" id="rgpd"><span style="margin-left: 20px;">J'accepte que mes informations soient conservées à des fins de contact.</span></input>
+                </div>
+                <button type="submit" class="mt-3 subtitle">Envoyer</button>
+            </form>
+        </article>
+        <hr/>
+        <article class="containerSocial">
+            <a href="https://fr.linkedin.com/in/eric-saou-a58542196" target="_blank"><i class="fab fa-linkedin"></i></a>
+            <a href="https://github.com/Esaou" target="_blank"><i class="fab fa-github"></i></a>
+            <a href="https://gitlab.com/Esaou" target="_blank"><i class="fab fa-gitlab"></i></a>
+        </article>
+
+    </section>
+
 {% endblock %}

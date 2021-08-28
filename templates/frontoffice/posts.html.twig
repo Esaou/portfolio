@@ -4,18 +4,22 @@
 
 {% block content %}
 
-    <section class="container">
+    <section class="container pb-4">
 
         <h4 class="text-center mb-4 text-black">Tous les posts</h4>
+        <div class="containerPosts">
         {% for post in posts %}
-            <div class="card bg-light mb-3" style="max-width: 18rem;">
-                <div class="card-header">{{ post.title }}</div>
-                <div class="card-body">
-                    <p class="card-text">{{ post.content}}</p>
-                    <a href="index.php?action=post&id={{ post.id}}">Lire le post</a>
+            <div class="containerCard p-3 col-6">
+                <div class="card bg-light mb-3">
+                    <div class="card-header">{{ post.title }}</div>
+                    <div class="card-body">
+                        <p class="card-text">{{ post.content}}</p>
+                        <a href="index.php?action=post&id={{ post.id}}">Lire le post</a>
+                    </div>
                 </div>
             </div>
         {% endfor %}
+        </div>
 
     </section>
 

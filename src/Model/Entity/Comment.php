@@ -4,20 +4,18 @@ declare(strict_types=1);
 
 namespace App\Model\Entity;
 
-use App\Model\Entity\Interfaces\EntityObjectInterface;
-
 final class Comment
 {
     private int $id;
-    private string $pseudo; // TODO l'entity User serait plus approprié
-    private string $text;
+    private string $user; // TODO l'entity User serait plus approprié
+    private string $content;
     private int $idPost;
 
-    public function __construct(int $id, string $pseudo, string $text, int $idPost)
+    public function __construct(int $id, string $content, int $idPost)
     {
         $this->id = $id;
-        $this->pseudo = $pseudo;
-        $this->text = $text;
+        $this->user = $user = '';
+        $this->content = $content;
         $this->idPost = $idPost;
     }
 
@@ -26,24 +24,30 @@ final class Comment
         return $this->id;
     }
 
-    public function getPseudo(): string
+    public function getUser(): string
     {
-        return $this->pseudo;
+        return $this->user;
     }
 
-    public function getText(): string
+    public function getContent(): string
     {
-        return $this->text;
+        return $this->content;
     }
 
-    public function setText(string $text): self
+    public function setContent(string $content): self
     {
-        $this->text = $text;
+        $this->content = $content;
         return $this;
     }
 
     public function getIdPost(): int
     {
         return $this->idPost;
+    }
+
+    public function __toString(){
+
+        return $this->content;
+
     }
 }

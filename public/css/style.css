@@ -1,3 +1,124 @@
 .danger {
     color: red;
 }
+
+.text-black{
+    color: rgb(100,100,100)!important;
+}
+
+.padMain{
+    padding-top: 40px;
+}
+
+/* NAV */
+
+.nav{
+    background-color: white;
+    position: fixed;
+    top: 0px;
+    width: 100%;
+    z-index: 1001;
+}
+
+.title{
+    text-decoration: none;
+    color: rgb(100,100,100);
+    font-size: 17px;
+    margin-right: 20px;
+}
+
+.btnsNav{
+    margin-right: 20px;
+}
+
+.subtitle{
+    text-decoration: none;
+    color: rgb(100,100,100);
+    cursor:pointer;
+    border: 1px solid rgba(100,100,100,0.5);
+    font-size: 14px;
+    font-family: sans-serif;
+    display: inline-block;
+    transition: border 200ms linear;
+    padding-top: 7px;
+    padding-bottom: 7px;
+    padding-right: 20px;
+    padding-left: 20px;
+    border-radius: 4px;
+    margin-left: 10px;
+}
+
+.subtitle:hover{
+    border: 1px solid rgba(100,100,100,0.2);
+}
+
+.subtitleRdv{
+    text-decoration: none;
+    color: white!important;
+    background-color: rgba(0, 199, 12,1);
+    font-size: 14px;
+    font-family: sans-serif;
+    display: inline-block;
+    transition: color 200ms linear,box-shadow 200ms linear,background-color 200ms linear;
+    padding: 7px;
+    padding-right: 20px;
+    padding-left: 20px;
+    border-radius: 4px;
+    box-shadow: 0px 0px 5px rgba(100,100,100,0.3);
+}
+
+.subtitleRdv:hover{
+    background-color: rgba(0, 179, 12,1);
+    box-shadow: 0px 0px 5px rgba(100,100,100,0.5);
+}
+
+.navbar-toggler:focus{
+    box-shadow: none!important;
+}
+
+.responsiveNav ul li a,.responsiveNav ul li label{
+    padding-left: 10px;
+    padding-right: 10px;
+    transition: color 200ms linear;
+    border-radius: 4px;
+    font-family: sans-serif;
+    color: rgb(100,100,100);
+}
+
+.responsiveNav ul li a:hover,.responsiveNav ul li label:hover{
+    color: blue;
+}
+
+.responsiveNav{
+    display: none;
+    padding-bottom: 10px;
+    padding-top: 10px;
+    background-color: white;
+    box-shadow: 0px 0px 10px rgba(100,100,100,0.5);
+    color: rgb(100,100,100);
+}
+
+@media screen and (max-width: 1150px) {
+
+    .padMain{
+        padding-top: 100px;
+    }
+
+    .nav{
+        display: none!important;
+    }
+
+    .titleNav{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        margin-left: 10px;
+    }
+
+    .responsiveNav{
+        display: block;
+        z-index: 1000!important;
+    }
+
+}

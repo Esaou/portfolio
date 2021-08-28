@@ -2,15 +2,21 @@
 
 {% block title %}Tous les posts{% endblock %}
 
-{% block content %} 
-    <h2>Tous les posts</h2>
-    {% for post in posts %}
-        <article>
-            <h2>title = {{ post.title }}</h2>
-            <p>text = {{ post.text}}</p>
-            <p>id = {{ post.id}}</p>
-            <a href="index.php?action=post&id={{ post.id}}">Lire le post</a>
-            <hr>
-        </article>
-    {% endfor %}
+{% block content %}
+
+    <section class="container">
+
+        <h4 class="text-center mb-4 text-black">Tous les posts</h4>
+        {% for post in posts %}
+            <div class="card bg-light mb-3" style="max-width: 18rem;">
+                <div class="card-header">{{ post.title }}</div>
+                <div class="card-body">
+                    <p class="card-text">{{ post.content}}</p>
+                    <a href="index.php?action=post&id={{ post.id}}">Lire le post</a>
+                </div>
+            </div>
+        {% endfor %}
+
+    </section>
+
 {% endblock %}

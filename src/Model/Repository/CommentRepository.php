@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Model\Repository;
 
+use App\Model\Entity\Post;
 use App\Service\Database;
 use App\Model\Entity\Comment;
-use App\Model\Entity\Interfaces\EntityObjectInterface;
 use App\Model\Repository\Interfaces\EntityRepositoryInterface;
 
 final class CommentRepository implements EntityRepositoryInterface
@@ -20,35 +20,63 @@ final class CommentRepository implements EntityRepositoryInterface
 
     public function find(int $id): ?Comment
     {
-        return null;
+        $data = $this->database->query("select * from user where id=$id");
+        $data = current($data);
+
+        if ($data === false) {
+            return null;
+        }
+
+        return new Comment((int)$data['id'], $data['content'],(int)$data['post_id'],(int)$data['user_id']);
     }
 
     public function findOneBy(array $criteria, array $orderBy = null): ?Comment
     {
-        return null;
+        $data = $this->findBy($criteria,$orderBy);
+        $data = current($data);
+
+        return $data === false ? null : new Comment((int)$data['id'], $data['content'],(int)$data['post_id'],(int)$data['user_id']);
     }
 
     public function findBy(array $criteria, array $orderBy = null, int $limit = null, int $offset = null): ?array
     {
-        $this->database->prepare('select * from comment where idPost=:idPost');
-        $data = $this->database->execute($criteria);
+        $where = $this->database->setCondition($criteria);
 
-        if ($data === null) {
-            return null;
+        if ($orderBy == null){
+            $orderBy = "id desc";
+        }else{
+            $orderBy = $this->database->setOrderBy($orderBy);
         }
 
-        // réfléchir à l'hydratation des entités;
-        $comments = [];
-        foreach ($data as $comment) {
-            $comments[] = new Comment((int)$comment['id'], $comment['pseudo'], $comment['text'], (int)$comment['idPost']);
+        if ($limit == null){
+            $limit = 1000000;
+        }
+        if ($offset == null){
+            $offset = 0;
         }
 
-        return $comments;
+
+        $data = $this->database->prepare("select * from comment where $where order by $orderBy limit $limit offset $offset",$criteria);
+
+        $data = json_decode(json_encode($data), true);
+        return $data === null ? null : $data;
     }
 
     public function findAll(): ?array
     {
-        return null;
+        $data = $this->database->query('select * from comment');
+
+        if (empty($data)) {
+            return null;
+        }
+
+        $comments = [];
+        foreach ($data as $comment) {
+            $comments[] = new Post((int)$comment->id, $comment->content,$comment->post_id);
+        }
+
+
+        return $comments;
     }
 
     public function create(object $comment): bool

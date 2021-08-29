@@ -78,6 +78,6 @@ final class Router
             // *** @Route http://localhost:8000/?action=logout ***
         }
         
-        return new Response("Error 404 - cette page n'existe pas<br><a href='index.php?action=posts'>Aller Ici</a>", 404);
+        return new Response("Error 404 - cette page n'existe pas<br><a href='index.php?action=home'>Aller Ici</a>", 404);
     }
 }

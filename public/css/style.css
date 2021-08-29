@@ -146,8 +146,8 @@
 }
 
 .id{
-    border-top-right-radius: 5px;
-    border-top-left-radius: 5px;
+    border-radius: 5px;
+    border: 1px solid rgba(150,150,150,0.5);
     height: 200px;
     margin-left: 40px;
     margin-right: 40px;

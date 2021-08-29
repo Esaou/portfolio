@@ -290,9 +290,54 @@
     align-items: center;
 }
 
+.blocBtnUpdate{
+    margin-top: 35px;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-end;
+    justify-content: space-between;
+}
+
+.titleCard{
+    font-size: 17px;
+}
+
 @media screen and (max-width: 1150px) {
 
     .containerCard{
         width: 100%!important;
     }
+}
+
+/* SHOWPOST */
+
+.formComment{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.formComment label{
+    margin-bottom: 10px;
+}
+
+.blocShowOneComment{
+    width: 100%;
+    padding: 25px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    background-color: white;
+    border: 1px solid rgba(150,150,150,0.4);
+    border-radius: 4px;
+}
+
+.blocBtnCreated{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-end;
 }

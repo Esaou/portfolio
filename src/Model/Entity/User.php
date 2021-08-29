@@ -6,24 +6,24 @@ namespace App\Model\Entity;
 
 final class User
 {
-    private int $id;
-    private string $email;
-    private string $firstname;
-    private string $lastname;
-    private string $password;
+    public int $id_utilisateur;
+    public string $email;
+    public string $firstname;
+    public string $lastname;
+    public string $password;
 
-    public function __construct(int $id, string $firstname,string $lastname, string $email, string $password)
+    public function __construct(int $id_utilisateur, string $firstname,string $lastname, string $email, string $password)
     {
-        $this->id = $id;
+        $this->id_utilisateur = $id_utilisateur;
         $this->firstname = $firstname;
         $this->lastname = $lastname;
         $this->email = $email;
         $this->password = $password;
     }
 
-    public function getId(): int
+    public function getIdUtilisateur(): int
     {
-        return $this->id;
+        return $this->id_utilisateur;
     }
 
     public function getFirstname(): string

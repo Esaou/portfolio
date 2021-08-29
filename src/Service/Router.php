@@ -7,6 +7,7 @@ namespace  App\Service;
 use App\Controller\Frontoffice\HomeController;
 use App\Controller\Frontoffice\PostController;
 use App\Controller\Frontoffice\UserController;
+use App\Model\Entity\User;
 use App\Model\Repository\PostRepository;
 use App\Model\Repository\CommentRepository;
 use App\Model\Repository\UserRepository;
@@ -44,7 +45,7 @@ final class Router
         if ($action === 'posts') {
             //injection des dépendances et instanciation du controller
             $postRepo = new PostRepository($this->database);
-            $controller = new PostController($postRepo, $this->view);
+            $controller = new PostController($postRepo, $this->view,$this->request);
 
             return $controller->displayAllAction();
 
@@ -52,11 +53,12 @@ final class Router
         } elseif ($action === 'post' && $this->request->query()->has('id')) {
             //injection des dépendances et instanciation du controller
             $postRepo = new PostRepository($this->database);
-            $controller = new PostController($postRepo, $this->view);
+            $controller = new PostController($postRepo, $this->view,$this->request);
+            $userRepo = new UserRepository($this->database);
 
             $commentRepo = new CommentRepository($this->database);
 
-            return $controller->displayOneAction((int) $this->request->query()->get('id'), $commentRepo);
+            return $controller->displayOneAction((int) $this->request->query()->get('id'), $commentRepo,$userRepo);
 
         // *** @Route http://localhost:8000/?action=login ***
         } elseif ($action === 'login') {

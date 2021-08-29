@@ -100,6 +100,5 @@ class Database
 
         return $sqlParts;
     }
-
 }
 

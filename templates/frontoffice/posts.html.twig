@@ -4,17 +4,24 @@
 
 {% block content %}
 
-    <section class="container pb-4">
+    <section class="container p-4 pt-3">
 
         <h4 class="text-center mb-4 text-black">Tous les posts</h4>
         <div class="containerPosts">
         {% for post in posts %}
             <div class="containerCard p-3 col-6">
                 <div class="card bg-light mb-3">
-                    <div class="card-header">{{ post.title }}</div>
+                    <div class="card-header titleCard text-blue">{{ post.title }}</div>
                     <div class="card-body">
-                        <p class="card-text">{{ post.content}}</p>
-                        <a href="index.php?action=post&id={{ post.id}}">Lire le post</a>
+                        <p class="card-text">{{ post.chapo }}</p>
+                        <div class="blocBtnUpdate">
+                            <div>
+                                <a class="subtitle" style="margin: 0px;" href="index.php?action=post&id={{ post.id}}">Lire le post</a>
+                            </div>
+                            <div>
+                                Modifié le {{ post.updatedAt|date('d/m/Y') }} à {{ post.updatedAt|date('H') }}h{{ post.updatedAt|date('i') }}
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

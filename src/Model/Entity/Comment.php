@@ -6,17 +6,21 @@ namespace App\Model\Entity;
 
 final class Comment
 {
-    private int $id;
-    private string $user; // TODO l'entity User serait plus approprié
-    private string $content;
-    private int $idPost;
+    public int $id;
+    public User $user; // TODO l'entity User serait plus approprié
+    public string $content;
+    public int $post_id;
+    public string $isChecked;
+    public \DateTime $createdAt;
 
-    public function __construct(int $id, string $content, int $idPost)
+    public function __construct(int $id, string $content, int $post_id,User $user,string $isChecked,\DateTime $createdAt)
     {
         $this->id = $id;
-        $this->user = $user = '';
+        $this->user = $user;
         $this->content = $content;
-        $this->idPost = $idPost;
+        $this->post_id = $post_id;
+        $this->isChecked = $isChecked;
+        $this->createdAt = $createdAt;
     }
 
     public function getId(): int
@@ -24,9 +28,37 @@ final class Comment
         return $this->id;
     }
 
-    public function getUser(): string
+    public function getUser(): User
     {
         return $this->user;
+    }
+
+    public function setUser(User $user): self
+    {
+        $this->user = $user;
+        return $this;
+    }
+
+    public function getIsChecked(): string
+    {
+        return $this->isChecked;
+    }
+
+    public function setIsChecked(string $isChecked): self
+    {
+        $this->isChecked = $isChecked;
+        return $this;
+    }
+
+    public function getCreatedAt(): \DateTime
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(\DateTime $createdAt): self
+    {
+        $this->createdAt = $createdAt;
+        return $this;
     }
 
     public function getContent(): string
@@ -42,7 +74,13 @@ final class Comment
 
     public function getIdPost(): int
     {
-        return $this->idPost;
+        return $this->post_id;
+    }
+
+    public function setIdPost(int $post_id): self
+    {
+        $this->post_id = $post_id;
+        return $this->post_id;
     }
 
     public function __toString(){

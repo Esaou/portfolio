@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Model\Repository;
 
-use App\Model\Entity\Post;
+use App\Model\Entity\User;
 use App\Service\Database;
 use App\Model\Entity\Comment;
 use App\Model\Repository\Interfaces\EntityRepositoryInterface;
@@ -20,14 +20,20 @@ final class CommentRepository implements EntityRepositoryInterface
 
     public function find(int $id): ?Comment
     {
-        $data = $this->database->query("select * from user where id=$id");
+        $data = $this->database->query("select * from comment left join user on comment.user_id = user.id_utilisateur where id=$id");
         $data = current($data);
 
         if ($data === false) {
             return null;
         }
 
-        return new Comment((int)$data['id'], $data['content'],(int)$data['post_id'],(int)$data['user_id']);
+        $data->createdAt = new \DateTime($data->createdAt);
+
+
+        $user = new User((int)$data->id_utilisateur, $data->firstname,$data->lastname, $data->email, $data->password);
+
+
+        return new Comment((int)$data->id, $data->content,(int)$data->post_id,$user,$data->isChecked,$data->createdAt);
     }
 
     public function findOneBy(array $criteria, array $orderBy = null): ?Comment
@@ -35,7 +41,9 @@ final class CommentRepository implements EntityRepositoryInterface
         $data = $this->findBy($criteria,$orderBy);
         $data = current($data);
 
-        return $data === false ? null : new Comment((int)$data['id'], $data['content'],(int)$data['post_id'],(int)$data['user_id']);
+        $user = new User((int)$data->user->id_utilisateur, $data->user->firstname,$data->user->lastname, $data->user->email, $data->user->password);
+
+        return $data === false ? null : new Comment((int)$data->id, $data->content,(int)$data->idPost,$user,$data->isChecked,$data->createdAt);
     }
 
     public function findBy(array $criteria, array $orderBy = null, int $limit = null, int $offset = null): ?array
@@ -56,15 +64,28 @@ final class CommentRepository implements EntityRepositoryInterface
         }
 
 
-        $data = $this->database->prepare("select * from comment where $where order by $orderBy limit $limit offset $offset",$criteria);
+        $data = $this->database->prepare("select * from comment left join user on comment.user_id = user.id_utilisateur where $where order by $orderBy limit $limit offset $offset",$criteria);
 
         $data = json_decode(json_encode($data), true);
-        return $data === null ? null : $data;
+
+        if (empty($data)) {
+            return null;
+        }
+
+        $comments = [];
+
+        foreach ($data as $comment) {
+            $comment['createdAt'] = new \DateTime($comment['createdAt']);
+            $user = new User((int)$comment['id_utilisateur'], $comment['firstname'],$comment['lastname'], $comment['email'], $comment['password']);
+            $comments[] = new Comment((int)$comment['id'], $comment['content'],(int)$comment['post_id'],$user,$comment['isChecked'],$comment['createdAt']);
+        }
+
+        return $comments;
     }
 
     public function findAll(): ?array
     {
-        $data = $this->database->query('select * from comment');
+        $data = $this->database->query('select * from comment left join user on comment.user_id = user.id_utilisateur');
 
         if (empty($data)) {
             return null;
@@ -72,7 +93,9 @@ final class CommentRepository implements EntityRepositoryInterface
 
         $comments = [];
         foreach ($data as $comment) {
-            $comments[] = new Post((int)$comment->id, $comment->content,$comment->post_id);
+            $comment->createdAt = new \DateTime($comment->createdAt);
+            $user = new User((int)$comment->id_utilisateur, $comment->firstname,$comment->lastname, $comment->email, $comment->password);
+            $comments[] = new Comment((int)$comment->id, $comment->content,(int)$comment->post_id,$user,$comment->isChecked,$comment->createdAt);
         }
 
 
@@ -81,7 +104,29 @@ final class CommentRepository implements EntityRepositoryInterface
 
     public function create(object $comment): bool
     {
-        return false ;
+
+        foreach ($comment as $key => $value) {
+
+            if ($key === 'createdAt'){
+                $criteria[$key] = $value->format('Y-m-d H:i:s');
+            }elseif ($key === 'user'){
+                $criteria[$key] = $value->id_utilisateur;
+            } elseif ($key === 'id'){
+
+            }else{
+                $criteria[$key] = $value;
+            }
+        }
+
+        $sql = "INSERT INTO comment (user_id,content, post_id,isChecked,createdAt) VALUES (:user,:content,:post_id,:isChecked,:createdAt )";
+        $result = $this->database->prepare($sql,$criteria);
+
+        if ($result == true){
+            return true;
+        }else{
+            return false;
+        }
+
     }
 
     public function update(object $comment): bool

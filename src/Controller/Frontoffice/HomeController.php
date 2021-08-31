@@ -27,45 +27,40 @@ final class HomeController
     public function home(): Response
     {
 
-        if (!empty($this->request->request()->all())){
+        if ($this->request->getMethod() === 'POST'){
 
             $prenom = $this->request->request()->get('firstname');
             $nom = $this->request->request()->get('lastname');
             $email = $this->request->request()->get('email');
             $content = $this->request->request()->get('content');
 
-            try {
-                $subject = "Message de ".$prenom." ".$nom;
-                $to = 'eric.saou3@gmail.com';
+            $subject = "Message de ".$prenom." ".$nom;
+            $to = 'eric.saou3@gmail.com';
 
-                $headers  = 'MIME-Version: 1.0' . "\r\n";
-                $headers .= 'Content-type: text/html; charset=UTF-8' . "\r\n";
+            $headers  = 'MIME-Version: 1.0' . "\r\n";
+            $headers .= 'Content-type: text/html; charset=UTF-8' . "\r\n";
 
-                $headers .= 'From: '.$email."\r\n".
-                    'Reply-To: '.$email."\r\n" .
-                    'X-Mailer: PHP/' . phpversion();
+            $headers .= 'From: '.$email."\r\n".
+                'Reply-To: '.$email."\r\n" .
+                'X-Mailer: PHP/' . phpversion();
 
-                $content = '<p>Bonjour,</p>
-                <p>Voici un nouveau message d\'un utilisateur :</p>
-                <ul>
-                    <li>Nom : '.$nom.'</li>
-                    <li>Prénom : '.$prenom.'</li>
-                    <li>Email : '.$email.'</li>
-                    <li>Contenu : '.$content.'</li>
-                </ul>';
+            $content = '<p>Bonjour,</p>
+            <p>Voici un nouveau message d\'un utilisateur :</p>
+            <ul>
+                <li>Nom : '.$nom.'</li>
+                <li>Prénom : '.$prenom.'</li>
+                <li>Email : '.$email.'</li>
+                <li>Contenu : '.$content.'</li>
+            </ul>';
 
-                ini_set("SMTP","smtp.bbox.fr");
-                ini_set("smtp_port","25");
-                ini_set("sendmail_from",$email);
+            ini_set("SMTP","smtp.bbox.fr");
+            ini_set("smtp_port","25");
+            ini_set("sendmail_from",$email);
 
 
-                mail($to, $subject, $content, $headers);
+            mail($to, $subject, $content, $headers);
 
-                $this->session->addFlashes('success','Message posté avec succès !');
-
-            }catch (Exception $exception){
-                echo 'Exception reçue : ',  $exception->getMessage(), "\n";
-            }
+            $this->session->addFlashes('success','Message posté avec succès !');
 
         }
 

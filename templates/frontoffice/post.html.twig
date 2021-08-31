@@ -23,7 +23,7 @@
     <section class="container p-4">
         <h4 class="text-left text-black mb-4">Commentaires</h4>
         <hr>
-        <form class="formComment pb-4" action="index.php?action=post&id={{ post.id }}" method="post">
+        <form class="formComment pb-4" action="index.php?action=post&id={{ post.id }}" method="POST">
             <div class="form-group col-12">
                 <label for="comment">Mon commentaire</label>
                 <textarea required style="min-height: 200px;" class="form-control" name="comment" id="comment"></textarea>
@@ -34,16 +34,16 @@
         </form>
         {% if comments %}
             {% for comment in comments %}
+                {% if comment.isChecked == 'Oui' %}
                 <div class="blocShowOneComment mb-3">
                     <div class="pb-3 text-blue">{{ comment.user.firstname }} {{ comment.user.lastname }}</div>
                     <div class="pb-3">{{ comment.content }}</div>
                     <div class="w-100 blocBtnCreated">
-                        {% if comment.isChecked == 'Oui' %}
                             <i class="far fa-check-circle" style="margin-right: 10px"></i>
-                        {% endif %}
                         <div>Posté le {{ comment.createdAt|date('d/m/Y') }} à {{ comment.createdAt|date('H') }}h{{ comment.createdAt|date('i') }}</div>
                     </div>
                 </div>
+                {% endif %}
             {% endfor %}
         {% else %}
             <h5 class="text-black text-center pb-4">Aucun commentaires</h5>

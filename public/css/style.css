@@ -15,9 +15,12 @@
     background-color: rgb(245,245,245);
 }
 
-@font-face {
-    font-family: "Scarlet";
-    src: url("/fonts/ScarletJosephine.ttf");
+.flashMessage{
+    width: unset!important;
+    position: fixed!important;
+    top: 85px!important;
+    right: 10px!important;
+    z-index: 100000!important;
 }
 
 /* NAV */
@@ -340,4 +343,46 @@
     flex-direction: row;
     align-items: center;
     justify-content: flex-end;
+}
+
+/* Login */
+
+.containerLogin{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.formLogin{
+    width: 300px;
+}
+
+.formLogin label{
+    margin-bottom: 10px;
+}
+
+/* Register */
+
+.containerRegister{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.formRegister{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    width: 500px;
+}
+
+.formRegister label{
+    margin-bottom: 10px;
+}
+
+.formRegister > div{
+    padding: 10px;
 }

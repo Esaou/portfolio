@@ -21,7 +21,10 @@ final class PostRepository implements EntityRepositoryInterface
     public function find(int $id): ?Post
     {
         $data = $this->database->query("select * from post left join user on post.user_id = user.id_utilisateur where id=$id");
-        $data = current($data);
+
+        if (!empty($data)){
+            $data = current($data);
+        }
 
         if ($data === false) {
             return null;
@@ -29,7 +32,7 @@ final class PostRepository implements EntityRepositoryInterface
 
         $data->createdAt = new \DateTime($data->createdAt);
         $data->updatedAt = new \DateTime($data->updatedAt);
-        $user = new User((int)$data->id_utilisateur, $data->firstname,$data->lastname, $data->email, $data->password);
+        $user = new User((int)$data->id_utilisateur, $data->firstname,$data->lastname, $data->email, $data->password,$data->role);
 
         return new Post((int)$data->id,$data->chapo, $data->title, $data->content,$data->createdAt,$data->updatedAt,$user);
     }
@@ -37,12 +40,15 @@ final class PostRepository implements EntityRepositoryInterface
     public function findOneBy(array $criteria, array $orderBy = null): ?Post
     {
 
+        $user = null;
         $data = $this->findBy($criteria,$orderBy);
-        $data = current($data);
 
-        $user = new User((int)$data->user->id_utilisateur, $data->user->firstname,$data->user->lastname, $data->user->email, $data->user->password);
+        if (!is_null($data)){
+            $data = current($data);
+            $user = new User((int)$data->user->id_utilisateur, $data->user->firstname,$data->user->lastname, $data->user->email, $data->user->password,$data->user->role);
+        }
 
-        return $data === false ? null : new Post((int)$data->id,$data->chapo, $data->title, $data->content,$data->createdAt,$data->updatedAt,$user);
+        return $data === null ? null : new Post((int)$data->id,$data->chapo, $data->title, $data->content,$data->createdAt,$data->updatedAt,$user);
     }
 
     public function findBy(array $criteria, array $orderBy = null, int $limit = null, int $offset = null): ?array
@@ -76,7 +82,7 @@ final class PostRepository implements EntityRepositoryInterface
         foreach ($data as $post) {
             $post['createdAt'] = new \DateTime($post['createdAt']);
             $post['updatedAt'] = new \DateTime($post['updatedAt']);
-            $user = new User((int)$post['id_utilisateur'], $post['firstname'],$post['lastname'], $post['email'], $post['password']);
+            $user = new User((int)$post['id_utilisateur'], $post['firstname'],$post['lastname'], $post['email'], $post['password'],$post['role']);
             $posts[] = new Post((int)$post['id'],$post['chapo'], $post['title'], $post['content'],$post['createdAt'],$post['updatedAt'],$user);
         }
 
@@ -94,7 +100,7 @@ final class PostRepository implements EntityRepositoryInterface
         foreach ($data as $post) {
             $post->createdAt = new \DateTime($post->createdAt);
             $post->updatedAt = new \DateTime($post->updatedAt);
-            $user = new User((int)$post->id_utilisateur, $post->firstname,$post->lastname, $post->email, $post->password);
+            $user = new User((int)$post->id_utilisateur, $post->firstname,$post->lastname, $post->email, $post->password,$post->role);
             $posts[] = new Post((int)$post->id,$post->chapo, $post->title, $post->content,$post->createdAt,$post->updatedAt,$user);
         }
 

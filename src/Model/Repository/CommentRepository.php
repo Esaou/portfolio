@@ -8,6 +8,7 @@ use App\Model\Entity\User;
 use App\Service\Database;
 use App\Model\Entity\Comment;
 use App\Model\Repository\Interfaces\EntityRepositoryInterface;
+use function Couchbase\defaultDecoder;
 
 final class CommentRepository implements EntityRepositoryInterface
 {
@@ -21,7 +22,9 @@ final class CommentRepository implements EntityRepositoryInterface
     public function find(int $id): ?Comment
     {
         $data = $this->database->query("select * from comment left join user on comment.user_id = user.id_utilisateur where id=$id");
-        $data = current($data);
+        if (!empty($data)){
+            $data = current($data);
+        }
 
         if ($data === false) {
             return null;
@@ -30,7 +33,7 @@ final class CommentRepository implements EntityRepositoryInterface
         $data->createdAt = new \DateTime($data->createdAt);
 
 
-        $user = new User((int)$data->id_utilisateur, $data->firstname,$data->lastname, $data->email, $data->password);
+        $user = new User((int)$data->id_utilisateur, $data->firstname,$data->lastname, $data->email, $data->password,$data->role);
 
 
         return new Comment((int)$data->id, $data->content,(int)$data->post_id,$user,$data->isChecked,$data->createdAt);
@@ -39,9 +42,11 @@ final class CommentRepository implements EntityRepositoryInterface
     public function findOneBy(array $criteria, array $orderBy = null): ?Comment
     {
         $data = $this->findBy($criteria,$orderBy);
-        $data = current($data);
+        if (!empty($data)){
+            $data = current($data);
+        }
 
-        $user = new User((int)$data->user->id_utilisateur, $data->user->firstname,$data->user->lastname, $data->user->email, $data->user->password);
+        $user = new User((int)$data->user->id_utilisateur, $data->user->firstname,$data->user->lastname, $data->user->email, $data->user->password,$data->user->role);
 
         return $data === false ? null : new Comment((int)$data->id, $data->content,(int)$data->idPost,$user,$data->isChecked,$data->createdAt);
     }
@@ -76,7 +81,7 @@ final class CommentRepository implements EntityRepositoryInterface
 
         foreach ($data as $comment) {
             $comment['createdAt'] = new \DateTime($comment['createdAt']);
-            $user = new User((int)$comment['id_utilisateur'], $comment['firstname'],$comment['lastname'], $comment['email'], $comment['password']);
+            $user = new User((int)$comment['id_utilisateur'], $comment['firstname'],$comment['lastname'], $comment['email'], $comment['password'],$comment['role']);
             $comments[] = new Comment((int)$comment['id'], $comment['content'],(int)$comment['post_id'],$user,$comment['isChecked'],$comment['createdAt']);
         }
 
@@ -94,7 +99,7 @@ final class CommentRepository implements EntityRepositoryInterface
         $comments = [];
         foreach ($data as $comment) {
             $comment->createdAt = new \DateTime($comment->createdAt);
-            $user = new User((int)$comment->id_utilisateur, $comment->firstname,$comment->lastname, $comment->email, $comment->password);
+            $user = new User((int)$comment->id_utilisateur, $comment->firstname,$comment->lastname, $comment->email, $comment->password,$comment->role);
             $comments[] = new Comment((int)$comment->id, $comment->content,(int)$comment->post_id,$user,$comment->isChecked,$comment->createdAt);
         }
 
@@ -104,6 +109,8 @@ final class CommentRepository implements EntityRepositoryInterface
 
     public function create(object $comment): bool
     {
+
+        $criteria = false;
 
         foreach ($comment as $key => $value) {
 
@@ -121,7 +128,7 @@ final class CommentRepository implements EntityRepositoryInterface
         $sql = "INSERT INTO comment (user_id,content, post_id,isChecked,createdAt) VALUES (:user,:content,:post_id,:isChecked,:createdAt )";
         $result = $this->database->prepare($sql,$criteria);
 
-        if ($result == true){
+        if ($result === true){
             return true;
         }else{
             return false;

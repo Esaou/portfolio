@@ -7,13 +7,13 @@ namespace App\Model\Entity;
 final class Comment
 {
     public int $id;
-    public User $user; // TODO l'entity User serait plus approprié
+    public User|null $user; // TODO l'entity User serait plus approprié
     public string $content;
     public int $post_id;
     public string $isChecked;
     public \DateTime $createdAt;
 
-    public function __construct(int $id, string $content, int $post_id,User $user,string $isChecked,\DateTime $createdAt)
+    public function __construct(int $id, string $content, int $post_id,User|null $user,string $isChecked,\DateTime $createdAt)
     {
         $this->id = $id;
         $this->user = $user;
@@ -28,7 +28,7 @@ final class Comment
         return $this->id;
     }
 
-    public function getUser(): User
+    public function getUser(): User|null
     {
         return $this->user;
     }
@@ -77,7 +77,7 @@ final class Comment
         return $this->post_id;
     }
 
-    public function setIdPost(int $post_id): self
+    public function setIdPost(int $post_id): int
     {
         $this->post_id = $post_id;
         return $this->post_id;

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Model\Entity;
 
+use DateTime;
+
 final class Post
 {
     public int $id;
@@ -12,9 +14,9 @@ final class Post
     public string $chapo;
     public \DateTime $createdAt;
     public \DateTime $updatedAt;
-    public User $user;
+    public User|null $user;
 
-    public function __construct(int $id,string $chapo,string $title, string $content,$createdAt,$updatedAt,User $user)
+    public function __construct(int $id,string $chapo,string $title, string $content,Datetime $createdAt,Datetime $updatedAt,User|null $user)
     {
         $this->id = $id;
         $this->title = $title;
@@ -85,7 +87,7 @@ final class Post
         return $this;
     }
 
-    public function getUser(): User
+    public function getUser(): User|null
     {
         return $this->user;
     }

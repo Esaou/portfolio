@@ -21,21 +21,27 @@ final class UserRepository implements EntityRepositoryInterface
     public function find(int $id): ?User
     {
         $data = $this->database->query("select * from user where id_utilisateur=$id");
-        $data = current($data);
+
+        if (!empty($data)){
+            $data = current($data);
+        }
 
         if ($data === false) {
             return null;
         }
 
-        return new User((int)$data['id_utilisateur'], $data['firstname'],$data['lastname'], $data['email'], $data['password']);
+        return new User((int)$data['id_utilisateur'], $data['firstname'],$data['lastname'], $data['email'], $data['password'],$data['role']);
     }
 
     public function findOneBy(array $criteria, array $orderBy = null): ?User
     {
         $data = $this->findBy($criteria,$orderBy);
-        $data = current($data);
 
-        return $data === false ? null : new User((int)$data->id_utilisateur, $data->firstname,$data->lastname, $data->email, $data->password);
+        if (!empty($data)){
+            $data = current($data);
+        }
+
+        return $data === false ? null : new User((int)$data->id_utilisateur, $data->firstname,$data->lastname, $data->email, $data->password,$data->role);
     }
 
     public function findBy(array $criteria, array $orderBy = null, int $limit = null, int $offset = null): ?array
@@ -57,6 +63,7 @@ final class UserRepository implements EntityRepositoryInterface
 
         $data = $this->database->prepare("select * from user where $where order by $orderBy limit $limit offset $offset",$criteria);
 
+
         $data = json_decode(json_encode($data), true);
 
         if (empty($data)) {
@@ -66,7 +73,7 @@ final class UserRepository implements EntityRepositoryInterface
         $users = [];
 
         foreach ($data as $user) {
-            $users[] = new User((int)$user['id_utilisateur'], $user['firstname'],$user['lastname'], $user['email'], $user['password']);
+            $users[] = new User((int)$user['id_utilisateur'], $user['firstname'],$user['lastname'], $user['email'], $user['password'],$user['role']);
         }
 
         return $users;
@@ -82,7 +89,7 @@ final class UserRepository implements EntityRepositoryInterface
 
         $users = [];
         foreach ($data as $user) {
-            $users[] = new User((int)$user->id_utilisateur, $user->firstname, $user->lastname,$user->email,$user->password);
+            $users[] = new User((int)$user->id_utilisateur, $user->firstname, $user->lastname,$user->email,$user->password,$user->role);
         }
 
         return $users;

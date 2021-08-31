@@ -7,6 +7,7 @@ namespace  App\Controller\Frontoffice;
 use App\Model\Entity\Comment;
 use App\Model\Repository\UserRepository;
 use App\Service\Http\Request;
+use App\Service\Http\Session\Session;
 use App\View\View;
 use App\Service\Http\Response;
 use App\Model\Repository\PostRepository;
@@ -15,33 +16,43 @@ use App\Model\Repository\CommentRepository;
 final class PostController
 {
     private PostRepository $postRepository;
+    private CommentRepository $commentRepository;
+    private UserRepository $userRepository;
     private View $view;
     private Request $request;
+    private Session $session;
 
-    public function __construct(PostRepository $postRepository, View $view,Request $request)
+    public function __construct(View $view,Request $request,Session $session,CommentRepository $commentRepository,UserRepository $userRepository,PostRepository $postRepository)
     {
         $this->postRepository = $postRepository;
+        $this->commentRepository = $commentRepository;
+        $this->userRepository = $userRepository;
         $this->view = $view;
         $this->request = $request;
+        $this->session = $session;
     }
 
-    public function displayOneAction(int $id, CommentRepository $commentRepository,UserRepository $userRepository): Response
+    public function displayOneAction(int $id): Response
     {
 
-        if (!empty($this->request->request()->all())){
+        if ($this->request->getMethod() === 'POST'){
 
             $content = $this->request->request()->get('comment');
-            $user = $userRepository->findOneBy(['id_utilisateur' => 1]);
-
+            $user = $this->userRepository->findOneBy(['id_utilisateur' => 1]);
             $comment = new Comment(0,$content,$id,$user,'Non',new \DateTime('now'));
-            $commentRepository->create($comment);
+            $this->commentRepository->create($comment);
+            $this->session->addFlashes('success','Commentaire posté avec succès !');
 
         }
 
         $post = $this->postRepository->findOneBy(['id' => $id]);
-        $comments = $commentRepository->findBy(['post_id' => $id]);
+        $comments = $this->commentRepository->findBy(['post_id' => $id]);
 
-        $response = new Response('<h1>faire une redirection vers la page d\'erreur, ce post n\'existe pas</h1><a href="index.php?action=posts">Liste des posts</a><br>', 404);
+        $response = new Response($this->view->render(
+            [
+                'template' => 'postNotFound',
+            ],
+        ));
 
         if ($post !== null) {
             $response = new Response($this->view->render(
@@ -54,6 +65,7 @@ final class PostController
                 ],
             ));
         }
+
 
         return $response;
     }

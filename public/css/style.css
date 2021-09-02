@@ -221,6 +221,9 @@
         width: 100%!important;
     }
 
+    .citation{
+        text-align: center;
+    }
 
     .containerId{
         display: flex;
@@ -310,6 +313,30 @@
     .containerCard{
         width: 100%!important;
     }
+
+    .blocBtnUpdate{
+        margin-top: 15px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+    .blocBtnUpdate div{
+        margin: 10px;
+        text-align: center;
+    }
+
+    .blocBtnUpdate{
+        margin-top: 15px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+    .blocBtnUpdate div a{
+        margin: 10px!important;
+        text-align: center;
+    }
 }
 
 /* SHOWPOST */
@@ -343,6 +370,34 @@
     flex-direction: row;
     align-items: center;
     justify-content: flex-end;
+}
+
+.paginator{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+.paginator a{
+    color: rgb(100,100,100);
+}
+
+.submitComment{
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+@media screen and (max-width: 1150px) {
+
+    .submitComment{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+
 }
 
 /* Login */
@@ -385,4 +440,20 @@
 
 .formRegister > div{
     padding: 10px;
+}
+
+#error{
+    text-align: justify;
+}
+
+@media screen and (max-width: 1150px) {
+
+    .formRegister{
+        width: 100%;
+    }
+
+    .formLogin{
+        width:100%;
+    }
+
 }

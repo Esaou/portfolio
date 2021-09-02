@@ -21,7 +21,8 @@ final class CommentRepository implements EntityRepositoryInterface
 
     public function find(int $id): ?Comment
     {
-        $data = $this->database->query("select * from comment left join user on comment.user_id = user.id_utilisateur where id=$id");
+        $data = $this->findBy(['id'=>$id]);
+
         if (!empty($data)){
             $data = current($data);
         }
@@ -30,48 +31,43 @@ final class CommentRepository implements EntityRepositoryInterface
             return null;
         }
 
-        $data->createdAt = new \DateTime($data->createdAt);
-
-
-        $user = new User((int)$data->id_utilisateur, $data->firstname,$data->lastname, $data->email, $data->password,$data->role);
-
-
-        return new Comment((int)$data->id, $data->content,(int)$data->post_id,$user,$data->isChecked,$data->createdAt);
+        return $data;
     }
 
     public function findOneBy(array $criteria, array $orderBy = null): ?Comment
     {
         $data = $this->findBy($criteria,$orderBy);
-        if (!empty($data)){
+
+        if (!is_null($data)){
             $data = current($data);
         }
 
-        $user = new User((int)$data->user->id_utilisateur, $data->user->firstname,$data->user->lastname, $data->user->email, $data->user->password,$data->user->role);
-
-        return $data === false ? null : new Comment((int)$data->id, $data->content,(int)$data->idPost,$user,$data->isChecked,$data->createdAt);
+        return $data === null ? null : $data;
     }
 
     public function findBy(array $criteria, array $orderBy = null, int $limit = null, int $offset = null): ?array
     {
-        $where = $this->database->setCondition($criteria);
+        $sql = "select * from comment left join user on comment.user_id = user.id_utilisateur ";
 
-        if ($orderBy == null){
-            $orderBy = "id desc";
-        }else{
-            $orderBy = $this->database->setOrderBy($orderBy);
+        if (!empty($criteria)){
+            $sql .= $this->database->setCondition($criteria);
         }
 
-        if ($limit == null){
-            $limit = 1000000;
-        }
-        if ($offset == null){
-            $offset = 0;
+        if (!is_null($orderBy)){
+            $sql .= ' order by '.$this->database->setOrderBy($orderBy);
         }
 
+        if (!is_null($limit)){
+            $sql .= ' limit '.$limit;
+        }
 
-        $data = $this->database->prepare("select * from comment left join user on comment.user_id = user.id_utilisateur where $where order by $orderBy limit $limit offset $offset",$criteria);
+        if (!is_null($offset)){
+            $sql .= ' offset '.$offset;
+        }
 
-        $data = json_decode(json_encode($data), true);
+
+        $data = $this->database->prepare($sql,$criteria);
+
 
         if (empty($data)) {
             return null;
@@ -80,9 +76,9 @@ final class CommentRepository implements EntityRepositoryInterface
         $comments = [];
 
         foreach ($data as $comment) {
-            $comment['createdAt'] = new \DateTime($comment['createdAt']);
-            $user = new User((int)$comment['id_utilisateur'], $comment['firstname'],$comment['lastname'], $comment['email'], $comment['password'],$comment['role']);
-            $comments[] = new Comment((int)$comment['id'], $comment['content'],(int)$comment['post_id'],$user,$comment['isChecked'],$comment['createdAt']);
+            $comment->createdAt = new \DateTime($comment->createdAt);
+            $user = new User((int)$comment->id_utilisateur, $comment->firstname,$comment->lastname, $comment->email, $comment->password,$comment->isValid,$comment->role,$comment->token);
+            $comments[] = new Comment((int)$comment->id, $comment->content,(int)$comment->post_id,$user,$comment->isChecked,$comment->createdAt);
         }
 
         return $comments;
@@ -90,21 +86,13 @@ final class CommentRepository implements EntityRepositoryInterface
 
     public function findAll(): ?array
     {
-        $data = $this->database->query('select * from comment left join user on comment.user_id = user.id_utilisateur');
+        $data = $this->findBy([]);
 
         if (empty($data)) {
             return null;
         }
 
-        $comments = [];
-        foreach ($data as $comment) {
-            $comment->createdAt = new \DateTime($comment->createdAt);
-            $user = new User((int)$comment->id_utilisateur, $comment->firstname,$comment->lastname, $comment->email, $comment->password,$comment->role);
-            $comments[] = new Comment((int)$comment->id, $comment->content,(int)$comment->post_id,$user,$comment->isChecked,$comment->createdAt);
-        }
-
-
-        return $comments;
+        return $data;
     }
 
     public function create(object $comment): bool
@@ -144,5 +132,12 @@ final class CommentRepository implements EntityRepositoryInterface
     public function delete(object $comment): bool
     {
         return false;
+    }
+
+    public function countAllCheckedComment(int $id):int
+    {
+        $data = $this->database->query("SELECT COUNT(*) AS nb FROM comment WHERE post_id = $id and isChecked = 'Oui' ORDER BY id DESC");
+        $data = current($data);
+        return (int)$data->nb;
     }
 }

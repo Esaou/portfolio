@@ -34,33 +34,47 @@ final class HomeController
             $email = $this->request->request()->get('email');
             $content = $this->request->request()->get('content');
 
-            $subject = "Message de ".$prenom." ".$nom;
-            $to = 'eric.saou3@gmail.com';
+            if (empty($nom) or empty($prenom) or empty($email) or empty($content)){
 
-            $headers  = 'MIME-Version: 1.0' . "\r\n";
-            $headers .= 'Content-type: text/html; charset=UTF-8' . "\r\n";
+                $this->session->addFlashes('danger','Tous les champs doivent être remplis !');
 
-            $headers .= 'From: '.$email."\r\n".
-                'Reply-To: '.$email."\r\n" .
-                'X-Mailer: PHP/' . phpversion();
+            }elseif (strlen($prenom) < 2 or strlen($prenom) > 30 or strlen($nom) < 2 or strlen($nom) > 30){
 
-            $content = '<p>Bonjour,</p>
-            <p>Voici un nouveau message d\'un utilisateur :</p>
-            <ul>
-                <li>Nom : '.$nom.'</li>
-                <li>Prénom : '.$prenom.'</li>
-                <li>Email : '.$email.'</li>
-                <li>Contenu : '.$content.'</li>
-            </ul>';
+                $this->session->addFlashes('danger','Le prénom et le nom doivent contenir de 2 à 30 caractères !');
 
-            ini_set("SMTP","smtp.bbox.fr");
-            ini_set("smtp_port","25");
-            ini_set("sendmail_from",$email);
+            }elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)){
+
+                $this->session->addFlashes('danger','L\'email renseigné n\'est pas valide !');
+
+            }else{
+                $subject = "Message de ".$prenom." ".$nom;
+                $to = 'eric.saou3@gmail.com';
+
+                $headers  = 'MIME-Version: 1.0' . "\r\n";
+                $headers .= 'Content-type: text/html; charset=UTF-8' . "\r\n";
+
+                $headers .= 'From: '.$email."\r\n".
+                    'Reply-To: '.$email."\r\n" .
+                    'X-Mailer: PHP/' . phpversion();
+
+                $content = '<p>Bonjour,</p>
+                <p>Voici un nouveau message d\'un utilisateur :</p>
+                <ul>
+                    <li>Nom : '.$nom.'</li>
+                    <li>Prénom : '.$prenom.'</li>
+                    <li>Email : '.$email.'</li>
+                    <li>Contenu : '.$content.'</li>
+                </ul>';
+
+                ini_set("SMTP","smtp.bbox.fr");
+                ini_set("smtp_port","25");
+                ini_set("sendmail_from",$email);
 
 
-            mail($to, $subject, $content, $headers);
+                mail($to, $subject, $content, $headers);
 
-            $this->session->addFlashes('success','Message posté avec succès !');
+                $this->session->addFlashes('success','Message posté avec succès !');
+            }
 
         }
 

@@ -14,6 +14,7 @@
 
                         <li class="centrageMenu"><a href="index.php?action=posts" class="subtitle"><i class="far fa-clone" style="margin-right: 7px"></i> Tous les posts</a></li>
                         {% if session.user %}
+                            <li class="centrageMenu"><a href="index.php?action=postsAdmin" class="subtitle"><i class="fas fa-user-cog" style="margin-right: 7px"></i></i> Espace administrateur</a></li>
                             <li class="centrageMenu"><a href="index.php?action=logout" class="subtitle">Déconnexion</a></li>
                         {% else %}
                             <li class="centrageMenu"><a href="index.php?action=login" class="subtitle">Connexion</a></li>
@@ -44,9 +45,11 @@
 
                     <li class="nav-item"><a href="index.php?action=posts" class="nav-link">Tous les posts</a></li>
                     {% if session.user %}
-                    <li class="nav-item"><a href="index.php?action=logout" class="nav-link">Déconnexion</a></li>
+                        <li class="nav-item"><a href="index.php?action=postsAdmin" class="nav-link">Espace administrateur</a></li>
+                        <li class="nav-item"><a href="index.php?action=logout" class="nav-link">Déconnexion</a></li>
                     {% else %}
                         <li class="nav-item"><a href="index.php?action=login" class="nav-link">Connexion</a></li>
+                        <li class="nav-item"><a href="index.php?action=register" class="nav-link">Inscription</a></li>
                     {% endif %}
 
                 </ul>

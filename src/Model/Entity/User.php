@@ -11,9 +11,11 @@ final class User
     public string $firstname;
     public string $lastname;
     public string $password;
+    public string $isValid;
     public string $role;
+    public string $token;
 
-    public function __construct(int $id_utilisateur, string $firstname,string $lastname, string $email, string $password,string $role)
+    public function __construct(int $id_utilisateur, string $firstname,string $lastname, string $email, string $password,string $isValid,string $role,string $token)
     {
         $this->id_utilisateur = $id_utilisateur;
         $this->firstname = $firstname;
@@ -21,6 +23,8 @@ final class User
         $this->email = $email;
         $this->password = $password;
         $this->role = $role;
+        $this->isValid = $isValid;
+        $this->token = $token;
     }
 
     public function getIdUtilisateur(): int
@@ -80,6 +84,28 @@ final class User
     public function setRole(string $role): self
     {
         $this->role = $role;
+        return $this;
+    }
+
+    public function getIsValid(): string
+    {
+        return $this->isValid;
+    }
+
+    public function setIsValid(string $isValid): self
+    {
+        $this->isValid = $isValid;
+        return $this;
+    }
+
+    public function getToken(): string
+    {
+        return $this->token;
+    }
+
+    public function setToken(string $token): self
+    {
+        $this->token = $token;
         return $this;
     }
 

@@ -33,25 +33,21 @@ class Database
         return $this->pdo;
     }
 
-    public function query(string $statement, string $className = null, bool $one = false): ?array
+    public function query(string $statement): array|bool
     {
         $req = $this->getPDO()->query($statement);
         if (
             mb_strpos($statement, 'UPDATE') === 0 ||
             mb_strpos($statement, 'INSERT') === 0 ||
             mb_strpos($statement, 'DELETE') === 0) {
-            return $req;
+
+            return true;
         }
-        if ($className === null) {
-            $req->setFetchMode(PDO::FETCH_OBJ);
-        } else {
-            $req->setFetchMode(PDO::FETCH_CLASS, $className);
-        }
-        if ($one) {
-            $datas = $req->fetch();
-        } else {
-            $datas = $req->fetchAll();
-        }
+
+        $req->setFetchMode(PDO::FETCH_OBJ);
+
+        $datas = $req->fetchAll();
+
 
         return $datas;
     }
@@ -82,6 +78,7 @@ class Database
         }
 
         $sqlParts = implode(' and ', $sqlParts);
+        $sqlParts = 'where ' . $sqlParts;
 
         return $sqlParts;
     }
@@ -94,6 +91,22 @@ class Database
         }
 
         $sqlParts = implode(' and ', $sqlParts);
+
+        return $sqlParts;
+    }
+
+    public function setConditionUpdate(array $fields):string{
+        $sqlParts = [];
+
+        foreach ($fields as $k => $v) {
+            if (is_string($v)){
+                $sqlParts[] = "$k = '$v'";
+            }else{
+                $sqlParts[] = "$k = $v";
+            }
+        }
+
+        $sqlParts = implode(' , ', $sqlParts);
 
         return $sqlParts;
     }

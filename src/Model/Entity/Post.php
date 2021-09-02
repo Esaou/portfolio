@@ -13,10 +13,10 @@ final class Post
     public string $content;
     public string $chapo;
     public \DateTime $createdAt;
-    public \DateTime $updatedAt;
+    public \DateTime|null $updatedAt;
     public User|null $user;
 
-    public function __construct(int $id,string $chapo,string $title, string $content,Datetime $createdAt,Datetime $updatedAt,User|null $user)
+    public function __construct(int $id,string $chapo,string $title, string $content,Datetime $createdAt,Datetime|null $updatedAt,User|null $user)
     {
         $this->id = $id;
         $this->title = $title;
@@ -76,12 +76,12 @@ final class Post
         return $this;
     }
 
-    public function getUpdatedAt(): \DateTime
+    public function getUpdatedAt(): \DateTime|null
     {
         return $this->updatedAt;
     }
 
-    public function setUpdatedAt(\DateTime $updatedAt): self
+    public function setUpdatedAt(\DateTime|null $updatedAt): self
     {
         $this->updatedAt = $updatedAt;
         return $this;

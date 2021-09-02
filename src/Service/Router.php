@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace  App\Service;
 
+use App\Controller\Backoffice\PostAdminController;
 use App\Controller\Frontoffice\ErrorController;
 use App\Controller\Frontoffice\HomeController;
 use App\Controller\Frontoffice\PostController;
@@ -61,13 +62,13 @@ final class Router
 
         } elseif ($action === 'login') {
             $userRepo = new UserRepository($this->database);
-            $controller = new UserController($userRepo, $this->view, $this->session);
+            $controller = new UserController($userRepo, $this->view, $this->session,$this->request);
 
             return $controller->loginAction($this->request);
 
         } elseif ($action === 'logout') {
             $userRepo = new UserRepository($this->database);
-            $controller = new UserController($userRepo, $this->view, $this->session);
+            $controller = new UserController($userRepo, $this->view, $this->session,$this->request);
 
             return $controller->logoutAction();
         } elseif ($action === 'home') {
@@ -75,10 +76,25 @@ final class Router
             return $controller->home();
 
         } elseif ($action === 'register') {
-            $controller = new SecurityController($this->view,$this->request);
+            $userRepo = new UserRepository($this->database);
+            $controller = new UserController($userRepo, $this->view, $this->session,$this->request);
             return $controller->register();
 
-        }
+        }elseif ($action === 'confirmUser') {
+            $userRepo = new UserRepository($this->database);
+            $controller = new UserController($userRepo, $this->view, $this->session,$this->request);
+            return $controller->confirmUser();
+
+        }elseif ($action === 'postsAdmin') {
+        //injection des dépendances et instanciation du controller
+        $postRepo = new PostRepository($this->database);
+        $userRepo = new UserRepository($this->database);
+        $commentRepo = new CommentRepository($this->database);
+        $controller = new PostAdminController($this->view,$this->request,$this->session,$commentRepo,$userRepo,$postRepo);
+
+        return $controller->postsList();
+
+    }
 
         return new Response($this->view->render(
             [

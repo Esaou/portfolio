@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace  App\Service;
 
+use App\Controller\Backoffice\CommentController;
 use App\Controller\Backoffice\PostAdminController;
+use App\Controller\Backoffice\UserAdminController;
 use App\Controller\Frontoffice\ErrorController;
 use App\Controller\Frontoffice\HomeController;
 use App\Controller\Frontoffice\PostController;
@@ -85,16 +87,54 @@ final class Router
             $controller = new UserController($userRepo, $this->view, $this->session,$this->request);
             return $controller->confirmUser();
 
+        }elseif ($action === 'forbidden') {
+            $userRepo = new UserRepository($this->database);
+            $controller = new UserController($userRepo, $this->view, $this->session,$this->request);
+            return $controller->forbidden();
+
         }elseif ($action === 'postsAdmin') {
-        //injection des dépendances et instanciation du controller
-        $postRepo = new PostRepository($this->database);
-        $userRepo = new UserRepository($this->database);
-        $commentRepo = new CommentRepository($this->database);
-        $controller = new PostAdminController($this->view,$this->request,$this->session,$commentRepo,$userRepo,$postRepo);
-
-        return $controller->postsList();
-
-    }
+            $postRepo = new PostRepository($this->database);
+            $userRepo = new UserRepository($this->database);
+            $commentRepo = new CommentRepository($this->database);
+            $controller = new PostAdminController($this->view,$this->request,$this->session,$commentRepo,$userRepo,$postRepo);
+            return $controller->postsList();
+        }elseif ($action === 'comments') {
+            $postRepo = new PostRepository($this->database);
+            $userRepo = new UserRepository($this->database);
+            $commentRepo = new CommentRepository($this->database);
+            $controller = new CommentController($this->view,$this->request,$this->session,$commentRepo,$userRepo,$postRepo);
+            return $controller->commentList();
+        }elseif ($action === 'users') {
+            $postRepo = new PostRepository($this->database);
+            $userRepo = new UserRepository($this->database);
+            $commentRepo = new CommentRepository($this->database);
+            $controller = new UserAdminController($this->view,$this->request,$this->session,$commentRepo,$userRepo,$postRepo);
+            return $controller->usersList();
+        }elseif ($action === 'userAccount') {
+            $postRepo = new PostRepository($this->database);
+            $userRepo = new UserRepository($this->database);
+            $commentRepo = new CommentRepository($this->database);
+            $controller = new UserAdminController($this->view,$this->request,$this->session,$commentRepo,$userRepo,$postRepo);
+            return $controller->userAccount();
+        } elseif ($action === 'editPost') {
+            $postRepo = new PostRepository($this->database);
+            $userRepo = new UserRepository($this->database);
+            $commentRepo = new CommentRepository($this->database);
+            $controller = new PostAdminController($this->view,$this->request,$this->session,$commentRepo,$userRepo,$postRepo);
+            return $controller->editPost((int) $this->request->query()->get('id'));
+        }elseif ($action === 'addPost') {
+            $postRepo = new PostRepository($this->database);
+            $userRepo = new UserRepository($this->database);
+            $commentRepo = new CommentRepository($this->database);
+            $controller = new PostAdminController($this->view,$this->request,$this->session,$commentRepo,$userRepo,$postRepo);
+            return $controller->addPost();
+        }elseif ($action === 'editUser') {
+            $postRepo = new PostRepository($this->database);
+            $userRepo = new UserRepository($this->database);
+            $commentRepo = new CommentRepository($this->database);
+            $controller = new UserAdminController($this->view,$this->request,$this->session,$commentRepo,$userRepo,$postRepo);
+            return $controller->editUser((int) $this->request->query()->get('id'));
+        }
 
         return new Response($this->view->render(
             [

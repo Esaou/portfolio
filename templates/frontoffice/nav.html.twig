@@ -14,7 +14,11 @@
 
                         <li class="centrageMenu"><a href="index.php?action=posts" class="subtitle"><i class="far fa-clone" style="margin-right: 7px"></i> Tous les posts</a></li>
                         {% if session.user %}
-                            <li class="centrageMenu"><a href="index.php?action=postsAdmin" class="subtitle"><i class="fas fa-user-cog" style="margin-right: 7px"></i></i> Espace administrateur</a></li>
+                            {% if session.user.role == 'User' %}
+                                <li class="centrageMenu"><a href="index.php?action=userAccount" class="subtitle"><i class="fas fa-user-cog" style="margin-right: 7px"></i></i> Espace administrateur</a></li>
+                            {% else %}
+                                <li class="centrageMenu"><a href="index.php?action=postsAdmin" class="subtitle"><i class="fas fa-user-cog" style="margin-right: 7px"></i></i> Espace administrateur</a></li>
+                            {% endif %}
                             <li class="centrageMenu"><a href="index.php?action=logout" class="subtitle">Déconnexion</a></li>
                         {% else %}
                             <li class="centrageMenu"><a href="index.php?action=login" class="subtitle">Connexion</a></li>
@@ -45,7 +49,11 @@
 
                     <li class="nav-item"><a href="index.php?action=posts" class="nav-link">Tous les posts</a></li>
                     {% if session.user %}
-                        <li class="nav-item"><a href="index.php?action=postsAdmin" class="nav-link">Espace administrateur</a></li>
+                        {% if session.user.role == 'User' %}
+                            <li class="nav-item"><a href="index.php?action=userAccount" class="nav-link">Espace administrateur</a></li>
+                        {% else %}
+                            <li class="nav-item"><a href="index.php?action=postsAdmin" class="nav-link">Espace administrateur</a></li>
+                        {% endif %}
                         <li class="nav-item"><a href="index.php?action=logout" class="nav-link">Déconnexion</a></li>
                     {% else %}
                         <li class="nav-item"><a href="index.php?action=login" class="nav-link">Connexion</a></li>

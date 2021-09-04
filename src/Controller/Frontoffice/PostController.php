@@ -37,9 +37,13 @@ final class PostController
     public function displayOneAction(int $id): Response
     {
 
+        $token = base_convert(hash('sha256', time() . mt_rand()), 16, 36);
+        $tokenSession = $this->session->get('token');
+        $tokenPost = $this->request->request()->get('token');
+
         // FIND A POST
 
-        $post = $this->postRepository->findOneBy(['id' => $id]);
+        $post = $this->postRepository->findOneBy(['id_post' => $id]);
 
         // NOT FOUND
 
@@ -56,12 +60,15 @@ final class PostController
             $content = $this->request->request()->get('comment');
             $user = $this->session->get('user');
 
-            $comment = new Comment(0,$content,$id,$user,'Non',new \DateTime('now'));
+            if ($tokenPost != $tokenSession){
+                $this->session->addFlashes('danger','Token de session expiré !');
+            }else{
+                $comment = new Comment(0,$content,$post,$user,'Non',new \DateTime('now'));
 
-            $this->commentRepository->create($comment);
+                $this->commentRepository->create($comment);
 
-            $this->session->addFlashes('success','Commentaire posté avec succès !');
-
+                $this->session->addFlashes('success','Commentaire posté avec succès !');
+            }
 
         }
 
@@ -72,20 +79,23 @@ final class PostController
 
         // PAGINATION
 
-        $page = $this->request->query()->get('page');
+        $page = (int)$this->request->query()->get('page');
         $tableRows = $this->commentRepository->countAllCheckedComment($id);
 
-        $paginator = (new Paginator($page,$tableRows))->paginate();
+        $paginator = (new Paginator($page,$tableRows,4))->paginate();
 
         $comments = $this->commentRepository->findBy(['post_id' => $id,'isChecked' => 'Oui'],['id' =>'desc'],$paginator['parPage'],$paginator['depart']);
 
         // RENDER
+
+        $this->session->set('token', $token);
 
         if ($post !== null) {
             $response = new Response($this->view->render(
                 [
                 'template' => 'post',
                 'data' => [
+                    'token' => $token,
                     'post' => $post,
                     'comments' => $comments,
                     'nextPost' => $nextPost,
@@ -105,12 +115,12 @@ final class PostController
 
         // PAGINATION
 
-        $page = $this->request->query()->get('page');
+        $page = (int)$this->request->query()->get('page');
         $tableRows = $this->postRepository->countAllPosts();
 
-        $paginator = (new Paginator($page,$tableRows))->paginate();
+        $paginator = (new Paginator($page,$tableRows,4))->paginate();
 
-        $posts = $this->postRepository->findBy([],['id' =>'desc'],$paginator['parPage'],$paginator['depart']);
+        $posts = $this->postRepository->findBy([],['id_post' =>'desc'],$paginator['parPage'],$paginator['depart']);
 
         return new Response($this->view->render([
             'template' => 'posts',

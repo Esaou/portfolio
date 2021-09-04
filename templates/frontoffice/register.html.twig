@@ -6,6 +6,7 @@
     <section class="container containerRegister">
         <h5 class="text-black text-center pb-4">Formulaire d'inscription</h5>
         <form action="index.php?action=register" class="formRegister" method="POST">
+            <input type="hidden" name="token" id="token" value="{{ token }}"/>
             <div class="form-group col-6">
                 <label for="firstname">Prénom</label>
                 <input type="text" required class="form-control" name="firstname" id="firstname">

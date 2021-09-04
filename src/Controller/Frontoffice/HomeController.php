@@ -27,6 +27,10 @@ final class HomeController
     public function home(): Response
     {
 
+        $token = base_convert(hash('sha256', time() . mt_rand()), 16, 36);
+        $tokenSession = $this->session->get('token');
+        $tokenPost = $this->request->request()->get('token');
+
         if ($this->request->getMethod() === 'POST'){
 
             $prenom = $this->request->request()->get('firstname');
@@ -46,7 +50,9 @@ final class HomeController
 
                 $this->session->addFlashes('danger','L\'email renseigné n\'est pas valide !');
 
-            }else{
+            }elseif ($tokenPost != $tokenSession){
+                $this->session->addFlashes('danger','Token de session expiré !');
+            } else{
                 $subject = "Message de ".$prenom." ".$nom;
                 $to = 'eric.saou3@gmail.com';
 
@@ -78,9 +84,13 @@ final class HomeController
 
         }
 
+        $this->session->set('token', $token);
 
         return new Response($this->view->render([
             'template' => 'home',
+            'data' => [
+                'token' => $token
+            ]
         ]));
     }
 

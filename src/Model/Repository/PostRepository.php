@@ -80,7 +80,7 @@ final class PostRepository implements EntityRepositoryInterface
                 $post->updatedAt = new \DateTime($post->updatedAt);
             }
             $user = new User((int)$post->id_utilisateur, $post->firstname,$post->lastname, $post->email, $post->password,$post->isValid,$post->role,$post->token);
-            $posts[] = new Post((int)$post->id,$post->chapo, $post->title, $post->content,$post->createdAt,$post->updatedAt,$user);
+            $posts[] = new Post((int)$post->id_post,$post->chapo, $post->title, $post->content,$post->createdAt,$post->updatedAt,$user);
         }
 
         return $posts;
@@ -99,27 +99,88 @@ final class PostRepository implements EntityRepositoryInterface
 
     public function create(object $post): bool
     {
-        return false;
+        $criteria = false;
+
+        foreach ($post as $key => $value) {
+
+            if ($key === 'createdAt'){
+                $criteria[$key] = $value->format('Y-m-d H:i:s');
+            }elseif ($key === 'user'){
+                $criteria[$key] = $value->id_utilisateur;
+            } elseif ($key === 'id_post'){
+
+            }else{
+                $criteria[$key] = $value;
+            }
+        }
+
+        $sql = "INSERT INTO post (title,chapo,content, createdAt,updatedAt,user_id) VALUES (:title,:chapo,:content,:createdAt,:updatedAt,:user )";
+        $result = $this->database->prepare($sql,$criteria);
+
+        if ($result === true){
+            return true;
+        }else{
+            return false;
+        }
     }
 
     public function update(object $post): bool
     {
-        return false;
+        $criteria = [];
+
+        foreach ($post as $key => $value) {
+
+            if ($key === 'createdAt'){
+                $criteria[$key] = $value->format('Y-m-d H:i:s');
+            }elseif ($key === 'updatedAt'){
+                $criteria[$key] = $value->format('Y-m-d H:i:s');
+            }
+            elseif ($key === 'user'){
+                $criteria['user_id'] = $value->id_utilisateur;
+            }else{
+                $criteria[$key] = $value;
+            }
+
+        }
+
+        $set = $this->database->setConditionUpdatePost($criteria);
+
+        $sql = "UPDATE post SET ";
+
+        $sql .= $set;
+
+        $sql.= " where id_post = ".$post->id_post;
+
+        $result = $this->database->prepare($sql,$criteria);
+
+        if ($result === true){
+            return true;
+        }else{
+            return false;
+        }
     }
 
     public function delete(object $post): bool
     {
-        return false;
+        $sql = "DELETE FROM post where id_post = $post->id_post ";
+
+        $result = $this->database->query($sql);
+
+        if ($result === true){
+            return true;
+        }else{
+            return false;
+        }
     }
 
     public function previousPost(int $id): int|null
     {
-        $last = $this->database->query("SELECT * FROM post ORDER BY id DESC LIMIT 0 ");
-        $nextPost = $this->database->query("SELECT * FROM post WHERE id>$id LIMIT 0,1 ");
+        $last = $this->database->query("SELECT * FROM post ORDER BY id_post DESC LIMIT 0 ");
+        $nextPost = $this->database->query("SELECT * FROM post WHERE id_post>$id LIMIT 0,1 ");
 
         if($nextPost !== $last){
 
-            $nextPost = current($nextPost)->id;
+            $nextPost = current($nextPost)->id_post;
             return (int)$nextPost;
 
         }else{
@@ -131,11 +192,11 @@ final class PostRepository implements EntityRepositoryInterface
 
     public function nextPost(int $id): int|null
     {
-        $previousPost = $this->database->query("SELECT * FROM post WHERE id<$id ORDER BY id DESC LIMIT 0,1 ");
+        $previousPost = $this->database->query("SELECT * FROM post WHERE id_post<$id ORDER BY id_post DESC LIMIT 0,1 ");
 
         if(!empty($previousPost)){
 
-            $previousPost = current($previousPost)->id;
+            $previousPost = current($previousPost)->id_post;
             return (int)$previousPost;
 
         }else{
@@ -148,7 +209,7 @@ final class PostRepository implements EntityRepositoryInterface
     public function countAllPosts():int
     {
 
-        $data = $this->database->query("SELECT COUNT(*) AS nb FROM post ORDER BY id desc ");
+        $data = $this->database->query("SELECT COUNT(*) AS nb FROM post ORDER BY id_post desc ");
         $data = current($data);
 
         return (int)$data->nb;

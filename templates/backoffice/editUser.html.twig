@@ -1,0 +1,42 @@
+{% extends "/backoffice/base.html.twig" %}
+
+{% block content %}
+
+    <section class="container-fluid">
+
+        <div class="w-100 blocBtnAdmin">
+            <h5 class="text-black">Modifier un utilisateur</h5>
+        </div>
+
+        <hr>
+
+        <form action="index.php?action=editUser&id={{ user.id_utilisateur }}" class="formEditUser" method="POST">
+            <input type="hidden" name="token" id="token" value="{{ token }}"/>
+            <div class="form-group col-6">
+                <label for="role">Modifier le rôle de l'utilisateur <span class="text-blue">{{ user.firstname }} {{ user.lastname }}</span></label>
+                <select required class="form-control" name="role" id="role">
+                    {% if user.role == 'Dev' %}
+                        <option value="Dev" selected>Développeur</option>
+                        <option value="Admin">Administrateur</option>
+                        <option value="User">Utilisateur</option>
+                    {% elseif user.role == 'Admin' %}
+                        <option value="Admin" selected>Administrateur</option>
+                        <option value="Dev">Développeur</option>
+                        <option value="User">Utilisateur</option>
+                    {% elseif user.role == 'User' %}
+                        <option value="User" selected>Utilisateur</option>
+                        <option value="Dev">Développeur</option>
+                        <option value="Admin">Administrateur</option>
+                    {% endif %}
+                </select>
+            </div>
+            <div class="w-100 text-left pt-4 pb-4">
+                <button type="submit" id="submitEditUser" class="btan btn-sm btn-success"><i class="far fa-save" style="margin-right: 5px"></i> Sauvegarder mes changements</button>
+            </div>
+            <div class="pt-0 pb-4 mb-3 danger" id="error">
+            </div>
+        </form>
+
+    </section>
+
+{% endblock %}

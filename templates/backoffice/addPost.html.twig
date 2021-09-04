@@ -1,0 +1,36 @@
+{% extends "/backoffice/base.html.twig" %}
+
+{% block content %}
+
+    <section class="container-fluid">
+
+        <div class="w-100 blocBtnAdmin">
+            <h5 class="text-black">Ajouter un post</h5>
+        </div>
+
+        <hr>
+
+        <form action="index.php?action=addPost" class="formAddPost" method="POST">
+            <input type="hidden" name="token" id="token" value="{{ token }}"/>
+            <div class="form-group col-12">
+                <label for="title">Titre</label>
+                <input type="text" required class="form-control" name="title" id="title">
+            </div>
+            <div class="form-group col-12">
+                <label for="chapo">Chapo</label>
+                <textarea required class="form-control" name="chapo" id="chapo" style="min-height: 150px"></textarea>
+            </div>
+            <div class="form-group col-12">
+                <label for="content">Contenu</label>
+                <textarea required class="form-control mb-2" name="content" id="content" style="min-height: 250px"></textarea>
+            </div>
+            <div class="w-100 text-left pt-4 pb-4">
+                <button type="submit" id="submitAddPost" class="btan btn-sm btn-success"><i class="far fa-save" style="margin-right: 5px"></i> Ajouter ce post</button>
+            </div>
+            <div class="pt-0 pb-4 mb-3 danger" id="error">
+            </div>
+        </form>
+
+    </section>
+
+{% endblock %}

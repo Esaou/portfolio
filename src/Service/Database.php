@@ -110,5 +110,19 @@ class Database
 
         return $sqlParts;
     }
+
+    public function setConditionUpdatePost(array $fields):string{
+        $sqlParts = [];
+
+        foreach ($fields as $k => $v) {
+            $sqlParts[] = "$k = :$k";
+        }
+
+        $sqlParts = implode(' , ', $sqlParts);
+
+
+        return $sqlParts;
+    }
+
 }
 

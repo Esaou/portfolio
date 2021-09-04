@@ -18,8 +18,6 @@ final class UserController
     private Session $session;
     private Request $request;
 
-    // TODO => ne doit pas resté dans le controller, voir comment on peut en faire 
-    // un service générique de validation
     private function isValidLoginForm(?array $infoUser): bool
     {
         if ($infoUser === null) {
@@ -28,13 +26,17 @@ final class UserController
 
         $user = $this->userRepository->findOneBy(['email' => $infoUser['email']]);
 
-        if ($user === null || $infoUser['password'] !== $user->getPassword()) {
+        if ($user === null or $user->getIsValid() === 'Non') {
              return false;
         }
 
-        $this->session->set('user', $user);
+        if(password_verify($infoUser['password'], $user->getPassword())) {
+            $this->session->set('user', $user);
+            return true;
+        }
 
-        return true;
+        return false;
+
     }
 
     public function __construct(UserRepository $userRepository, View $view, Session $session,Request $request)
@@ -47,18 +49,33 @@ final class UserController
 
     public function loginAction(Request $request): Response
     {
-        if ($request->getMethod() === 'POST') {
-            if ($this->isValidLoginForm($request->request()->all())) {
-                return new Response($this->view->renderAdmin([
-                    'template' => 'posts',
-                    'data' => [
 
-                    ],
-                ]),200);
+        $token = base_convert(hash('sha256', time() . mt_rand()), 16, 36);
+        $tokenSession = $this->session->get('token');
+        $tokenPost = $this->request->request()->get('token');
+
+        if ($request->getMethod() === 'POST') {
+
+            if ($tokenPost != $tokenSession){
+                $this->session->addFlashes('danger','Token de session expiré !');
+            } elseif (!$this->isValidLoginForm($request->request()->all())){
+                $this->session->addFlashes('danger','Mauvais identifiants !');
+            } else {
+                $user = $this->session->get('user');
+                if ($user->getRole() === 'User'){
+                    header('Location: index.php?action=userAccount');
+                }else{
+                    header('Location: index.php?action=postsAdmin');
+                }
             }
+
             $this->session->addFlashes('danger', 'Mauvais identifiants');
         }
-        return new Response($this->view->render(['template' => 'login', 'data' => []]));
+
+        $this->session->set('token', $token);
+        return new Response($this->view->render(['template' => 'login', 'data' => [
+            'token' => $token
+        ]]),403);
     }
 
     public function logoutAction(): Response
@@ -72,8 +89,35 @@ final class UserController
         ]),200);
     }
 
+    public function notLogged():bool
+    {
+        return is_null($this->session->get('user'));
+
+    }
+
+    public function loggedAs(string $role):bool
+    {
+        $user = $this->session->get('user');
+
+        if ($user->getRole() == $role){
+            return true;
+        }
+        return false;
+
+    }
+
+    public function forbidden() :Response{
+        return new Response($this->view->render([
+            'template' => 'forbidden'
+        ]),403);
+    }
+
     public function register() :Response
     {
+
+        $token = base_convert(hash('sha256', time() . mt_rand()), 16, 36);
+        $tokenSession = $this->session->get('token');
+        $tokenPost = $this->request->request()->get('token');
 
         if ($this->request->getMethod() === 'POST') {
 
@@ -89,7 +133,9 @@ final class UserController
 
                 $this->session->addFlashes('danger', 'Tous les champs doivent être remplis !');
 
-            } elseif ($confirmPassword !== $password){
+            } elseif ($tokenPost != $tokenSession){
+                $this->session->addFlashes('danger','Token de session expiré !');
+            }elseif ($confirmPassword !== $password){
 
                 $this->session->addFlashes('danger', 'Mots de passe non identiques !');
 
@@ -105,9 +151,10 @@ final class UserController
 
                 $this->session->addFlashes('danger', 'L\'email renseigné est déjà utilisé !');
 
-            } else {
+            }else {
 
                 $token = uniqid();
+                $password = password_hash($password, PASSWORD_BCRYPT);
                 $user = new User(0,$prenom,$nom,$email,$password,'Non','User',$token);
                 $this->userRepository->create($user);
 
@@ -141,12 +188,17 @@ final class UserController
             }
         }
 
+        $this->session->set('token', $token);
+
         return new Response($this->view->render([
             'template' => 'register',
+            'data' => [
+                'token' => $token
+            ],
         ]));
     }
 
-    public function confirmUser(){
+    public function confirmUser():Response{
         $token = $this->request->query()->get('token');
         $user = $this->userRepository->findOneBy(['token'=>$token]);
         $user->setIsValid('Oui');
@@ -156,6 +208,6 @@ final class UserController
 
         return new Response($this->view->render([
             'template' => 'login',
-        ]));
+        ]),200);
     }
 }

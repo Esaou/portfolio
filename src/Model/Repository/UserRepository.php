@@ -140,7 +140,22 @@ final class UserRepository implements EntityRepositoryInterface
 
     public function delete(object $user): bool
     {
-        return false;
+        $sql = "DELETE FROM user where id_utilisateur = $user->id_utilisateur ";
+
+        $result = $this->database->query($sql);
+
+        if ($result === true){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    public function countAllUsers():int
+    {
+        $data = $this->database->query("SELECT COUNT(*) AS nb FROM user ORDER BY id_utilisateur DESC");
+        $data = current($data);
+        return (int)$data->nb;
     }
 
 }

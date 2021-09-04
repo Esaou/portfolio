@@ -15,18 +15,22 @@
                 {% include '/backoffice/nav.html.twig' %}
             {% endblock %}
             <main class="page-content">
-                {% for type,message in flashes %}
-                    {% if type == 'success' %}
-                        <div class="alert alert-success flashMessage">
-                            {{ message }}
-                        </div>
-                    {% elseif type == 'danger' %}
-                        <div class="alert alert-danger flashMessage">
-                            {{ message }}
-                        </div>
-                    {% endif %}
-                {% endfor %}
                 <div class="pb-5">
+                    {% for type,message in flashes %}
+                        {% if type == 'success' %}
+                            <div class="alert alert-success flashMessage">
+                                {{ message }}
+                            </div>
+                        {% elseif type == 'danger' %}
+                            <div class="alert alert-danger flashMessage">
+                                {{ message }}
+                            </div>
+                        {% elseif type == 'update' %}
+                            <div class="alert alert-primary flashMessage">
+                                {{ message }}
+                            </div>
+                        {% endif %}
+                    {% endfor %}
                     {% block content %}{% endblock %}
                 </div>
             </main>

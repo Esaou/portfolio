@@ -12,6 +12,7 @@ class Validator {
         this.content = document.getElementById('content');
         this.submitRegister = document.getElementById('submitRegister');
         this.submitContact = document.getElementById('submitContact');
+        this.submitAccount = document.getElementById('submitAccount');
         this.error = document.getElementById('error');
 
         this.passCheck = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[-+!*$@%_])([-+!*$@%_\w]{8,100})$/;
@@ -31,6 +32,16 @@ class Validator {
             this.submitContact.addEventListener('click', (event)=>{
 
                 this.contactValidator(event);
+
+            });
+
+        }
+
+        if(this.submitAccount){
+
+            this.submitAccount.addEventListener('click', (event)=>{
+
+                this.registerValidator(event);
 
             });
 

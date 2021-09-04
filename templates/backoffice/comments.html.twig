@@ -5,56 +5,56 @@
     <section class="container-fluid">
 
         <div class="w-100 blocBtnAdmin">
-            <h5 class="text-black">Liste des posts</h5>
-            <a href="index.php?action=addPost" class="btn btn-sm btn-success"><i class="fas fa-plus-square" style="margin-right: 5px"></i> Ajouter un post</a>
+            <h5 class="text-black">Liste des commentaires</h5>
         </div>
 
         <hr>
 
         <div class="table-responsive-lg">
-            <table class="table table-striped" style="font-size: 14px;max-width: 100%;">
+            <table class="table table-striped text-nowrap" style="font-size: 14px;max-width: 100%;">
                 <thead class="text-nowrap">
-                <th>Titre</th>
-                <th>Chapo</th>
                 <th>Contenu</th>
-                <th>Date de création</th>
-                <th>Date de modification</th>
                 <th>Utilisateur</th>
+                <th>Post</th>
+                <th>Date de création</th>
+                <th>Validité</th>
                 <th class="text-end">Actions</th>
                 </thead>
                 <tbody>
-                {% for post in posts %}
+                {% for comment in comments %}
                     <tr>
-                        <td class="align-middle">{{ post.title }}</td>
-                        <td class="align-middle text-nowrap">{{ post.chapo|slice(0,20) }} {% if post.chapo|length > 20 %}...{% endif %}</td>
-                        <td class="align-middle text-nowrap">{{ post.content|slice(0,20) }} {% if post.content|length > 20 %}...{% endif %}</td>
-                        <td class="align-middle">{{ post.createdAt|date('d/m/Y') }}</td>
-                        <td class="align-middle">{{ post.updatedAt|date('d/m/Y') }}</td>
-                        <td class="align-middle">{{ post.user.firstname }} {{ post.user.lastname }}</td>
+                        <td class="align-middle">{{ comment.comment|slice(0,20) }} {% if comment.comment|length > 20 %}...{% endif %}</td>
+                        <td class="align-middle text-nowrap">{{ comment.user.firstname }} {{ comment.user.lastname }}</td>
+                        <td class="align-middle text-nowrap">{{ comment.post_id.title|slice(0,20) }} {% if comment.post_id.title|length > 20 %}...{% endif %}</td>
+                        <td class="align-middle">{{ comment.createdAt|date('d/m/Y') }}</td>
+                        <td class="align-middle">{{ comment.isChecked }}</td>
                         <td class="text-end text-nowrap align-middle">
-                            <a href="index.php?action=editPost&id={{ post.id_post }}" class="btn btn-sm btn-primary updateBtn"><i class="fas fa-pen-square" style="margin-right: 5px;"></i> Modifier</a>
-                            <button type="button" data-toggle="modal" data-target="#deleteModal{{ post.id_post }}" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
+                            {% if comment.isChecked == 'Non' %}
+                                <a href="index.php?action=comments&validate&id={{ comment.id }}" class="btn btn-sm btn-success updateBtn"><i class="fas fa-check-circle" style="margin-right: 5px"></i> Valider</a>
+                            {% else %}
+                                <a href="index.php?action=comments&unvalidate&id={{ comment.id }}" class="btn btn-sm btn-secondary updateBtn"><i class="far fa-times-circle" style="margin-right: 5px"></i> Invalider</a>
+                            {% endif %}
+                            <button type="button" data-toggle="modal" data-target="#deleteModal{{ comment.id|raw }}" class="btn btn-sm btn-danger updateBtn"><i class="fas fa-trash"></i></button>
                         </td>
                     </tr>
 
-                    <div class="modal fade" id="deleteModal{{ post.id_post }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal fade" id="deleteModal{{ comment.id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                         <div class="modal-dialog" role="document">
                             <div class="modal-content">
                                 <div class="modal-header">
                                     <h5 class="modal-title text-black" id="exampleModalLabel" style="font-size: 18px;"><i class="fas fa-exclamation-circle" style="margin-right: 5px;"></i> Confirmation</h5>
                                 </div>
                                 <div class="modal-body" style="font-size: 16px;">
-                                    <p class="text-black">Confirmez le suppression du post :</p>
-                                    <p class="text-blue p-2" style="font-weight: bold;">{{ post.title }}</p>
+                                    <p class="text-black">Confirmez le suppression du commentaire de :</p>
+                                    <p class="text-blue p-2" style="font-weight: bold;">{{ comment.user.firstname }} {{ comment.user.lastname }}</p>
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Annuler</button>
-                                    <a href="index.php?action=postsAdmin&delete&id={{ post.id_post }}" class="btn btn-sm btn-danger">Supprimer</a>
+                                    <a href="index.php?action=comments&delete&id={{ comment.id }}" class="btn btn-sm btn-danger">Supprimer</a>
                                 </div>
                             </div>
                         </div>
                     </div>
-
                 {% endfor %}
                 </tbody>
             </table>
@@ -63,7 +63,7 @@
             {% if pagesTotales > 0 and pagesTotales != 1 %}
                 {% for i in 1.. pagesTotales %}
                     {% if i == 1 and pageCourante >= 4 %}
-                        <a href='index.php?action=postsAdmin&page={{ i }}' style='margin:5px;text-decoration:none;'>{{ i }}</a>
+                        <a href='index.php?action=comments&page={{ i }}' style='margin:5px;text-decoration:none;'>{{ i }}</a>
                     {% endif %}
                     {% if i == 1 and pageCourante >= 5 %}
                         <span style='margin: 5px;font-size:17px;'>-</span>
@@ -72,14 +72,14 @@
                         {% if i == pageCourante %}
                             <span class="text-blue" style='margin:5px;'>{{ i }}</span>
                         {% else %}
-                            <a href='index.php?action=postsAdmin&page={{ i }}' style='margin:5px;text-decoration:none;'>{{ i }}</a>
+                            <a href='index.php?action=comments&page={{ i }}' style='margin:5px;text-decoration:none;'>{{ i }}</a>
                         {% endif %}
                     {% endif %}
                     {% if i == pagesTotales and pageCourante < (pagesTotales - 3) %}
                         <span style='margin:5px;'>-</span>
                     {% endif %}
                     {% if i == pagesTotales and pageCourante <= (pagesTotales - 3) %}
-                        <a href='index.php?action=postsAdmin&page={{ i }}' style='margin:5px;text-decoration:none;'>{{ i }}</a>
+                        <a href='index.php?action=comments&page={{ i }}' style='margin:5px;text-decoration:none;'>{{ i }}</a>
                     {% endif %}
                 {% endfor %}
             {% endif %}
@@ -87,4 +87,3 @@
     </section>
 
 {% endblock %}
-

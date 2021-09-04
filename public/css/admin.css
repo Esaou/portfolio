@@ -1,3 +1,7 @@
+.danger {
+    color: red;
+}
+
 @keyframes swing {
     0% {
         transform: rotate(0deg);
@@ -534,9 +538,49 @@ body {
 }
 
 table thead th{
-    color: rgb(100,100,100)!important;
+    color: rgb(120,120,120)!important;
+    font-family: sans-serif;
+    font-weight: normal;
+
+}
+
+.table>:not(:last-child)>:last-child>* {
+    border-bottom-color: rgb(200,200,200)!important;
+}
+
+table td{
+    padding: 10px!important;
 }
 
 .paginator a{
     color: rgb(100,100,100);
+}
+
+/* FORM ACCOUNT */
+
+.formAccount,.formEditPost,.formAddPost{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.formEditUser{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+.formAccount label,.formEditPost label,.formAddPost label,.formEditUser label{
+    margin-bottom: 10px;
+}
+
+.formAccount > div,.formEditPost > div,.formAddPost > div,.formEditUser > div{
+    padding: 10px;
+}
+
+#error{
+    text-align: justify;
 }

@@ -8,7 +8,7 @@ use DateTime;
 
 final class Post
 {
-    public int $id;
+    public int $id_post;
     public string $title;
     public string $content;
     public string $chapo;
@@ -16,9 +16,9 @@ final class Post
     public \DateTime|null $updatedAt;
     public User|null $user;
 
-    public function __construct(int $id,string $chapo,string $title, string $content,Datetime $createdAt,Datetime|null $updatedAt,User|null $user)
+    public function __construct(int $id_post,string $chapo,string $title, string $content,Datetime $createdAt,Datetime|null $updatedAt,User|null $user)
     {
-        $this->id = $id;
+        $this->id_post = $id_post;
         $this->title = $title;
         $this->content = $content;
         $this->chapo = $chapo;
@@ -27,9 +27,9 @@ final class Post
         $this->user = $user;
     }
 
-    public function getId(): int
+    public function getIdPost(): int
     {
-        return $this->id;
+        return $this->id_post;
     }
 
     public function getTitle(): string

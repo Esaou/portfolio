@@ -1,0 +1,48 @@
+{% extends "/backoffice/base.html.twig" %}
+
+{% block content %}
+
+    <section class="container-fluid">
+
+        <div class="w-100 blocBtnAdmin">
+            <h5 class="text-black">Mon compte utilisateur</h5>
+        </div>
+
+        <hr>
+
+        {% if session.user %}
+            <form action="index.php?action=userAccount&id={{ session.user.id_utilisateur }}" class="formAccount" method="POST">
+                <input type="hidden" name="token" id="token" value="{{ token }}"/>
+                <div class="form-group col-6">
+                    <label for="firstname">Prénom</label>
+                    <input type="text" required class="form-control" value="{{ session.user.firstname }}" name="firstname" id="firstname">
+                </div>
+                <div class="form-group col-6">
+                    <label for="lastname">Nom</label>
+                    <input type="text" required class="form-control" value="{{ session.user.lastname }}" name="lastname" id="lastname">
+                </div>
+                <div class="form-group col-12">
+                    <label for="email">Email</label>
+                    <input type="email" required class="form-control" value="{{ session.user.email }}" name="email" id="email">
+                </div>
+                <div class="form-group col-12">
+                    <label for="password">Mot de passe
+                    </label>
+                    <input type="password" required class="form-control mb-2" name="password" id="password">
+                    <small>Votre mot de passe doit contenir au moins 1 chiffre, une lettre minuscule, majuscule, un caractère spécial et 8 caractères minimum !</small>
+                </div>
+                <div class="form-group col-12">
+                    <label for="passwordConfirm">Confirmez votre mot de passe</label>
+                    <input type="password" required class="form-control" name="passwordConfirm" id="passwordConfirm">
+                </div>
+                <div class="w-100 text-left pt-4 pb-4">
+                    <button type="submit" id="submitAccount" class="btan btn-sm btn-success"><i class="far fa-save" style="margin-right: 5px"></i> Sauvegarder mes changements</button>
+                </div>
+                <div class="pt-0 pb-4 mb-3 danger" id="error">
+                </div>
+            </form>
+        {% endif %}
+
+    </section>
+
+{% endblock %}

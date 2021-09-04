@@ -1,23 +1,26 @@
 <?php
 
+declare(strict_types=1);
 
 namespace App\Service;
 
 class Paginator
 {
-    private $page;
-    private $tableRows;
+    private int|null $page;
+    private int $tableRows;
+    private int $parPage;
 
-    public function __construct($page,$tableRows)
+    public function __construct(int|null $page,int $tableRows,int $parPage)
     {
         $this->page = $page;
         $this->tableRows = $tableRows;
+        $this->parPage = $parPage;
     }
 
-    public function paginate()
+    public function paginate(): array
     {
-        $parPage = 4;
-        $pagesTotales = ceil($this->tableRows/$parPage);
+
+        $pagesTotales = ceil($this->tableRows/$this->parPage);
 
         if(isset($this->page) AND !empty($this->page) AND $this->page > 0 AND $this->page <= $pagesTotales){
             $this->page = intval($this->page);
@@ -26,10 +29,10 @@ class Paginator
             $pageCourante = 1;
         }
 
-        $depart = ($pageCourante - 1)*$parPage;
+        $depart = ($pageCourante - 1)*$this->parPage;
 
         return [
-            "parPage" => $parPage,
+            "parPage" => $this->parPage,
             "depart" => $depart,
             "pagesTotales" => $pagesTotales,
             "pageCourante" => $pageCourante

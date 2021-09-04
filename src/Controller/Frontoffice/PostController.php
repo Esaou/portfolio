@@ -6,7 +6,6 @@ namespace  App\Controller\Frontoffice;
 
 use App\Model\Entity\Comment;
 use App\Model\Repository\UserRepository;
-use App\Service\Database;
 use App\Service\Http\Request;
 use App\Service\Http\Session\Session;
 use App\Service\Paginator;

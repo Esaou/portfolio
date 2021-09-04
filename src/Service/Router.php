@@ -21,8 +21,6 @@ use App\Service\Http\Response;
 use App\Service\Http\Session\Session;
 use App\View\View;
 
-// TODO cette classe router est un exemple très basic. Cette façon de faire n'est pas optimale
-// TODO Le router ne devrait pas avoir la responsabilité de l'injection des dépendances
 final class Router
 {
     private Database $database;

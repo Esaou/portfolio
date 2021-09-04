@@ -15,20 +15,18 @@ final class Session
         $this->sessionParamBag = new SessionParametersBag($_SESSION);
     }
 
-    // PHP 8 version -> public function set(string $name, mixed $value): void
     /**
      * @param mixed $value
      */
-    public function set(string $name, $value): void
+    public function set(string $name,mixed $value): void
     {
         $this->sessionParamBag->set($name, $value);
     }
 
-    // PHP 8 version -> public function get(string $name): ?mixed
     /**
     * @return mixed
     */
-    public function get(string $name)
+    public function get(string $name): mixed
     {
         return $this->sessionParamBag->get($name);
     }
@@ -43,7 +41,6 @@ final class Session
         $this->sessionParamBag->unset($name);
     }
 
-    // TODO Gestion de plusieurs message flash
     public function addFlashes(string $type, string $message): void
     {
         $this->set('flashes', [$type => $message]);

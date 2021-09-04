@@ -6,7 +6,6 @@ namespace  App\Controller\Backoffice;
 
 use App\Controller\Frontoffice\UserController;
 use App\Model\Repository\UserRepository;
-
 use App\Service\Http\Request;
 use App\Service\Http\Response;
 use App\Service\Http\Session\Session;

@@ -15,7 +15,7 @@
                         <li class="centrageMenu"><a href="index.php?action=posts" class="subtitle"><i class="far fa-clone" style="margin-right: 7px"></i> Tous les posts</a></li>
                         {% if session.user %}
                             {% if session.user.role == 'User' %}
-                                <li class="centrageMenu"><a href="index.php?action=userAccount" class="subtitle"><i class="fas fa-user-cog" style="margin-right: 7px"></i></i> Espace administrateur</a></li>
+                                <li class="centrageMenu"><a href="index.php?action=userAccountFrontOffice" class="subtitle"><i class="fas fa-user-cog" style="margin-right: 7px"></i></i> Mon profil</a></li>
                             {% else %}
                                 <li class="centrageMenu"><a href="index.php?action=postsAdmin" class="subtitle"><i class="fas fa-user-cog" style="margin-right: 7px"></i></i> Espace administrateur</a></li>
                             {% endif %}
@@ -50,7 +50,7 @@
                     <li class="nav-item"><a href="index.php?action=posts" class="nav-link">Tous les posts</a></li>
                     {% if session.user %}
                         {% if session.user.role == 'User' %}
-                            <li class="nav-item"><a href="index.php?action=userAccount" class="nav-link">Espace administrateur</a></li>
+                            <li class="nav-item"><a href="index.php?action=userAccountFrontOffice" class="nav-link">Mon profil</a></li>
                         {% else %}
                             <li class="nav-item"><a href="index.php?action=postsAdmin" class="nav-link">Espace administrateur</a></li>
                         {% endif %}

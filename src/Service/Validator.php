@@ -91,4 +91,36 @@ class Validator
 
     }
 
+    public function isValidLoginForm(?array $infoUser): bool
+    {
+        if ($infoUser['tokenPost'] != $infoUser['tokenSession']){
+            $this->session->addFlashes('danger','Token de session expiré !');
+            return false;
+        }
+
+        if ($infoUser === null) {
+            $this->session->addFlashes('danger', 'Aucun identifiant renseigné !');
+            return false;
+        }
+
+        if ($infoUser['user'] === null) {
+            $this->session->addFlashes('danger', 'Mauvais identifiants');
+            return false;
+        }
+
+        if($infoUser['user']->getIsValid() === 'Non'){
+            $this->session->addFlashes('danger', 'Compte non valide !');
+            return false;
+        }
+
+        if(password_verify($infoUser['password'], $infoUser['user']->getPassword())) {
+            $this->session->set('user', $infoUser['user']);
+            return true;
+        }
+
+        $this->session->addFlashes('danger', 'Mauvais identifiants');
+        return false;
+
+    }
+
 }

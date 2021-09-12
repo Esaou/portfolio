@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace  App\Controller\Backoffice;
 
+use App\Controller\Frontoffice\SecurityController;
 use App\Controller\Frontoffice\UserController;
 use App\Model\Repository\UserRepository;
 use App\Service\Http\Request;
@@ -33,13 +34,11 @@ final class CommentController
         $this->request = $request;
         $this->session = $session;
 
-        $user = new UserController($userRepository,$this->view,$this->session,$this->request);
+        $security = new SecurityController($userRepository,$this->view,$this->session,$this->request);
 
-        if($user->notLogged() === true){
+        if($security->notLogged() === true){
             header('Location: index.php?action=forbidden');
-        }
-
-        if($user->loggedAs('User') === true){
+        }elseif($security->loggedAs('User') === true){
             header('Location: index.php?action=forbidden');
         }
 

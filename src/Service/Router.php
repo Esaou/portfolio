@@ -132,6 +132,10 @@ final class Router
             $commentRepo = new CommentRepository($this->database);
             $controller = new UserAdminController($this->view,$this->request,$this->session,$commentRepo,$userRepo,$postRepo);
             return $controller->editUser((int) $this->request->query()->get('id'));
+        }elseif ($action === 'userAccountFrontOffice') {
+            $userRepo = new UserRepository($this->database);
+            $controller = new UserController($userRepo, $this->view, $this->session,$this->request);
+            return $controller->userAccount();
         }
 
         return new Response($this->view->render(

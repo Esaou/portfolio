@@ -123,4 +123,34 @@ class Validator
 
     }
 
+    public function accountValidator(array $data):bool{
+
+        if ($data['tokenPost'] != $data['tokenSession']){
+            $this->session->addFlashes('danger','Token de session expiré !');
+            return false;
+        }elseif ($data['lastname'] == '' or $data['firstname'] == '' or $data['email'] == '' or $data['password'] == '') {
+
+            $this->session->addFlashes('danger', 'Tous les champs doivent être remplis !');
+            return false;
+
+        } elseif ($data['passwordConfirm'] !== $data['password']){
+
+            $this->session->addFlashes('danger', 'Mots de passe non identiques !');
+            return false;
+
+        } elseif (strlen($data['firstname']) < 2 or strlen($data['firstname']) > 30 or strlen($data['lastname']) < 2 or strlen($data['lastname']) > 30) {
+
+            $this->session->addFlashes('danger', 'Le prénom et le nom doivent contenir de 2 à 30 caractères !');
+            return false;
+
+        } elseif (!filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
+
+            $this->session->addFlashes('danger', 'L\'email renseigné n\'est pas valide !');
+            return false;
+
+        }
+
+        return true;
+    }
+
 }

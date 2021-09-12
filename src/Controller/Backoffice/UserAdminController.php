@@ -8,6 +8,7 @@ use App\Controller\Frontoffice\SecurityController;
 use App\Controller\Frontoffice\UserController;
 use App\Model\Entity\User;
 use App\Model\Repository\UserRepository;
+use App\Service\Authorization;
 use App\Service\Http\Request;
 use App\Service\Http\Response;
 use App\Service\Http\Session\Session;
@@ -24,7 +25,7 @@ final class UserAdminController
     private View $view;
     private Request $request;
     private Session $session;
-    private SecurityController $security;
+    private Authorization $security;
 
     public function __construct(View $view,Request $request,Session $session,CommentRepository $commentRepository,UserRepository $userRepository,PostRepository $postRepository)
     {
@@ -35,7 +36,7 @@ final class UserAdminController
         $this->view = $view;
         $this->request = $request;
         $this->session = $session;
-        $this->security = new SecurityController($userRepository,$this->view,$this->session,$this->request);
+        $this->security = new Authorization($this->session,$this->request);
 
         if($this->security->notLogged() === true){
             header('Location: index.php?action=forbidden');
@@ -46,8 +47,6 @@ final class UserAdminController
     }
 
     public function usersList():Response{
-
-        $userController = new UserController($this->userRepository,$this->view,$this->session,$this->request);
 
         if($this->security->loggedAs('Dev') === false){
             header('Location: index.php?action=forbidden');

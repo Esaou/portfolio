@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace  App\Controller\Frontoffice;
 
 use App\Model\Entity\User;
+use App\Service\Validator;
 use App\View\View;
 use App\Service\Http\Request;
 use App\Service\Http\Response;
@@ -129,33 +130,13 @@ final class UserController
 
             $validEmail = $this->userRepository->findOneBy(['email'=>$email]);
 
-            if (empty($nom) or empty($prenom) or empty($email) or empty($password)) {
+            $validator = new Validator($this->session);
 
-                $this->session->addFlashes('danger', 'Tous les champs doivent être remplis !');
+            if ($validator->registerValidator($nom,$prenom,$email,$validEmail,$password,$confirmPassword,$tokenPost,$tokenSession)){
 
-            } elseif ($tokenPost != $tokenSession){
-                $this->session->addFlashes('danger','Token de session expiré !');
-            }elseif ($confirmPassword !== $password){
-
-                $this->session->addFlashes('danger', 'Mots de passe non identiques !');
-
-            } elseif (strlen($prenom) < 2 or strlen($prenom) > 30 or strlen($nom) < 2 or strlen($nom) > 30) {
-
-                $this->session->addFlashes('danger', 'Le prénom et le nom doivent contenir de 2 à 30 caractères !');
-
-            } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-
-                $this->session->addFlashes('danger', 'L\'email renseigné n\'est pas valide !');
-
-            } elseif ($validEmail !== null) {
-
-                $this->session->addFlashes('danger', 'L\'email renseigné est déjà utilisé !');
-
-            }else {
-
-                $token = uniqid();
+                $tokenUser = uniqid();
                 $password = password_hash($password, PASSWORD_BCRYPT);
-                $user = new User(0,$prenom,$nom,$email,$password,'Non','User',$token);
+                $user = new User(0,$prenom,$nom,$email,$password,'Non','User',$tokenUser);
                 $this->userRepository->create($user);
 
                 try{

@@ -13,6 +13,7 @@ use App\Service\Http\Request;
 use App\Service\Http\Response;
 use App\Service\Http\Session\Session;
 use App\Service\Paginator;
+use App\Service\Validator;
 use App\View\View;
 use App\Model\Repository\PostRepository;
 use App\Model\Repository\CommentRepository;
@@ -26,6 +27,7 @@ final class UserAdminController
     private Request $request;
     private Session $session;
     private Authorization $security;
+    private Validator $validator;
 
     public function __construct(View $view,Request $request,Session $session,CommentRepository $commentRepository,UserRepository $userRepository,PostRepository $postRepository)
     {
@@ -37,6 +39,7 @@ final class UserAdminController
         $this->request = $request;
         $this->session = $session;
         $this->security = new Authorization($this->session,$this->request);
+        $this->validator = new Validator($this->session);
 
         if($this->security->notLogged() === true){
             header('Location: index.php?action=forbidden');
@@ -87,42 +90,20 @@ final class UserAdminController
     {
 
         $token = base_convert(hash('sha256', time() . mt_rand()), 16, 36);
-        $tokenSession = $this->session->get('token');
-        $tokenPost = $this->request->request()->get('token');
 
         $id = $this->request->query()->get('id');
         $user = $this->userRepository->findOneBy(['id_utilisateur' => $id]);
 
         if ($this->request->getMethod() === 'POST'){
 
-            $prenom = $this->request->request()->get('firstname');
-            $nom = $this->request->request()->get('lastname');
-            $email = $this->request->request()->get('email');
-            $password = $this->request->request()->get('password');
-            $confirmPassword = $this->request->request()->get('passwordConfirm');
+            $data = $this->request->request()->all();
+            $data['tokenPost'] = $this->request->request()->get('token');
+            $data['tokenSession'] = $this->session->get('token');
 
+            if ($this->validator->accountValidator($data)){
 
-            if (empty($nom) or empty($prenom) or empty($email) or empty($password)) {
-
-                $this->session->addFlashes('danger', 'Tous les champs doivent être remplis !');
-
-            } elseif ($confirmPassword !== $password){
-
-                $this->session->addFlashes('danger', 'Mots de passe non identiques !');
-
-            } elseif (strlen($prenom) < 2 or strlen($prenom) > 30 or strlen($nom) < 2 or strlen($nom) > 30) {
-
-                $this->session->addFlashes('danger', 'Le prénom et le nom doivent contenir de 2 à 30 caractères !');
-
-            } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-
-                $this->session->addFlashes('danger', 'L\'email renseigné n\'est pas valide !');
-
-            } elseif ($tokenPost != $tokenSession){
-                $this->session->addFlashes('danger','Token de session expiré !');
-            } else {
-
-                $user = new User($user->getIdUtilisateur(), $prenom, $nom, $email, $password, $user->getIsValid(), $user->getRole(), $user->getToken());
+                $password = password_hash($data['password'], PASSWORD_BCRYPT);
+                $user = new User($user->getIdUtilisateur(), $data['firstname'], $data['lastname'], $data['email'], $password, $user->getIsValid(), $user->getRole(), $user->getToken());
                 $this->userRepository->update($user);
                 $this->session->set('user', $user);
                 $this->session->addFlashes('update','Vos informations sont modifiées avec succès !');
@@ -146,8 +127,6 @@ final class UserAdminController
         $token = base_convert(hash('sha256', time() . mt_rand()), 16, 36);
         $tokenSession = $this->session->get('token');
         $tokenPost = $this->request->request()->get('token');
-
-        $userController = new UserController($this->userRepository,$this->view,$this->session,$this->request);
 
         if($this->security->loggedAs('Dev') === false){
             header('Location: index.php?action=forbidden');

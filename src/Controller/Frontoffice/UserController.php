@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace  App\Controller\Frontoffice;
 
 use App\Model\Entity\User;
+use App\Service\Mailer;
 use App\Service\Validator;
 use App\View\View;
 use App\Service\Http\Request;
@@ -18,6 +19,18 @@ final class UserController
     private View $view;
     private Session $session;
     private Request $request;
+    private Validator $validator;
+    private Mailer $mailer;
+
+    public function __construct(UserRepository $userRepository, View $view, Session $session,Request $request)
+    {
+        $this->userRepository = $userRepository;
+        $this->view = $view;
+        $this->session = $session;
+        $this->request = $request;
+        $this->validator = new Validator($this->session);
+        $this->mailer = new Mailer();
+    }
 
     private function isValidLoginForm(?array $infoUser): bool
     {
@@ -28,7 +41,7 @@ final class UserController
         $user = $this->userRepository->findOneBy(['email' => $infoUser['email']]);
 
         if ($user === null or $user->getIsValid() === 'Non') {
-             return false;
+            return false;
         }
 
         if(password_verify($infoUser['password'], $user->getPassword())) {
@@ -38,14 +51,6 @@ final class UserController
 
         return false;
 
-    }
-
-    public function __construct(UserRepository $userRepository, View $view, Session $session,Request $request)
-    {
-        $this->userRepository = $userRepository;
-        $this->view = $view;
-        $this->session = $session;
-        $this->request = $request;
     }
 
     public function loginAction(Request $request): Response
@@ -117,55 +122,43 @@ final class UserController
     {
 
         $token = base_convert(hash('sha256', time() . mt_rand()), 16, 36);
-        $tokenSession = $this->session->get('token');
-        $tokenPost = $this->request->request()->get('token');
 
         if ($this->request->getMethod() === 'POST') {
 
-            $prenom = $this->request->request()->get('firstname');
-            $nom = $this->request->request()->get('lastname');
-            $email = $this->request->request()->get('email');
-            $password = $this->request->request()->get('password');
-            $confirmPassword = $this->request->request()->get('passwordConfirm');
+            $datas = $this->request->request()->all();
 
-            $validEmail = $this->userRepository->findOneBy(['email'=>$email]);
+            $validEmail = $this->userRepository->findOneBy(['email'=>$datas['email']]);
 
-            $validator = new Validator($this->session);
+            $datas['validEmail'] = $validEmail;
+            $datas['tokenPost'] = $this->request->request()->get('token');
+            $datas['tokenSession'] = $this->session->get('token');
 
-            if ($validator->registerValidator($nom,$prenom,$email,$validEmail,$password,$confirmPassword,$tokenPost,$tokenSession)){
+            if ($this->validator->registerValidator($datas)){
 
                 $tokenUser = uniqid();
-                $password = password_hash($password, PASSWORD_BCRYPT);
-                $user = new User(0,$prenom,$nom,$email,$password,'Non','User',$tokenUser);
-                $this->userRepository->create($user);
+                $password = password_hash($datas['password'], PASSWORD_BCRYPT);
+                $user = new User(0,$datas['firstname'],$datas['lastname'],$datas['email'],$password,'Non','User',$tokenUser);
+                $result = $this->userRepository->create($user);
 
-                try{
-                    $subject = "Validation de compte - Blog";
-                    $to = $email;
-
-                    $headers = 'MIME-Version: 1.0' . "\r\n";
-                    $headers .= 'Content-type: text/html; charset=UTF-8' . "\r\n";
-
-                    $headers .= 'From: ' . 'eric.saou3@gmail.com' . "\r\n" .
-                        'Reply-To: ' . 'eric.saou3@gmail.com' . "\r\n" .
-                        'X-Mailer: PHP/' . phpversion();
+                if ($result){
 
                     $content = "<p style='font-weight: bold'>Bonjour,</p>
-                <p>Merci d'avoir rejoint ma communauté, pour valider votre compte cliquez sur le <span style='color: blue;font-weight: bold;'>lien</span> ci-dessous :</p>
-                <a style='font-weight: bold' href='http://projet5/index.php?action=confirmUser&token=$token'>Cliquez ici</a>";
+                    <p>Merci d'avoir rejoint ma communauté, pour valider votre compte cliquez sur le <span style='color: blue;font-weight: bold;'>lien</span> ci-dessous :</p>
+                    <a style='font-weight: bold' href='http://projet5/index.php?action=confirmUser&token=$tokenUser'>Cliquez ici</a>";
 
-                    ini_set("SMTP", "smtp.bbox.fr");
-                    ini_set("smtp_port", "25");
-                    ini_set("sendmail_from", 'eric.saou3@gmail.com');
+                    $result = $this->mailer->mail('Confirmation de compte','eric.saou3@gmail.com',$datas['email'],$content);
 
+                    if ($result) {
+                        $this->session->addFlashes('success', 'Inscription réalisée, consultez vos mails pour valider votre compte !');
+                    } else {
+                        $this->session->addFlashes('danger', 'Erreur lors de l\'envoi du mail !');
+                    }
+                }else{
 
-                    mail($to, $subject, $content, $headers);
+                    $this->session->addFlashes('danger', 'Erreur lors de la création de l\'utilisateur !');
 
-                    $this->session->addFlashes('success', 'Inscription réalisée, consultez vos mails pour valider votre compte !');
-
-                }catch (\Exception $exception){
-                    $this->session->addFlashes('danger', 'Erreur lors de l\'envoi du mail !');
                 }
+
             }
         }
 
@@ -191,4 +184,5 @@ final class UserController
             'template' => 'login',
         ]),200);
     }
+
 }

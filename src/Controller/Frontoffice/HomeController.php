@@ -56,7 +56,7 @@ final class HomeController
                             <li>Contenu : ' . $data['content'] . '</li>
                         </ul>';
 
-                $result = $this->mailer->mail($data['email'],$content);
+                $result = $this->mailer->mail('Message de '.$data['firstname'].' '.$data['lastname'],$data['email'],'eric.saou3@gmail.com',$content);
 
                 if ($result) {
                     $this->session->addFlashes('success', 'Message posté avec succès !');

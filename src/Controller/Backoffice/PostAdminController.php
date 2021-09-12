@@ -13,6 +13,7 @@ use App\Service\Http\Request;
 use App\Service\Http\Response;
 use App\Service\Http\Session\Session;
 use App\Service\Paginator;
+use App\Service\Validator;
 use App\View\View;
 use App\Model\Repository\PostRepository;
 use App\Model\Repository\CommentRepository;
@@ -25,6 +26,7 @@ final class PostAdminController
     private View $view;
     private Request $request;
     private Session $session;
+    private Validator $validator;
 
     public function __construct(View $view,Request $request,Session $session,CommentRepository $commentRepository,UserRepository $userRepository,PostRepository $postRepository)
     {
@@ -35,6 +37,7 @@ final class PostAdminController
         $this->view = $view;
         $this->request = $request;
         $this->session = $session;
+        $this->validator = new Validator($this->session);
 
         $security = new Authorization($this->session,$this->request);
 
@@ -83,25 +86,21 @@ final class PostAdminController
     public function editPost(int $id):Response{
 
         $token = base_convert(hash('sha256', time() . mt_rand()), 16, 36);
-        $tokenSession = $this->session->get('token');
-        $tokenPost = $this->request->request()->get('token');
 
         $post = $this->postRepository->findOneBy(['id_post' => $id]);
         $users = $this->userRepository->findAll();
 
         if ($this->request->getMethod() === 'POST'){
 
-            if ($tokenPost != $tokenSession){
-                $this->session->addFlashes('danger','Token de session expiré !');
-            }else{
-                $title = $this->request->request()->get('title');
-                $chapo = $this->request->request()->get('chapo');
-                $content = $this->request->request()->get('content');
-                $author = $this->request->request()->get('author');
+            $data = $this->request->request()->all();
+            $data['tokenSession']= $this->session->get('token');
+            $data['tokenPost'] = $this->request->request()->get('token');
 
-                $user = $this->userRepository->findOneBy(['id_utilisateur'=>(int)$author]);
+            if ($this->validator->editPostValidator($data)){
 
-                $post = new Post($post->getIdPost(),$chapo,$title,$content,$post->getCreatedAt(),new \DateTime(),$user);
+                $user = $this->userRepository->findOneBy(['id_utilisateur'=>(int)$data['author']]);
+
+                $post = new Post($post->getIdPost(),$data['chapo'],$data['title'],$data['content'],$post->getCreatedAt(),new \DateTime(),$user);
 
                 $this->postRepository->update($post);
 
@@ -126,21 +125,18 @@ final class PostAdminController
     public function addPost():Response{
 
         $token = base_convert(hash('sha256', time() . mt_rand()), 16, 36);
-        $tokenSession = $this->session->get('token');
-        $tokenPost = $this->request->request()->get('token');
-
 
         if ($this->request->getMethod() === 'POST'){
 
-            if ($tokenPost != $tokenSession){
-                $this->session->addFlashes('danger','Token de session expiré !');
-            }else{
-                $title = $this->request->request()->get('title');
-                $chapo = $this->request->request()->get('chapo');
-                $content = $this->request->request()->get('content');
+            $data = $this->request->request()->all();
+            $data['tokenSession'] = $this->session->get('token');
+            $data['tokenPost'] = $this->request->request()->get('token');
+
+            if ($this->validator->editPostValidator($data)){
+
                 $user = $this->session->get('user');
 
-                $post = new Post(0,$chapo,$title,$content,new \DateTime('now'),null,$user);
+                $post = new Post(0,$data['chapo'],$data['title'],$data['content'],new \DateTime('now'),null,$user);
 
                 $this->postRepository->create($post);
 

@@ -26,8 +26,8 @@
                 {% for post in posts %}
                     <tr>
                         <td class="align-middle text-nowrap">{{ post.title|slice(0,20) }} {% if post.title|length > 20 %}...{% endif %}</td>
-                        <td class="align-middle text-nowrap">{{ post.chapo|slice(0,20) }} {% if post.chapo|length > 20 %}...{% endif %}</td>
-                        <td class="align-middle text-nowrap">{{ post.content|slice(0,20) }} {% if post.content|length > 20 %}...{% endif %}</td>
+                        <td class="align-middle text-nowrap">{{ post.chapo|slice(0,20)|raw }} {% if post.chapo|length > 20 %}...{% endif %}</td>
+                        <td class="align-middle text-nowrap">{{ post.content|slice(0,20)|raw }} {% if post.content|length > 20 %}...{% endif %}</td>
                         <td class="align-middle">{{ post.createdAt|date('d/m/Y') }}</td>
                         <td class="align-middle">{{ post.updatedAt|date('d/m/Y') }}</td>
                         <td class="align-middle">{{ post.user.firstname }} {{ post.user.lastname }}</td>
@@ -45,7 +45,8 @@
                                 </div>
                                 <div class="modal-body" style="font-size: 16px;">
                                     <p class="text-black">Confirmez le suppression du post :</p>
-                                    <p class="text-blue p-2" style="font-weight: bold;">{{ post.title }}</p>
+                                    <p class="text-blue p-2 pb-0" style="font-weight: bold;">{{ post.title|slice(0,50) }}</p>
+                                    <p class="text-black p-2 pt-0">{{ post.content|slice(0,50)|raw }} ...</p>
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Annuler</button>

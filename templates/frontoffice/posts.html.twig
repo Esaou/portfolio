@@ -13,7 +13,7 @@
                 <div class="card bg-light mb-3">
                     <div class="card-header titleCard text-blue">{{ post.title }}</div>
                     <div class="card-body">
-                        <p class="card-text">{{ post.chapo }}</p>
+                        <p class="card-text">{{ post.chapo|raw }}</p>
                         <div class="blocBtnUpdate">
                             <div>
                                 <a class="subtitle" style="margin: 0px;" href="index.php?action=post&id={{ post.id_post}}">Lire le post</a>

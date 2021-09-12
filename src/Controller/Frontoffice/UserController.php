@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace  App\Controller\Frontoffice;
 
 use App\Model\Entity\User;
+use App\Service\Authorization;
 use App\Service\Mailer;
 use App\Service\Validator;
 use App\View\View;
@@ -21,7 +22,7 @@ final class UserController
     private Request $request;
     private Validator $validator;
     private Mailer $mailer;
-    private SecurityController $security;
+    private Authorization $security;
 
     public function __construct(UserRepository $userRepository, View $view, Session $session,Request $request)
     {
@@ -31,7 +32,7 @@ final class UserController
         $this->request = $request;
         $this->validator = new Validator($this->session);
         $this->mailer = new Mailer();
-        $this->security = new SecurityController($userRepository,$this->view,$this->session,$this->request);
+        $this->security = new Authorization($this->session,$this->request);
     }
 
     public function loginAction(Request $request): Response
@@ -170,6 +171,20 @@ final class UserController
                 'token' => $token
             ]
         ]));
+    }
+
+    public function confirmUser():Response{
+
+        $token = $this->request->query()->get('token');
+        $user = $this->userRepository->findOneBy(['token'=>$token]);
+        $user->setIsValid('Oui');
+        $this->userRepository->update($user);
+
+        $this->session->addFlashes('success','Votre compte est validé succès !');
+
+        return new Response($this->view->render([
+            'template' => 'login',
+        ]),200);
     }
 
 }

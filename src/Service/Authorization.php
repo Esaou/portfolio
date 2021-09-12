@@ -23,7 +23,6 @@ class Authorization
     public function notLogged():bool
     {
         return is_null($this->session->get('user'));
-
     }
 
     public function loggedAs(string $role):bool

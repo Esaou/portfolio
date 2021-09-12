@@ -153,4 +153,17 @@ class Validator
         return true;
     }
 
+    public function editPostValidator(array $data):bool{
+
+        if ($data['tokenPost'] != $data['tokenSession']){
+            $this->session->addFlashes('danger','Token de session expiré !');
+            return false;
+        }elseif ($data['title'] == '' or $data['chapo'] == '' or $data['content'] == ''){
+            $this->session->addFlashes('danger','Tous les champs doivent être remplis !');
+            return false;
+        }
+
+        return true;
+    }
+
 }

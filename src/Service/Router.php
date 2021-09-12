@@ -82,12 +82,12 @@ final class Router
 
         }elseif ($action === 'confirmUser') {
             $userRepo = new UserRepository($this->database);
-            $controller = new UserController($userRepo, $this->view, $this->session,$this->request);
+            $controller = new SecurityController($userRepo, $this->view, $this->session,$this->request);
             return $controller->confirmUser();
 
         }elseif ($action === 'forbidden') {
             $userRepo = new UserRepository($this->database);
-            $controller = new UserController($userRepo, $this->view, $this->session,$this->request);
+            $controller = new SecurityController($userRepo, $this->view, $this->session,$this->request);
             return $controller->forbidden();
 
         }elseif ($action === 'postsAdmin') {

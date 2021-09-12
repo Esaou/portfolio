@@ -32,53 +32,34 @@ final class UserController
         $this->mailer = new Mailer();
     }
 
-    private function isValidLoginForm(?array $infoUser): bool
-    {
-        if ($infoUser === null) {
-            return false;
-        }
-
-        $user = $this->userRepository->findOneBy(['email' => $infoUser['email']]);
-
-        if ($user === null or $user->getIsValid() === 'Non') {
-            return false;
-        }
-
-        if(password_verify($infoUser['password'], $user->getPassword())) {
-            $this->session->set('user', $user);
-            return true;
-        }
-
-        return false;
-
-    }
-
     public function loginAction(Request $request): Response
     {
 
         $token = base_convert(hash('sha256', time() . mt_rand()), 16, 36);
-        $tokenSession = $this->session->get('token');
-        $tokenPost = $this->request->request()->get('token');
 
         if ($request->getMethod() === 'POST') {
 
-            if ($tokenPost != $tokenSession){
-                $this->session->addFlashes('danger','Token de session expiré !');
-            } elseif (!$this->isValidLoginForm($request->request()->all())){
-                $this->session->addFlashes('danger','Mauvais identifiants !');
-            } else {
+            $data = $request->request()->all();
+
+            $user = $this->userRepository->findOneBy(['email' => $data['email']]);
+
+            $data['tokenSession'] = $this->session->get('token');
+            $data['tokenPost'] = $this->request->request()->get('token');
+            $data['user'] = $user;
+
+            if ($this->validator->isValidLoginForm($data)){
                 $user = $this->session->get('user');
                 if ($user->getRole() === 'User'){
-                    header('Location: index.php?action=userAccount');
+                    header('Location: index.php?action=home');
                 }else{
                     header('Location: index.php?action=postsAdmin');
                 }
             }
 
-            $this->session->addFlashes('danger', 'Mauvais identifiants');
         }
 
         $this->session->set('token', $token);
+
         return new Response($this->view->render(['template' => 'login', 'data' => [
             'token' => $token
         ]]),403);
@@ -93,29 +74,6 @@ final class UserController
 
             ],
         ]),200);
-    }
-
-    public function notLogged():bool
-    {
-        return is_null($this->session->get('user'));
-
-    }
-
-    public function loggedAs(string $role):bool
-    {
-        $user = $this->session->get('user');
-
-        if ($user->getRole() == $role){
-            return true;
-        }
-        return false;
-
-    }
-
-    public function forbidden() :Response{
-        return new Response($this->view->render([
-            'template' => 'forbidden'
-        ]),403);
     }
 
     public function register() :Response
@@ -170,19 +128,6 @@ final class UserController
                 'token' => $token
             ],
         ]));
-    }
-
-    public function confirmUser():Response{
-        $token = $this->request->query()->get('token');
-        $user = $this->userRepository->findOneBy(['token'=>$token]);
-        $user->setIsValid('Oui');
-        $this->userRepository->update($user);
-
-        $this->session->addFlashes('success','Votre compte est validé succès !');
-
-        return new Response($this->view->render([
-            'template' => 'login',
-        ]),200);
     }
 
 }

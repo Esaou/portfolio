@@ -77,4 +77,18 @@ class Validator
 
     }
 
+    public function commentValidator(array $data):bool{
+
+        if ($data['tokenPost'] != $data['tokenSession']){
+            $this->session->addFlashes('danger','Token de session expiré !');
+            return false;
+        }elseif(strlen($data['comment']) < 1 or strlen($data['comment']) > 5000){
+            $this->session->addFlashes('danger','Votre commentaire ne peut excéder 5000 caractères');
+            return false;
+        }
+
+        return true;
+
+    }
+
 }

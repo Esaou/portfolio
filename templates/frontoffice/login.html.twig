@@ -2,13 +2,22 @@
 
 {% block title %}Login{% endblock %}
 
-{% block content %} 
-    <h2>Formulaire de connexion</h2>
-    <form method="POST">
-        <label for="email">Email:</label>
-        <input type="email" id="email" name="email" >
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" >
-        <input type="submit" value="Submit">        
-    </form>
+{% block content %}
+    <section class="container containerLogin">
+        <form action="index.php?action=login" class="formLogin" method="POST">
+            <input type="hidden" name="token" id="token" value="{{ token }}"/>
+            <h5 class="text-black text-center pb-4">Formulaire de connexion</h5>
+            <div class="form-group mb-3">
+                <label for="email">Email</label>
+                <input type="email" required class="form-control" id="email" name="email" >
+            </div>
+            <div class="form-group">
+                <label for="password">Mot de passe</label>
+                <input type="password" required class="form-control" id="password" name="password" >
+            </div>
+            <div class="w-100 text-center p-4">
+                <button type="submit" class="subtitle text-center m-0">Connexion</button>
+            </div>
+        </form>
+    </section>
 {% endblock %}

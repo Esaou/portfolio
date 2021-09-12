@@ -7,20 +7,20 @@ namespace App\Model\Entity;
 final class Comment
 {
     public int $id;
-    public User $user; // TODO l'entity User serait plus approprié
-    public string $content;
-    public int $post_id;
+    public User|null $id_user;
+    public string $comment;
+    public Post $post_id;
     public string $isChecked;
-    public \DateTime $createdAt;
+    public \DateTime $createdDate;
 
-    public function __construct(int $id, string $content, int $post_id,User $user,string $isChecked,\DateTime $createdAt)
+    public function __construct(int $id, string $comment, Post $post_id,User|null $id_user,string $isChecked,\DateTime $createdDate)
     {
         $this->id = $id;
-        $this->user = $user;
-        $this->content = $content;
+        $this->id_user = $id_user;
+        $this->comment = $comment;
         $this->post_id = $post_id;
         $this->isChecked = $isChecked;
-        $this->createdAt = $createdAt;
+        $this->createdDate = $createdDate;
     }
 
     public function getId(): int
@@ -28,14 +28,14 @@ final class Comment
         return $this->id;
     }
 
-    public function getUser(): User
+    public function getUser(): User|null
     {
-        return $this->user;
+        return $this->id_user;
     }
 
-    public function setUser(User $user): self
+    public function setUser(User $id_user): self
     {
-        $this->user = $user;
+        $this->id_user = $id_user;
         return $this;
     }
 
@@ -52,32 +52,32 @@ final class Comment
 
     public function getCreatedAt(): \DateTime
     {
-        return $this->createdAt;
+        return $this->createdDate;
     }
 
-    public function setCreatedAt(\DateTime $createdAt): self
+    public function setCreatedAt(\DateTime $createdDate): self
     {
-        $this->createdAt = $createdAt;
+        $this->createdDate = $createdDate;
         return $this;
     }
 
-    public function getContent(): string
+    public function getComment(): string
     {
-        return $this->content;
+        return $this->comment;
     }
 
-    public function setContent(string $content): self
+    public function setComment(string $comment): self
     {
-        $this->content = $content;
+        $this->comment = $comment;
         return $this;
     }
 
-    public function getIdPost(): int
+    public function getIdPost(): Post
     {
         return $this->post_id;
     }
 
-    public function setIdPost(int $post_id): self
+    public function setIdPost(Post $post_id): Post
     {
         $this->post_id = $post_id;
         return $this->post_id;
@@ -85,7 +85,7 @@ final class Comment
 
     public function __toString(){
 
-        return $this->content;
+        return $this->comment;
 
     }
 }

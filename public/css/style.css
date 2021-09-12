@@ -15,9 +15,12 @@
     background-color: rgb(245,245,245);
 }
 
-@font-face {
-    font-family: "Scarlet";
-    src: url("/fonts/ScarletJosephine.ttf");
+.flashMessage{
+    width: unset!important;
+    position: fixed!important;
+    top: 85px!important;
+    right: 10px!important;
+    z-index: 100000!important;
 }
 
 /* NAV */
@@ -218,6 +221,9 @@
         width: 100%!important;
     }
 
+    .citation{
+        text-align: center;
+    }
 
     .containerId{
         display: flex;
@@ -307,6 +313,30 @@
     .containerCard{
         width: 100%!important;
     }
+
+    .blocBtnUpdate{
+        margin-top: 15px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+    .blocBtnUpdate div{
+        margin: 10px;
+        text-align: center;
+    }
+
+    .blocBtnUpdate{
+        margin-top: 15px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+    .blocBtnUpdate div a{
+        margin: 10px!important;
+        text-align: center;
+    }
 }
 
 /* SHOWPOST */
@@ -340,4 +370,90 @@
     flex-direction: row;
     align-items: center;
     justify-content: flex-end;
+}
+
+.paginator{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+.paginator a{
+    color: rgb(100,100,100);
+}
+
+.submitComment{
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+@media screen and (max-width: 1150px) {
+
+    .submitComment{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+
+}
+
+/* Login */
+
+.containerLogin{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.formLogin{
+    width: 300px;
+}
+
+.formLogin label{
+    margin-bottom: 10px;
+}
+
+/* Register */
+
+.containerRegister{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.formRegister{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    width: 500px;
+}
+
+.formRegister label{
+    margin-bottom: 10px;
+}
+
+.formRegister > div{
+    padding: 10px;
+}
+
+#error{
+    text-align: justify;
+}
+
+@media screen and (max-width: 1150px) {
+
+    .formRegister{
+        width: 100%;
+    }
+
+    .formLogin{
+        width:100%;
+    }
+
 }

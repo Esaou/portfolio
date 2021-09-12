@@ -21,7 +21,7 @@ class ParametersBag
     /**
     * @return mixed
     */
-    public function get(string $key) //: mixed //uniquement en PHP 8.0
+    public function get(string $key) : mixed
     {
         return $this->has($key) ? $this->parameters[$key] : null;
     }
@@ -31,11 +31,10 @@ class ParametersBag
         return isset($this->parameters[$key]);
     }
 
-    // PHP 8.0 -> public function set(string $key, mixed $value): void
     /**
      * @param mixed $value
      */
-    public function set(string $key, $value): void
+    public function set(string $key,mixed $value): void
     {
         $this->parameters[$key] = $value;
     }

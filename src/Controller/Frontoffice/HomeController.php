@@ -27,14 +27,32 @@ final class HomeController
     public function home(): Response
     {
 
-        if (!empty($this->request->request()->all())){
+        $token = base_convert(hash('sha256', time() . mt_rand()), 16, 36);
+        $tokenSession = $this->session->get('token');
+        $tokenPost = $this->request->request()->get('token');
+
+        if ($this->request->getMethod() === 'POST'){
 
             $prenom = $this->request->request()->get('firstname');
             $nom = $this->request->request()->get('lastname');
             $email = $this->request->request()->get('email');
             $content = $this->request->request()->get('content');
 
-            try {
+            if (empty($nom) or empty($prenom) or empty($email) or empty($content)){
+
+                $this->session->addFlashes('danger','Tous les champs doivent être remplis !');
+
+            }elseif (strlen($prenom) < 2 or strlen($prenom) > 30 or strlen($nom) < 2 or strlen($nom) > 30){
+
+                $this->session->addFlashes('danger','Le prénom et le nom doivent contenir de 2 à 30 caractères !');
+
+            }elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)){
+
+                $this->session->addFlashes('danger','L\'email renseigné n\'est pas valide !');
+
+            }elseif ($tokenPost != $tokenSession){
+                $this->session->addFlashes('danger','Token de session expiré !');
+            } else{
                 $subject = "Message de ".$prenom." ".$nom;
                 $to = 'eric.saou3@gmail.com';
 
@@ -62,16 +80,17 @@ final class HomeController
                 mail($to, $subject, $content, $headers);
 
                 $this->session->addFlashes('success','Message posté avec succès !');
-
-            }catch (Exception $exception){
-                echo 'Exception reçue : ',  $exception->getMessage(), "\n";
             }
 
         }
 
+        $this->session->set('token', $token);
 
         return new Response($this->view->render([
             'template' => 'home',
+            'data' => [
+                'token' => $token
+            ]
         ]));
     }
 

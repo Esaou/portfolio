@@ -16,11 +16,14 @@
                         <p class="card-text">{{ post.chapo }}</p>
                         <div class="blocBtnUpdate">
                             <div>
-                                <a class="subtitle" style="margin: 0px;" href="index.php?action=post&id={{ post.id}}">Lire le post</a>
+                                <a class="subtitle" style="margin: 0px;" href="index.php?action=post&id={{ post.id_post}}">Lire le post</a>
                             </div>
                             <div>
-                                Modifié le {{ post.updatedAt|date('d/m/Y') }} à {{ post.updatedAt|date('H') }}h{{ post.updatedAt|date('i') }}
-                            </div>
+                                {% if post.updatedAt is not null %}
+                                    Modifié le {{ post.updatedAt|date('d/m/Y') }} à {{ post.updatedAt|date('H') }}h{{ post.updatedAt|date('i') }}
+                                {% else %}
+                                    Créé le {{ post.createdAt|date('d/m/Y') }} à {{ post.createdAt|date('H') }}h{{ post.createdAt|date('i') }}
+                                {% endif %}                            </div>
                         </div>
                     </div>
                 </div>
@@ -28,6 +31,31 @@
         {% endfor %}
         </div>
 
+        <p class="text-black paginator text-center" style='font-size:18px;margin-bottom:30px;margin-top:30px;'>
+        {% if pagesTotales > 0 and pagesTotales != 1 %}
+            {% for i in 1.. pagesTotales %}
+                {% if i == 1 and pageCourante >= 4 %}
+                    <a href='index.php?action=posts&page={{ i }}' style='margin:5px;text-decoration:none;'>{{ i }}</a>
+                {% endif %}
+                {% if i == 1 and pageCourante >= 5 %}
+                    <span style='margin: 5px;font-size:17px;'>-</span>
+                {% endif %}
+                {% if (pageCourante - 3) < i and i < (pageCourante + 3) %}
+                    {% if i == pageCourante %}
+                        <span class="text-blue" style='margin:5px;'>{{ i }}</span>
+                    {% else %}
+                        <a href='index.php?action=posts&page={{ i }}' style='margin:5px;text-decoration:none;'>{{ i }}</a>
+                    {% endif %}
+                {% endif %}
+                {% if i == pagesTotales and pageCourante < (pagesTotales - 3) %}
+                    <span style='margin:5px;'>-</span>
+                {% endif %}
+                {% if i == pagesTotales and pageCourante <= (pagesTotales - 3) %}
+                    <a href='index.php?action=posts&page={{ i }}' style='margin:5px;text-decoration:none;'>{{ i }}</a>
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+        </p>
     </section>
 
 {% endblock %}

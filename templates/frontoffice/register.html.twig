@@ -1,0 +1,39 @@
+{% extends "/frontoffice/base.html.twig" %}
+
+{% block title %}Inscription{% endblock %}
+
+{% block content %}
+    <section class="container containerRegister">
+        <h5 class="text-black text-center pb-4">Formulaire d'inscription</h5>
+        <form action="index.php?action=register" class="formRegister" method="POST">
+            <input type="hidden" name="token" id="token" value="{{ token }}"/>
+            <div class="form-group col-6">
+                <label for="firstname">Prénom</label>
+                <input type="text" required class="form-control" name="firstname" id="firstname">
+            </div>
+            <div class="form-group col-6">
+                <label for="lastname">Nom</label>
+                <input type="text" required class="form-control" name="lastname" id="lastname">
+            </div>
+            <div class="form-group col-12">
+                <label for="email">Email</label>
+                <input type="email" required class="form-control" name="email" id="email">
+            </div>
+            <div class="form-group col-12">
+                <label for="password">Mot de passe
+                </label>
+                <input type="password" required class="form-control mb-2" name="password" id="password">
+                <small>Votre mot de passe doit contenir au moins 1 chiffre, une lettre minuscule, majuscule, un caractère spécial et 8 caractères minimum !</small>
+            </div>
+            <div class="form-group col-12">
+                <label for="passwordConfirm">Confirmez votre mot de passe</label>
+                <input type="password" required class="form-control" name="passwordConfirm" id="passwordConfirm">
+            </div>
+            <div class="w-100 text-center p-4">
+                <button type="submit" id="submitRegister" class="subtitle text-center m-0">Inscription</button>
+            </div>
+            <div class="pt-0 pb-4 mb-3 danger" id="error">
+            </div>
+        </form>
+    </section>
+{% endblock %}

@@ -1,0 +1,48 @@
+{% extends "/backoffice/base.html.twig" %}
+
+{% block content %}
+
+    <section class="container-fluid">
+
+        <div class="w-100 blocBtnAdmin">
+            <h5 class="text-black">Modifier un post</h5>
+        </div>
+
+        <hr>
+
+        <form action="index.php?action=editPost&id={{ post.id_post }}" class="formEditPost" method="POST">
+            <input type="hidden" name="token" id="token" value="{{ token }}"/>
+            <div class="form-group col-6">
+                <label for="title">Titre</label>
+                <input type="text" required class="form-control" value="{{ post.title }}" name="title" id="title">
+            </div>
+            <div class="form-group col-6">
+                <label for="author">Auteur</label>
+                <select required class="form-control" name="author" id="author">
+                    {% for user in users %}
+                        {% if user.id_utilisateur == post.user.id_utilisateur %}
+                                <option value="{{ user.id_utilisateur }}" selected>{{ user.firstname }} {{ user.lastname }}</option>
+                            {% else %}
+                                <option value="{{ user.id_utilisateur }}">{{ user.firstname }} {{ user.lastname }}</option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group col-12">
+                <label for="chapo">Chapo</label>
+                <textarea required class="form-control" name="chapo" id="chapo" style="min-height: 150px">{{ post.chapo }}</textarea>
+            </div>
+            <div class="form-group col-12">
+                <label for="content">Contenu</label>
+                <textarea required class="form-control mb-2" name="content" id="content" style="min-height: 250px">{{ post.content }}</textarea>
+            </div>
+            <div class="w-100 text-left pt-4 pb-4">
+                <button type="submit" id="submitEditPost" class="btan btn-sm btn-success"><i class="far fa-save" style="margin-right: 5px"></i> Sauvegarder mes changements</button>
+            </div>
+            <div class="pt-0 pb-4 mb-3 danger" id="error">
+            </div>
+        </form>
+
+    </section>
+
+{% endblock %}

@@ -1,0 +1,85 @@
+<a id="show-sidebar" class="btn btn-sm btn-dark" href="#">
+    <i class="fas fa-bars"></i>
+</a>
+<nav id="sidebar" class="sidebar-wrapper">
+    <div class="sidebar-content">
+        <div class="sidebar-brand">
+            <a href="index.php?action=home" style="font-size: 13.5px;">Retour au site</a>
+            <div id="close-sidebar">
+                <i class="fas fa-times" style="font-size: 17px;"></i>
+            </div>
+        </div>
+        <div class="sidebar-header d-flex justify-content-center">
+            <div class="user-info text-center">
+              <span class="user-name mb-1">
+                  {% for user in session %}
+                      {{ user.firstname }} {{ user.lastname }}
+                  {% endfor %}
+              </span>
+                <span class="user-role">
+                    {% for user in session %}
+                        {% if user.role == 'Admin' %}
+                            Administrateur
+                        {% endif %}
+                        {% if user.role == 'Dev' %}
+                            Développeur
+                        {% endif %}
+                        {% if user.role == 'User' %}
+                            Utilisateur
+                        {% endif %}
+                    {% endfor %}
+                </span>
+                <span class="user-status">
+                    <i class="fa fa-circle"></i>
+                    <span>En ligne</span>
+                </span>
+            </div>
+        </div>
+        <!-- sidebar-header  -->
+        <div class="sidebar-menu">
+            <ul>
+                {% if session.user.role == 'Admin' or session.user.role == 'Dev' %}
+                <li class="header-menu">
+                    <span>Administrer</span>
+                </li>
+                <li>
+                    <a href="index.php?action=postsAdmin">
+                        <i class="fas fa-file-alt"></i>
+                        <span>Posts</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="index.php?action=comments">
+                        <i class="fas fa-comment"></i>
+                        <span>Commentaires</span>
+                    </a>
+                </li>
+                {% endif %}
+                {% if session.user.role == 'Dev' %}
+                <li>
+                    <a href="index.php?action=users">
+                        <i class="fas fa-users"></i>
+                        <span>Utilisateurs</span>
+                    </a>
+                </li>
+                {% endif %}
+                <li class="header-menu">
+                    <span>Profil</span>
+                </li>
+                <li>
+                    <a href="index.php?action=userAccount">
+                        <i class="fas fa-user"></i>
+                        <span >Mon profil</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="index.php?action=logout">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span >Déconnexion</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <!-- sidebar-menu  -->
+    </div>
+</nav>

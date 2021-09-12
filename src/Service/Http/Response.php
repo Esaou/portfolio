@@ -22,4 +22,5 @@ final class Response
         // TODO Il faut renvoyer aussi le status de la réponse
         echo $this->content;
     }
+
 }

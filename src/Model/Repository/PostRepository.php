@@ -20,52 +20,53 @@ final class PostRepository implements EntityRepositoryInterface
 
     public function find(int $id): ?Post
     {
-        $data = $this->database->query("select * from post left join user on post.user_id = user.id_utilisateur where id=$id");
-        $data = current($data);
+        $data = $this->findBy(['id'=>$id]);
+
+        if (!empty($data)){
+            $data = current($data);
+        }
 
         if ($data === false) {
             return null;
         }
 
-        $data->createdAt = new \DateTime($data->createdAt);
-        $data->updatedAt = new \DateTime($data->updatedAt);
-        $user = new User((int)$data->id_utilisateur, $data->firstname,$data->lastname, $data->email, $data->password);
-
-        return new Post((int)$data->id,$data->chapo, $data->title, $data->content,$data->createdAt,$data->updatedAt,$user);
+        return $data;
     }
 
     public function findOneBy(array $criteria, array $orderBy = null): ?Post
     {
 
+        $user = null;
         $data = $this->findBy($criteria,$orderBy);
-        $data = current($data);
 
-        $user = new User((int)$data->user->id_utilisateur, $data->user->firstname,$data->user->lastname, $data->user->email, $data->user->password);
+        if (!is_null($data)){
+            $data = current($data);
+        }
 
-        return $data === false ? null : new Post((int)$data->id,$data->chapo, $data->title, $data->content,$data->createdAt,$data->updatedAt,$user);
+        return $data === null ? null : $data;
     }
 
     public function findBy(array $criteria, array $orderBy = null, int $limit = null, int $offset = null): ?array
     {
-        $where = $this->database->setCondition($criteria);
+        $sql = "select * from post inner join user on post.user_id = user.id_utilisateur ";
 
-        if ($orderBy == null){
-            $orderBy = "id desc";
-        }else{
-            $orderBy = $this->database->setOrderBy($orderBy);
+        if (!empty($criteria)){
+            $sql .= $this->database->setCondition($criteria);
         }
 
-        if ($limit == null){
-            $limit = 1000000;
-        }
-        if ($offset == null){
-            $offset = 0;
+        if (!is_null($orderBy)){
+            $sql .= ' order by '.$this->database->setOrderBy($orderBy);
         }
 
+        if (!is_null($limit)){
+            $sql .= ' limit '.$limit;
+        }
 
-        $data = $this->database->prepare("select * from post left join user on post.user_id = user.id_utilisateur where $where order by $orderBy limit $limit offset $offset",$criteria);
+        if (!is_null($offset)){
+            $sql .= ' offset '.$offset;
+        }
 
-        $data = json_decode(json_encode($data), true);
+        $data = $this->database->prepare($sql,$criteria);
 
         if (empty($data)) {
             return null;
@@ -74,10 +75,12 @@ final class PostRepository implements EntityRepositoryInterface
         $posts = [];
 
         foreach ($data as $post) {
-            $post['createdAt'] = new \DateTime($post['createdAt']);
-            $post['updatedAt'] = new \DateTime($post['updatedAt']);
-            $user = new User((int)$post['id_utilisateur'], $post['firstname'],$post['lastname'], $post['email'], $post['password']);
-            $posts[] = new Post((int)$post['id'],$post['chapo'], $post['title'], $post['content'],$post['createdAt'],$post['updatedAt'],$user);
+            $post->createdAt = new \DateTime($post->createdAt);
+            if (!is_null($post->updatedAt)){
+                $post->updatedAt = new \DateTime($post->updatedAt);
+            }
+            $user = new User((int)$post->id_utilisateur, $post->firstname,$post->lastname, $post->email, $post->password,$post->isValid,$post->role,$post->token);
+            $posts[] = new Post((int)$post->id_post,$post->chapo, $post->title, $post->content,$post->createdAt,$post->updatedAt,$user);
         }
 
         return $posts;
@@ -85,34 +88,130 @@ final class PostRepository implements EntityRepositoryInterface
 
     public function findAll(): ?array
     {
-        $data = $this->database->query('select * from post left join user on post.user_id = user.id_utilisateur');
+        $data = $this->findBy([]);
 
         if (empty($data)) {
             return null;
         }
-        $posts = [];
-        foreach ($data as $post) {
-            $post->createdAt = new \DateTime($post->createdAt);
-            $post->updatedAt = new \DateTime($post->updatedAt);
-            $user = new User((int)$post->id_utilisateur, $post->firstname,$post->lastname, $post->email, $post->password);
-            $posts[] = new Post((int)$post->id,$post->chapo, $post->title, $post->content,$post->createdAt,$post->updatedAt,$user);
-        }
 
-        return $posts;
+        return $data;
     }
 
     public function create(object $post): bool
     {
-        return false;
+        $criteria = false;
+
+        foreach ($post as $key => $value) {
+
+            if ($key === 'createdAt'){
+                $criteria[$key] = $value->format('Y-m-d H:i:s');
+            }elseif ($key === 'user'){
+                $criteria[$key] = $value->id_utilisateur;
+            } elseif ($key === 'id_post'){
+
+            }else{
+                $criteria[$key] = $value;
+            }
+        }
+
+        $sql = "INSERT INTO post (title,chapo,content, createdAt,updatedAt,user_id) VALUES (:title,:chapo,:content,:createdAt,:updatedAt,:user )";
+        $result = $this->database->prepare($sql,$criteria);
+
+        if ($result === true){
+            return true;
+        }else{
+            return false;
+        }
     }
 
     public function update(object $post): bool
     {
-        return false;
+        $criteria = [];
+
+        foreach ($post as $key => $value) {
+
+            if ($key === 'createdAt'){
+                $criteria[$key] = $value->format('Y-m-d H:i:s');
+            }elseif ($key === 'updatedAt'){
+                $criteria[$key] = $value->format('Y-m-d H:i:s');
+            }
+            elseif ($key === 'user'){
+                $criteria['user_id'] = $value->id_utilisateur;
+            }else{
+                $criteria[$key] = $value;
+            }
+
+        }
+
+        $set = $this->database->setConditionUpdatePost($criteria);
+
+        $sql = "UPDATE post SET ";
+
+        $sql .= $set;
+
+        $sql.= " where id_post = ".$post->id_post;
+
+        $result = $this->database->prepare($sql,$criteria);
+
+        if ($result === true){
+            return true;
+        }else{
+            return false;
+        }
     }
 
     public function delete(object $post): bool
     {
-        return false;
+        $sql = "DELETE FROM post where id_post = $post->id_post ";
+
+        $result = $this->database->query($sql);
+
+        if ($result === true){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    public function previousPost(int $id): int|null
+    {
+        $last = $this->database->query("SELECT * FROM post ORDER BY id_post DESC LIMIT 0 ");
+        $nextPost = $this->database->query("SELECT * FROM post WHERE id_post>$id LIMIT 0,1 ");
+
+        if($nextPost !== $last){
+
+            $nextPost = current($nextPost)->id_post;
+            return (int)$nextPost;
+
+        }else{
+
+            return null;
+
+        }
+    }
+
+    public function nextPost(int $id): int|null
+    {
+        $previousPost = $this->database->query("SELECT * FROM post WHERE id_post<$id ORDER BY id_post DESC LIMIT 0,1 ");
+
+        if(!empty($previousPost)){
+
+            $previousPost = current($previousPost)->id_post;
+            return (int)$previousPost;
+
+        }else{
+
+            return null;
+
+        }
+    }
+
+    public function countAllPosts():int
+    {
+
+        $data = $this->database->query("SELECT COUNT(*) AS nb FROM post ORDER BY id_post desc ");
+        $data = current($data);
+
+        return (int)$data->nb;
     }
 }

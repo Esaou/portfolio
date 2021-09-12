@@ -36,11 +36,10 @@ final class PostAdminController
 
         $user = new UserController($userRepository,$this->view,$this->session,$this->request);
 
+
         if($user->notLogged() === true){
             header('Location: index.php?action=forbidden');
-        }
-
-        if($user->loggedAs('User') === true){
+        }elseif($user->loggedAs('User') === true){
             header('Location: index.php?action=forbidden');
         }
 

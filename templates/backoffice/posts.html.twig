@@ -25,7 +25,7 @@
                 <tbody>
                 {% for post in posts %}
                     <tr>
-                        <td class="align-middle">{{ post.title }}</td>
+                        <td class="align-middle text-nowrap">{{ post.title|slice(0,20) }} {% if post.title|length > 20 %}...{% endif %}</td>
                         <td class="align-middle text-nowrap">{{ post.chapo|slice(0,20) }} {% if post.chapo|length > 20 %}...{% endif %}</td>
                         <td class="align-middle text-nowrap">{{ post.content|slice(0,20) }} {% if post.content|length > 20 %}...{% endif %}</td>
                         <td class="align-middle">{{ post.createdAt|date('d/m/Y') }}</td>

@@ -36,14 +36,12 @@ final class HomeController
     {
 
         $token = base_convert(hash('sha256', time() . mt_rand()), 16, 36);
-        $tokenSession = $this->session->get('token');
-        $tokenPost = $this->request->request()->get('token');
 
         if ($this->request->getMethod() === 'POST') {
 
             $data = $this->request->request()->all();
-            $data['tokenPost'] = $tokenPost;
-            $data['tokenSession'] = $tokenSession;
+            $data['tokenPost'] = $this->request->request()->get('token');;
+            $data['tokenSession'] = $this->session->get('token');
 
             if ($this->validator->homeContactValidator($data)) {
 

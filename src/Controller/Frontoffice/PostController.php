@@ -9,6 +9,7 @@ use App\Model\Repository\UserRepository;
 use App\Service\Http\Request;
 use App\Service\Http\Session\Session;
 use App\Service\Paginator;
+use App\Service\Validator;
 use App\View\View;
 use App\Service\Http\Response;
 use App\Model\Repository\PostRepository;
@@ -22,6 +23,7 @@ final class PostController
     private View $view;
     private Request $request;
     private Session $session;
+    private Validator $validator;
 
     public function __construct(View $view,Request $request,Session $session,CommentRepository $commentRepository,UserRepository $userRepository,PostRepository $postRepository)
     {
@@ -31,14 +33,13 @@ final class PostController
         $this->view = $view;
         $this->request = $request;
         $this->session = $session;
+        $this->validator = new Validator($this->session);
     }
 
     public function displayOneAction(int $id): Response
     {
 
         $token = base_convert(hash('sha256', time() . mt_rand()), 16, 36);
-        $tokenSession = $this->session->get('token');
-        $tokenPost = $this->request->request()->get('token');
 
         // FIND A POST
 
@@ -56,13 +57,16 @@ final class PostController
 
         if ($this->request->getMethod() === 'POST'){
 
-            $content = $this->request->request()->get('comment');
+            $data = $this->request->request()->all();
+
+            $data['tokenSession'] = $this->session->get('token');
+            $data['tokenPost'] = $this->request->request()->get('token');
+
             $user = $this->session->get('user');
 
-            if ($tokenPost != $tokenSession){
-                $this->session->addFlashes('danger','Token de session expiré !');
-            }else{
-                $comment = new Comment(0,$content,$post,$user,'Non',new \DateTime('now'));
+            if ($this->validator->commentValidator($data)){
+
+                $comment = new Comment(0,$data['comment'],$post,$user,'Non',new \DateTime('now'));
 
                 $this->commentRepository->create($comment);
 

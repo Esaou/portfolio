@@ -25,6 +25,10 @@
                     <div class="alert alert-danger flashMessage">
                         {{ message }}
                     </div>
+                {% elseif type == 'update' %}
+                    <div class="alert alert-primary flashMessage">
+                        {{ message }}
+                    </div>
                 {% endif %}
             {% endfor %}
             {% block content %}

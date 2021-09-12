@@ -24,6 +24,7 @@ final class UserAdminController
     private View $view;
     private Request $request;
     private Session $session;
+    private SecurityController $security;
 
     public function __construct(View $view,Request $request,Session $session,CommentRepository $commentRepository,UserRepository $userRepository,PostRepository $postRepository)
     {
@@ -34,12 +35,11 @@ final class UserAdminController
         $this->view = $view;
         $this->request = $request;
         $this->session = $session;
+        $this->security = new SecurityController($userRepository,$this->view,$this->session,$this->request);
 
-        $security = new SecurityController($userRepository,$this->view,$this->session,$this->request);
-
-        if($security->notLogged() === true){
+        if($this->security->notLogged() === true){
             header('Location: index.php?action=forbidden');
-        }elseif($security->loggedAs('User') === true){
+        }elseif($this->security->loggedAs('User') === true){
             header('Location: index.php?action=forbidden');
         }
 
@@ -49,7 +49,7 @@ final class UserAdminController
 
         $userController = new UserController($this->userRepository,$this->view,$this->session,$this->request);
 
-        if($userController->loggedAs('Dev') === false){
+        if($this->security->loggedAs('Dev') === false){
             header('Location: index.php?action=forbidden');
         }
 
@@ -150,7 +150,7 @@ final class UserAdminController
 
         $userController = new UserController($this->userRepository,$this->view,$this->session,$this->request);
 
-        if($userController->loggedAs('Dev') === false){
+        if($this->security->loggedAs('Dev') === false){
             header('Location: index.php?action=forbidden');
         }
 

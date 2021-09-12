@@ -446,6 +446,29 @@
     text-align: justify;
 }
 
+.formAccount{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.formEditUser{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+.formAccount label{
+    margin-bottom: 10px;
+}
+
+.formAccount > div{
+    padding: 10px;
+}
+
 @media screen and (max-width: 1150px) {
 
     .formRegister{

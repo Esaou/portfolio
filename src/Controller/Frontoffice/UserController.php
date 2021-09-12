@@ -21,6 +21,7 @@ final class UserController
     private Request $request;
     private Validator $validator;
     private Mailer $mailer;
+    private SecurityController $security;
 
     public function __construct(UserRepository $userRepository, View $view, Session $session,Request $request)
     {
@@ -30,6 +31,7 @@ final class UserController
         $this->request = $request;
         $this->validator = new Validator($this->session);
         $this->mailer = new Mailer();
+        $this->security = new SecurityController($userRepository,$this->view,$this->session,$this->request);
     }
 
     public function loginAction(Request $request): Response
@@ -127,6 +129,46 @@ final class UserController
             'data' => [
                 'token' => $token
             ],
+        ]));
+    }
+
+    public function userAccount() :Response
+    {
+
+        if($this->security->notLogged() === true or $this->security->loggedAs('User') !== true){
+            header('Location: index.php?action=forbidden');
+        }
+
+        $token = base_convert(hash('sha256', time() . mt_rand()), 16, 36);
+
+        if ($this->request->getMethod() === 'POST'){
+
+            $data = $this->request->request()->all();
+            $data['tokenPost'] = $this->request->request()->get('token');
+            $data['tokenSession'] = $this->session->get('token');
+
+            if ($this->validator->accountValidator($data)){
+
+                $id = $this->request->query()->get('id');
+                $user = $this->userRepository->findOneBy(['id_utilisateur' => $id]);
+
+                $password = password_hash($data['password'], PASSWORD_BCRYPT);
+
+                $user = new User($user->getIdUtilisateur(), $data['firstname'], $data['lastname'], $data['email'], $password, $user->getIsValid(), $user->getRole(), $user->getToken());
+                $this->userRepository->update($user);
+                $this->session->set('user', $user);
+                $this->session->addFlashes('update','Vos informations sont modifiées avec succès !');
+
+            }
+        }
+
+        $this->session->set('token', $token);
+
+        return new Response($this->view->render([
+            'template' => 'userAccount',
+            'data' => [
+                'token' => $token
+            ]
         ]));
     }
 

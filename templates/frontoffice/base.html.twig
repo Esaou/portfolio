@@ -16,21 +16,30 @@
         {% endblock %}
 
         <main class="padMain">
-            {% for type,message in flashes %}
+            {% for type,values in flashes %}
+                <div class="containerFlashMessage">
                 {% if type == 'success' %}
+                    {% for message in values %}
                     <div class="alert alert-success flashMessage">
                         {{ message }}
                     </div>
+                    {% endfor %}
                 {% elseif type == 'danger' %}
+                    {% for message in values %}
                     <div class="alert alert-danger flashMessage">
                         {{ message }}
                     </div>
+                    {% endfor %}
                 {% elseif type == 'update' %}
+                    {% for message in values %}
                     <div class="alert alert-primary flashMessage">
                         {{ message }}
                     </div>
-                {% endif %}
+                {% endfor %}
+            {% endif %}
+            </div>
             {% endfor %}
+
             {% block content %}
             {% endblock %}
         </main>

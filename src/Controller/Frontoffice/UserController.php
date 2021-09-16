@@ -6,9 +6,11 @@ namespace  App\Controller\Frontoffice;
 
 use App\Model\Entity\User;
 use App\Service\Authorization;
+use App\Service\FormValidator\AccountValidator;
+use App\Service\FormValidator\LoginValidator;
+use App\Service\FormValidator\RegisterValidator;
 use App\Service\Http\RedirectResponse;
 use App\Service\Mailer;
-use App\Service\Validator;
 use App\View\View;
 use App\Service\Http\Request;
 use App\Service\Http\Response;
@@ -21,7 +23,9 @@ final class UserController
     private View $view;
     private Session $session;
     private Request $request;
-    private Validator $validator;
+    private LoginValidator $loginValidator;
+    private RegisterValidator $registerValidator;
+    private AccountValidator $accountValidator;
     private Mailer $mailer;
     private Authorization $security;
 
@@ -31,7 +35,9 @@ final class UserController
         $this->view = $view;
         $this->session = $session;
         $this->request = $request;
-        $this->validator = new Validator($this->session);
+        $this->loginValidator = new LoginValidator($this->session);
+        $this->registerValidator = new RegisterValidator($this->session);
+        $this->accountValidator = new AccountValidator($this->session);
         $this->mailer = new Mailer($this->view);
         $this->security = new Authorization($this->session,$this->request);
     }
@@ -57,12 +63,13 @@ final class UserController
             $data['tokenPost'] = $this->request->request()->get('token');
             $data['user'] = $user;
 
-            if ($this->validator->isValidLoginForm($data)){
+            if ($this->loginValidator->loginValidator($data)){
+                $this->session->set('user', $data['user']);
                 $user = $this->session->get('user');
                 if ($user->getRole() === 'User'){
-                    header('Location: index.php?action=home');
+                    new RedirectResponse('home');
                 }else{
-                    header('Location: index.php?action=postsAdmin');
+                    new RedirectResponse('postsAdmin');
                 }
             }
 
@@ -108,7 +115,7 @@ final class UserController
             $datas['tokenPost'] = $this->request->request()->get('token');
             $datas['tokenSession'] = $this->session->get('token');
 
-            if ($this->validator->registerValidator($datas)){
+            if ($this->registerValidator->registerValidator($datas)){
 
                 // CREATE USER
 
@@ -168,7 +175,7 @@ final class UserController
             $data['tokenPost'] = $this->request->request()->get('token');
             $data['tokenSession'] = $this->session->get('token');
 
-            if ($this->validator->accountValidator($data)){
+            if ($this->accountValidator->accountValidator($data)){
 
                 $id = $this->request->query()->get('id');
                 $user = $this->userRepository->findOneBy(['id_utilisateur' => $id]);

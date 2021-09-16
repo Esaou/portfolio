@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace  App\Controller\Frontoffice;
 
+use App\Service\FormValidator\ContactValidator;
 use App\Service\Http\Session\Session;
 use App\Service\Mailer;
 use App\Service\Validator;
@@ -28,7 +29,7 @@ final class HomeController
         $this->view = $view;
         $this->request = $request;
         $this->session = $session;
-        $this->validator = new Validator($this->session);
+        $this->validator = new ContactValidator($this->session);
         $this->mailer = new Mailer($this->view);
     }
 

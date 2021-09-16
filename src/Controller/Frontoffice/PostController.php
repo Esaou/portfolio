@@ -6,6 +6,7 @@ namespace  App\Controller\Frontoffice;
 
 use App\Model\Entity\Comment;
 use App\Model\Repository\UserRepository;
+use App\Service\FormValidator\CommentValidator;
 use App\Service\Http\RedirectResponse;
 use App\Service\Http\Request;
 use App\Service\Http\Session\Session;
@@ -24,7 +25,7 @@ final class PostController
     private View $view;
     private Request $request;
     private Session $session;
-    private Validator $validator;
+    private CommentValidator $validator;
 
     public function __construct(View $view,Request $request,Session $session,CommentRepository $commentRepository,UserRepository $userRepository,PostRepository $postRepository)
     {
@@ -34,7 +35,7 @@ final class PostController
         $this->view = $view;
         $this->request = $request;
         $this->session = $session;
-        $this->validator = new Validator($this->session);
+        $this->validator = new CommentValidator($this->session);
     }
 
     public function displayOneAction(int $id): Response

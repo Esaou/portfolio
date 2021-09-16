@@ -29,7 +29,7 @@ final class HomeController
         $this->request = $request;
         $this->session = $session;
         $this->validator = new Validator($this->session);
-        $this->mailer = new Mailer();
+        $this->mailer = new Mailer($this->view);
     }
 
     public function home(): Response
@@ -45,16 +45,7 @@ final class HomeController
 
             if ($this->validator->homeContactValidator($data)) {
 
-                $content = '<p>Bonjour,</p>
-                        <p>Voici un nouveau message d\'un utilisateur :</p>
-                        <ul>
-                            <li>Nom : ' . $data['lastname'] . '</li>
-                            <li>Prénom : ' . $data['firstname'] . '</li>
-                            <li>Email : ' . $data['email'] . '</li>
-                            <li>Contenu : ' . $data['content'] . '</li>
-                        </ul>';
-
-                $result = $this->mailer->mail('Message de '.$data['firstname'].' '.$data['lastname'],$data['email'],'eric.saou3@gmail.com',$content);
+                $result = $this->mailer->mail('Message de '.$data['firstname'].' '.$data['lastname'],$data['email'],'eric.saou3@gmail.com','contact',$data);
 
                 if ($result) {
                     $this->session->addFlashes('success', 'Message posté avec succès !');

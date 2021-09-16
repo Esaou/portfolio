@@ -38,6 +38,10 @@ final class UserController
     public function loginAction(Request $request): Response
     {
 
+        if($this->security->notLogged() === false){
+            header('Location: index.php?action=home');
+        }
+
         $token = base_convert(hash('sha256', time() . mt_rand()), 16, 36);
 
         if ($request->getMethod() === 'POST') {
@@ -81,6 +85,10 @@ final class UserController
 
     public function register() :Response
     {
+
+        if($this->security->notLogged() === false){
+            header('Location: index.php?action=home');
+        }
 
         $token = base_convert(hash('sha256', time() . mt_rand()), 16, 36);
 
@@ -137,7 +145,7 @@ final class UserController
     {
 
         if($this->security->notLogged() === true or $this->security->loggedAs('User') !== true){
-            header('Location: index.php?action=forbidden');
+            header('Location: index.php?action=home');
         }
 
         $token = base_convert(hash('sha256', time() . mt_rand()), 16, 36);

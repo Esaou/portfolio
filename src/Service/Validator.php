@@ -25,6 +25,11 @@ class Validator
             $this->session->addFlashes('danger','Tous les champs doivent être remplis !');
             return false;
 
+        }elseif (!preg_match('#[^0-9]#',$data['lastname']) or !preg_match('#[^0-9]#',$data['firstname'])){
+
+            $this->session->addFlashes('danger','Le nom et le prénom ne peuvent pas contenir de chiffres !');
+            return false;
+
         }elseif (strlen($data['firstname']) < 2 or strlen($data['firstname']) > 30 or strlen($data['lastname']) < 2 or strlen($data['lastname']) > 30){
 
             $this->session->addFlashes('danger','Le prénom et le nom doivent contenir de 2 à 30 caractères !');
@@ -52,6 +57,11 @@ class Validator
         } elseif ($data['tokenPost'] != $data['tokenSession']){
             $this->session->addFlashes('danger','Token de session expiré !');
             return false;
+        }elseif (!preg_match('#[^0-9]#',$data['lastname']) or !preg_match('#[^0-9]#',$data['firstname'])){
+
+            $this->session->addFlashes('danger','Le nom et le prénom ne peuvent pas contenir de chiffres !');
+            return false;
+
         }elseif ($data['password'] != $data['passwordConfirm']){
             $this->session->addFlashes('danger', 'Mots de passe non identiques !');
             return false;

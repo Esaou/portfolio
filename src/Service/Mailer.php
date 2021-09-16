@@ -12,9 +12,7 @@ class Mailer
 {
 
     public function mail($subject,$from,$to,$content){
-        $transport = (new Swift_SmtpTransport('smtp.bbox.fr', 25))
-            ->setUsername('saou.eric@bbox.fr')
-            ->setPassword('JaaH7Lzj');
+        $transport = (new Swift_SmtpTransport('localhost', 1025));
 
         $mailer = new Swift_Mailer($transport);
 

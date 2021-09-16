@@ -74,7 +74,7 @@ final class UserAdminController
 
         $paginator = (new Paginator($page,$tableRows,8))->paginate();
 
-        $users = $this->userRepository->findBy([],['id_utilisateur' =>'desc'],$paginator['parPage'],$paginator['depart']);
+        $users = $this->userRepository->findBy([],['lastname' =>'asc'],$paginator['parPage'],$paginator['depart']);
 
         return new Response($this->view->renderAdmin([
             'template' => 'users',

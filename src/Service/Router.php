@@ -16,6 +16,7 @@ use App\Model\Entity\User;
 use App\Model\Repository\PostRepository;
 use App\Model\Repository\CommentRepository;
 use App\Model\Repository\UserRepository;
+use App\Service\Http\RedirectResponse;
 use App\Service\Http\Request;
 use App\Service\Http\Response;
 use App\Service\Http\Session\Session;
@@ -86,7 +87,6 @@ final class Router
             return $controller->confirmUser();
 
         }elseif ($action === 'forbidden') {
-            $userRepo = new UserRepository($this->database);
             $controller = new SecurityController($this->view);
             return $controller->forbidden();
 
@@ -136,13 +136,15 @@ final class Router
             $userRepo = new UserRepository($this->database);
             $controller = new UserController($userRepo, $this->view, $this->session,$this->request);
             return $controller->userAccount();
+        }elseif ($action === 'postNotFound') {
+            $controller = new SecurityController($this->view);
+            return $controller->postNotFound();
+        }elseif ($action === 'notFound') {
+            $controller = new SecurityController($this->view);
+            return $controller->notFound();
         }
 
-        return new Response($this->view->render(
-            [
-                'template' => 'notFound',
-            ],
-        ));
+        return new RedirectResponse('notFound');
 
     }
 }

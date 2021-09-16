@@ -30,6 +30,7 @@ final class View
         }
 
         return $this->twig->render("frontoffice/${data['template']}.html.twig", $data['data']);
+
     }
 
 }

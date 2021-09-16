@@ -22,4 +22,16 @@ final class SecurityController
         ]),403);
     }
 
+    public function postNotFound() :Response{
+        return new Response($this->view->render([
+            'template' => 'postNotFound'
+        ]),404);
+    }
+
+    public function notFound() :Response{
+        return new Response($this->view->render([
+            'template' => 'notFound'
+        ]),404);
+    }
+
 }

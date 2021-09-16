@@ -173,13 +173,13 @@ final class PostRepository implements EntityRepositoryInterface
         }
     }
 
-    public function previousPost(\DateTime $createdAt): int|null
+    public function nextPost(\DateTime $createdAt): int|null
     {
 
         $createdAt = $createdAt->format('Y-m-d H:i:s');
 
         $last = $this->database->query("SELECT * FROM post ORDER BY createdAt DESC LIMIT 0 ");
-        $nextPost = $this->database->query("SELECT * FROM post WHERE createdAt < '$createdAt' LIMIT 0,1 ");
+        $nextPost = $this->database->query("SELECT * FROM post WHERE createdAt > '$createdAt' LIMIT 0,1 ");
 
         if($nextPost !== $last){
 
@@ -193,12 +193,12 @@ final class PostRepository implements EntityRepositoryInterface
         }
     }
 
-    public function nextPost(\DateTime $createdAt): int|null
+    public function previousPost(\DateTime $createdAt): int|null
     {
 
         $date = $createdAt->format('Y-m-d H:i:s');
 
-        $previousPost = $this->database->query("SELECT * FROM post WHERE createdAt > '$date' ORDER BY createdAt DESC LIMIT 0,1 ");
+        $previousPost = $this->database->query("SELECT * FROM post WHERE createdAt < '$date' ORDER BY createdAt DESC LIMIT 0,1 ");
 
         if(!empty($previousPost)){
 

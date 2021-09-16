@@ -32,6 +32,7 @@ class Authorization
         if ($user->getRole() == $role){
             return true;
         }
+
         return false;
 
     }

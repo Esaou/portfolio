@@ -4,12 +4,12 @@
 
 {% block content %}
     <section class="container containerLogin">
-        <form action="index.php?action=login" class="formLogin" method="POST">
+        <form action="index.php?action=login#containerLogin" class="formLogin" method="POST">
             <input type="hidden" name="token" id="token" value="{{ token }}"/>
             <h5 class="text-black text-center pb-4">Formulaire de connexion</h5>
             <div class="form-group mb-3">
                 <label for="email">Email</label>
-                <input type="email" required class="form-control" id="email" name="email" >
+                <input type="email" required class="form-control" {% if formData.email %}value="{{ formData.email }}"{% endif %} id="email" name="email" >
             </div>
             <div class="form-group">
                 <label for="password">Mot de passe</label>

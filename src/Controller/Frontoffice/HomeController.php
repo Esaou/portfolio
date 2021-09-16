@@ -37,10 +37,12 @@ final class HomeController
 
         $token = base_convert(hash('sha256', time() . mt_rand()), 16, 36);
 
+        $data = [];
+
         if ($this->request->getMethod() === 'POST') {
 
             $data = $this->request->request()->all();
-            $data['tokenPost'] = $this->request->request()->get('token');;
+            $data['tokenPost'] = $this->request->request()->get('token');
             $data['tokenSession'] = $this->session->get('token');
 
             if ($this->validator->homeContactValidator($data)) {
@@ -49,7 +51,8 @@ final class HomeController
 
                 if ($result) {
                     $this->session->addFlashes('success', 'Message posté avec succès !');
-                } else {
+                }
+                if (!$result) {
                     $this->session->addFlashes('danger', 'Erreur lors de l\'envoi du message !');
                 }
 
@@ -62,9 +65,10 @@ final class HomeController
         return new Response($this->view->render([
             'template' => 'home',
             'data' => [
-                'token' => $token
+                'token' => $token,
+                'formData' => $data
             ]
-        ]));
+        ]),200);
     }
 
 

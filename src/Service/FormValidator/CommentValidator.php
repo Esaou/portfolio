@@ -26,8 +26,13 @@ class CommentValidator extends Validator
             $error = true;
         }
 
-        if(strlen($data['comment']) < 1 or strlen($data['comment']) > 5000){
+        if(strlen($data['comment']) > 5000){
             $this->session->addFlashes('danger','Votre commentaire peut contenir de 1 à 5000 caractères');
+            return false;
+        }
+
+        if (strlen($data['comment']) < 1){
+            $this->session->addFlashes('danger','Votre commentaire ne peut pas être vide !');
             return false;
         }
 

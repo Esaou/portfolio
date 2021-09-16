@@ -3,7 +3,6 @@
 
 namespace App\Service;
 
-
 use App\View\View;
 use Swift_Mailer;
 use Swift_Message;

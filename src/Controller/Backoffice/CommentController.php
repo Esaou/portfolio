@@ -95,8 +95,9 @@ final class CommentController
 
         $comments = $this->commentRepository->findBy([],['createdDate' =>'desc'],$paginator['parPage'],$paginator['depart']);
 
-        return new Response($this->view->renderAdmin([
+        return new Response($this->view->render([
             'template' => 'comments',
+            'type' => 'backoffice',
             'data' => [
                 'comments' => $comments,
                 'pagesTotales' => $paginator['pagesTotales'],

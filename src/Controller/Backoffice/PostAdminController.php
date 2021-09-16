@@ -73,8 +73,9 @@ final class PostAdminController
 
         $posts = $this->postRepository->findBy([],['createdAt' =>'desc'],$paginator['parPage'],$paginator['depart']);
 
-        return new Response($this->view->renderAdmin([
+        return new Response($this->view->render([
             'template' => 'posts',
+            'type' => 'backoffice',
             'data' => [
                 'posts' => $posts,
                 'pagesTotales' => $paginator['pagesTotales'],
@@ -111,8 +112,9 @@ final class PostAdminController
 
         $this->session->set('token', $token);
 
-        return new Response($this->view->renderAdmin([
+        return new Response($this->view->render([
             'template' => 'editPost',
+            'type' => 'backoffice',
             'data' => [
                 'users' => $users,
                 'post' => $post,
@@ -146,8 +148,9 @@ final class PostAdminController
 
         $this->session->set('token', $token);
 
-        return new Response($this->view->renderAdmin([
+        return new Response($this->view->render([
             'template' => 'addPost',
+            'type' => 'backoffice',
             'data' => [
                 'token' => $token
             ]

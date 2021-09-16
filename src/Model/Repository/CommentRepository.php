@@ -82,7 +82,7 @@ final class CommentRepository implements EntityRepositoryInterface
             $comment->createdDate = new \DateTime($comment->createdDate);
             $post = new Post((int)$comment->id_post,$comment->chapo,$comment->title,$comment->content,$comment->createdAt,$comment->updatedAt,null);
             $user = new User((int)$comment->id_utilisateur, $comment->firstname,$comment->lastname, $comment->email, $comment->password,$comment->isValid,$comment->role,$comment->token);
-            $comments[] = new Comment((int)$comment->id, $comment->content,$post,$user,$comment->isChecked,$comment->createdDate);
+            $comments[] = new Comment((int)$comment->id, $comment->comment,$post,$user,$comment->isChecked,$comment->createdDate);
         }
 
         return $comments;

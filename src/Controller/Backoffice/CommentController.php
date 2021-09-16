@@ -93,7 +93,7 @@ final class CommentController
 
         $paginator = (new Paginator($page,$tableRows,8))->paginate();
 
-        $comments = $this->commentRepository->findBy([],['id' =>'desc'],$paginator['parPage'],$paginator['depart']);
+        $comments = $this->commentRepository->findBy([],['createdDate' =>'desc'],$paginator['parPage'],$paginator['depart']);
 
         return new Response($this->view->renderAdmin([
             'template' => 'comments',

@@ -77,8 +77,8 @@ final class PostController
 
         // NEXT/PREVIOUS POST
 
-        $nextPost = $this->postRepository->nextPost($id);
-        $previousPost = $this->postRepository->previousPost($id);
+        $nextPost = $this->postRepository->nextPost($post->getCreatedAt());
+        $previousPost = $this->postRepository->previousPost($post->getCreatedAt());
 
         // PAGINATION
 
@@ -87,7 +87,7 @@ final class PostController
 
         $paginator = (new Paginator($page,$tableRows,4))->paginate();
 
-        $comments = $this->commentRepository->findBy(['post_id' => $id,'isChecked' => 'Oui'],['id' =>'desc'],$paginator['parPage'],$paginator['depart']);
+        $comments = $this->commentRepository->findBy(['post_id' => $id,'isChecked' => 'Oui'],['createdDate' =>'desc'],$paginator['parPage'],$paginator['depart']);
 
         // RENDER
 
@@ -123,7 +123,7 @@ final class PostController
 
         $paginator = (new Paginator($page,$tableRows,4))->paginate();
 
-        $posts = $this->postRepository->findBy([],['id_post' =>'desc'],$paginator['parPage'],$paginator['depart']);
+        $posts = $this->postRepository->findBy([],['createdAt' =>'asc'],$paginator['parPage'],$paginator['depart']);
 
         return new Response($this->view->render([
             'template' => 'posts',

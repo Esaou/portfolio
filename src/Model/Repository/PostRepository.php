@@ -173,10 +173,13 @@ final class PostRepository implements EntityRepositoryInterface
         }
     }
 
-    public function previousPost(int $id): int|null
+    public function previousPost(\DateTime $createdAt): int|null
     {
-        $last = $this->database->query("SELECT * FROM post ORDER BY id_post DESC LIMIT 0 ");
-        $nextPost = $this->database->query("SELECT * FROM post WHERE id_post>$id LIMIT 0,1 ");
+
+        $createdAt = $createdAt->format('Y-m-d H:i:s');
+
+        $last = $this->database->query("SELECT * FROM post ORDER BY createdAt DESC LIMIT 0 ");
+        $nextPost = $this->database->query("SELECT * FROM post WHERE createdAt < '$createdAt' LIMIT 0,1 ");
 
         if($nextPost !== $last){
 
@@ -190,9 +193,12 @@ final class PostRepository implements EntityRepositoryInterface
         }
     }
 
-    public function nextPost(int $id): int|null
+    public function nextPost(\DateTime $createdAt): int|null
     {
-        $previousPost = $this->database->query("SELECT * FROM post WHERE id_post<$id ORDER BY id_post DESC LIMIT 0,1 ");
+
+        $date = $createdAt->format('Y-m-d H:i:s');
+
+        $previousPost = $this->database->query("SELECT * FROM post WHERE createdAt > '$date' ORDER BY createdAt DESC LIMIT 0,1 ");
 
         if(!empty($previousPost)){
 
@@ -209,7 +215,7 @@ final class PostRepository implements EntityRepositoryInterface
     public function countAllPosts():int
     {
 
-        $data = $this->database->query("SELECT COUNT(*) AS nb FROM post ORDER BY id_post desc ");
+        $data = $this->database->query("SELECT COUNT(*) AS nb FROM post ORDER BY createdAt desc ");
         $data = current($data);
 
         return (int)$data->nb;

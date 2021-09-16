@@ -71,7 +71,7 @@ final class PostAdminController
 
         $paginator = (new Paginator($page,$tableRows,8))->paginate();
 
-        $posts = $this->postRepository->findBy([],['id_post' =>'desc'],$paginator['parPage'],$paginator['depart']);
+        $posts = $this->postRepository->findBy([],['createdAt' =>'desc'],$paginator['parPage'],$paginator['depart']);
 
         return new Response($this->view->renderAdmin([
             'template' => 'posts',

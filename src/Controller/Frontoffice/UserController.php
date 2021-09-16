@@ -31,12 +31,16 @@ final class UserController
         $this->session = $session;
         $this->request = $request;
         $this->validator = new Validator($this->session);
-        $this->mailer = new Mailer();
+        $this->mailer = new Mailer($this->view);
         $this->security = new Authorization($this->session,$this->request);
     }
 
     public function loginAction(Request $request): Response
     {
+
+        if($this->security->notLogged() === false){
+            header('Location: index.php?action=home');
+        }
 
         $token = base_convert(hash('sha256', time() . mt_rand()), 16, 36);
 
@@ -82,6 +86,10 @@ final class UserController
     public function register() :Response
     {
 
+        if($this->security->notLogged() === false){
+            header('Location: index.php?action=home');
+        }
+
         $token = base_convert(hash('sha256', time() . mt_rand()), 16, 36);
 
         if ($this->request->getMethod() === 'POST') {
@@ -96,24 +104,29 @@ final class UserController
 
             if ($this->validator->registerValidator($datas)){
 
+                // CREATE USER
+
                 $tokenUser = uniqid();
                 $password = password_hash($datas['password'], PASSWORD_BCRYPT);
                 $user = new User(0,$datas['firstname'],$datas['lastname'],$datas['email'],$password,'Non','User',$tokenUser);
                 $result = $this->userRepository->create($user);
 
+                // ADD TOKEN TO MAIL DATA
+
+                $datas['token'] = $tokenUser;
+
+                // SEND CONFIRMATION MAIL
+
                 if ($result){
 
-                    $content = "<p style='font-weight: bold'>Bonjour,</p>
-                    <p>Merci d'avoir rejoint ma communauté, pour valider votre compte cliquez sur le <span style='color: blue;font-weight: bold;'>lien</span> ci-dessous :</p>
-                    <a style='font-weight: bold' href='http://projet5/index.php?action=confirmUser&token=$tokenUser'>Cliquez ici</a>";
-
-                    $result = $this->mailer->mail('Confirmation de compte','eric.saou3@gmail.com',$datas['email'],$content);
+                    $result = $this->mailer->mail('Confirmation de compte','eric.saou3@gmail.com',$datas['email'],'register',$datas);
 
                     if ($result) {
                         $this->session->addFlashes('success', 'Inscription réalisée, consultez vos mails pour valider votre compte !');
                     } else {
                         $this->session->addFlashes('danger', 'Erreur lors de l\'envoi du mail !');
                     }
+
                 }else{
 
                     $this->session->addFlashes('danger', 'Erreur lors de la création de l\'utilisateur !');
@@ -137,7 +150,7 @@ final class UserController
     {
 
         if($this->security->notLogged() === true or $this->security->loggedAs('User') !== true){
-            header('Location: index.php?action=forbidden');
+            header('Location: index.php?action=home');
         }
 
         $token = base_convert(hash('sha256', time() . mt_rand()), 16, 36);

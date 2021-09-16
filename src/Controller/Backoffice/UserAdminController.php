@@ -76,8 +76,9 @@ final class UserAdminController
 
         $users = $this->userRepository->findBy([],['lastname' =>'asc'],$paginator['parPage'],$paginator['depart']);
 
-        return new Response($this->view->renderAdmin([
+        return new Response($this->view->render([
             'template' => 'users',
+            'type' => 'backoffice',
             'data' => [
                 'users' => $users,
                 'pagesTotales' => $paginator['pagesTotales'],
@@ -114,8 +115,9 @@ final class UserAdminController
 
         $this->session->set('token', $token);
 
-        return new Response($this->view->renderAdmin([
+        return new Response($this->view->render([
             'template' => 'userAccount',
+            'type' => 'backoffice',
             'data' => [
                 'token' => $token
             ]
@@ -152,9 +154,10 @@ final class UserAdminController
 
         $this->session->set('token', $token);
 
-        return new Response($this->view->renderAdmin([
+        return new Response($this->view->render([
 
             'template' => 'editUser',
+            'type' => 'backoffice',
             'data' => [
                 'user' => $user,
                 'token' => $token

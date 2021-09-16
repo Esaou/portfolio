@@ -14,25 +14,25 @@
             <a href="/docs/cv.pdf" target="_blank" class="cv">Découvrez mon cv à jour</a>
         </article>
         <hr/>
-        <article class="containerContact">
+        <article class="containerContact" id="containerContact">
             <h5 class="citation text-black pb-4"><i class="far fa-envelope" style="margin-right: 7px"></i> Formulaire de contact</h5>
-            <form class="formContact" action="index.php?action=home" method="POST">
+            <form class="formContact" action="index.php?action=home#containerContact" method="POST">
                 <input type="hidden" name="token" id="token" value="{{ token }}"/>
                 <div class="form-group col-6">
                     <label for="firstname">Prénom</label>
-                    <input type="text" class="form-control" name="firstname" id="firstname">
+                    <input type="text" class="form-control" {% if formData.firstname %}value="{{ formData.firstname }}"{% endif %} name="firstname" id="firstname">
                 </div>
                 <div class="form-group col-6">
                     <label for="lastname">Nom</label>
-                    <input type="text" class="form-control" name="lastname" id="lastname">
+                    <input type="text" class="form-control" {% if formData.lastname %}value="{{ formData.lastname }}"{% endif %} name="lastname" id="lastname">
                 </div>
                 <div class="form-group col-12">
                     <label for="email">Email</label>
-                    <input type="text" class="form-control" name="email" id="email">
+                    <input type="text" class="form-control" {% if formData.email %}value="{{ formData.email }}"{% endif %} name="email" id="email">
                 </div>
                 <div class="form-group col-12">
                     <label for="content">Message</label>
-                    <textarea style="min-height: 250px;" class="form-control" name="content" id="content"></textarea>
+                    <textarea style="min-height: 250px;" class="form-control" name="content" id="content">{% if formData.content %}{{ formData.content }}{% endif %}</textarea>
                 </div>
                 <div class="form-group col-12">
                     <input type="checkbox" required name="rgpd" id="rgpd"><span style="margin-left: 20px;">J'accepte que mes informations soient conservées à des fins de contact.</span></input>

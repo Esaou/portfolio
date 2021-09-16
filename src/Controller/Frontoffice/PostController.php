@@ -6,6 +6,7 @@ namespace  App\Controller\Frontoffice;
 
 use App\Model\Entity\Comment;
 use App\Model\Repository\UserRepository;
+use App\Service\Http\RedirectResponse;
 use App\Service\Http\Request;
 use App\Service\Http\Session\Session;
 use App\Service\Paginator;
@@ -45,14 +46,6 @@ final class PostController
 
         $post = $this->postRepository->findOneBy(['id_post' => $id]);
 
-        // NOT FOUND
-
-        $response = new Response($this->view->render(
-            [
-                'template' => 'postNotFound',
-            ],
-        ));
-
         // COMMENT FORM
 
         if ($this->request->getMethod() === 'POST'){
@@ -75,11 +68,6 @@ final class PostController
 
         }
 
-        // NEXT/PREVIOUS POST
-
-        $nextPost = $this->postRepository->nextPost($post->getCreatedAt());
-        $previousPost = $this->postRepository->previousPost($post->getCreatedAt());
-
         // PAGINATION
 
         $page = (int)$this->request->query()->get('page');
@@ -93,7 +81,12 @@ final class PostController
 
         $this->session->set('token', $token);
 
+
         if ($post !== null) {
+
+            $nextPost = $this->postRepository->nextPost($post->getCreatedAt());
+            $previousPost = $this->postRepository->previousPost($post->getCreatedAt());
+
             $response = new Response($this->view->render(
                 [
                 'template' => 'post',
@@ -107,7 +100,11 @@ final class PostController
                     'pageCourante' => $paginator['pageCourante']
                     ],
                 ],
-            ));
+            ),200);
+        }
+
+        if (is_null($post)){
+            $response = new RedirectResponse('postNotFound');
         }
 
         return $response;
@@ -132,7 +129,7 @@ final class PostController
                 'pagesTotales' => $paginator['pagesTotales'],
                 'pageCourante' => $paginator['pageCourante']
             ],
-        ]));
+        ]),200);
     }
 
 }

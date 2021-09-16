@@ -6,6 +6,7 @@ namespace  App\Controller\Frontoffice;
 
 use App\Model\Entity\User;
 use App\Service\Authorization;
+use App\Service\Http\RedirectResponse;
 use App\Service\Mailer;
 use App\Service\Validator;
 use App\View\View;
@@ -39,10 +40,12 @@ final class UserController
     {
 
         if($this->security->notLogged() === false){
-            header('Location: index.php?action=home');
+            new RedirectResponse('home');
         }
 
         $token = base_convert(hash('sha256', time() . mt_rand()), 16, 36);
+
+        $data = [];
 
         if ($request->getMethod() === 'POST') {
 
@@ -68,8 +71,9 @@ final class UserController
         $this->session->set('token', $token);
 
         return new Response($this->view->render(['template' => 'login', 'data' => [
-            'token' => $token
-        ]]),403);
+            'token' => $token,
+            'formData' => $data
+        ]]),200);
     }
 
     public function logoutAction(): Response
@@ -87,10 +91,12 @@ final class UserController
     {
 
         if($this->security->notLogged() === false){
-            header('Location: index.php?action=home');
+            new RedirectResponse('home');
         }
 
         $token = base_convert(hash('sha256', time() . mt_rand()), 16, 36);
+
+        $datas = [];
 
         if ($this->request->getMethod() === 'POST') {
 
@@ -109,7 +115,7 @@ final class UserController
                 $tokenUser = uniqid();
                 $password = password_hash($datas['password'], PASSWORD_BCRYPT);
                 $user = new User(0,$datas['firstname'],$datas['lastname'],$datas['email'],$password,'Non','User',$tokenUser);
-                $result = $this->userRepository->create($user);
+                $resultUser = $this->userRepository->create($user);
 
                 // ADD TOKEN TO MAIL DATA
 
@@ -117,20 +123,20 @@ final class UserController
 
                 // SEND CONFIRMATION MAIL
 
-                if ($result){
+                if ($resultUser){
 
                     $result = $this->mailer->mail('Confirmation de compte','eric.saou3@gmail.com',$datas['email'],'register',$datas);
 
                     if ($result) {
                         $this->session->addFlashes('success', 'Inscription réalisée, consultez vos mails pour valider votre compte !');
-                    } else {
+                    }
+                    if (!$result){
                         $this->session->addFlashes('danger', 'Erreur lors de l\'envoi du mail !');
                     }
 
-                }else{
-
+                }
+                if (!$resultUser){
                     $this->session->addFlashes('danger', 'Erreur lors de la création de l\'utilisateur !');
-
                 }
 
             }
@@ -141,16 +147,17 @@ final class UserController
         return new Response($this->view->render([
             'template' => 'register',
             'data' => [
-                'token' => $token
+                'token' => $token,
+                'formData' => $datas
             ],
-        ]));
+        ]),200);
     }
 
     public function userAccount() :Response
     {
 
         if($this->security->notLogged() === true or $this->security->loggedAs('User') !== true){
-            header('Location: index.php?action=home');
+            new RedirectResponse('home');
         }
 
         $token = base_convert(hash('sha256', time() . mt_rand()), 16, 36);
@@ -183,7 +190,7 @@ final class UserController
             'data' => [
                 'token' => $token
             ]
-        ]));
+        ]),200);
     }
 
     public function confirmUser():Response{

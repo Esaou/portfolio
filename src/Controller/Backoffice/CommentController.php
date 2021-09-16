@@ -8,6 +8,7 @@ use App\Controller\Frontoffice\SecurityController;
 use App\Controller\Frontoffice\UserController;
 use App\Model\Repository\UserRepository;
 use App\Service\Authorization;
+use App\Service\Http\RedirectResponse;
 use App\Service\Http\Request;
 use App\Service\Http\Response;
 use App\Service\Http\Session\Session;
@@ -38,9 +39,9 @@ final class CommentController
         $security = new Authorization($this->session,$this->request);
 
         if($security->notLogged() === true){
-            header('Location: index.php?action=forbidden');
+            new RedirectResponse('forbidden');
         }elseif($security->loggedAs('User') === true){
-            header('Location: index.php?action=forbidden');
+            new RedirectResponse('forbidden');
         }
 
     }

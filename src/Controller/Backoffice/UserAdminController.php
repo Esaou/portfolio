@@ -9,6 +9,7 @@ use App\Controller\Frontoffice\UserController;
 use App\Model\Entity\User;
 use App\Model\Repository\UserRepository;
 use App\Service\Authorization;
+use App\Service\Http\RedirectResponse;
 use App\Service\Http\Request;
 use App\Service\Http\Response;
 use App\Service\Http\Session\Session;
@@ -42,9 +43,9 @@ final class UserAdminController
         $this->validator = new Validator($this->session);
 
         if($this->security->notLogged() === true){
-            header('Location: index.php?action=forbidden');
+            new RedirectResponse('forbidden');
         }elseif($this->security->loggedAs('User') === true){
-            header('Location: index.php?action=forbidden');
+            new RedirectResponse('forbidden');
         }
 
     }
@@ -52,7 +53,7 @@ final class UserAdminController
     public function usersList():Response{
 
         if($this->security->loggedAs('Dev') === false){
-            header('Location: index.php?action=forbidden');
+            new RedirectResponse('forbidden');
         }
 
         if(!is_null($this->request->query()->get('delete'))){
@@ -84,7 +85,7 @@ final class UserAdminController
                 'pagesTotales' => $paginator['pagesTotales'],
                 'pageCourante' => $paginator['pageCourante']
             ],
-        ]));
+        ]),200);
     }
 
     public function userAccount() :Response
@@ -121,7 +122,7 @@ final class UserAdminController
             'data' => [
                 'token' => $token
             ]
-        ]));
+        ]),200);
     }
 
     public function editUser(int $id):Response{
@@ -131,7 +132,7 @@ final class UserAdminController
         $tokenPost = $this->request->request()->get('token');
 
         if($this->security->loggedAs('Dev') === false){
-            header('Location: index.php?action=forbidden');
+            new RedirectResponse('forbidden');
         }
 
         $user = $this->userRepository->findOneBy(['id_utilisateur' => $id]);
@@ -162,7 +163,7 @@ final class UserAdminController
                 'user' => $user,
                 'token' => $token
             ],
-        ]));
+        ]),200);
 
     }
 

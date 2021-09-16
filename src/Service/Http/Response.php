@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Service\Http;
 
-final class Response
+class Response
 {
     private string $content;
     private int $status;
@@ -20,7 +20,13 @@ final class Response
     public function send(): void
     {
         // TODO Il faut renvoyer aussi le status de la réponse
+        $this->setStatus($this->status);
         echo $this->content;
+
+    }
+
+    public function setStatus(int $status){
+        http_response_code($status);
     }
 
 }

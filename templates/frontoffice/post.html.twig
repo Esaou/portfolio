@@ -30,19 +30,19 @@
                         Publié par <span class="text-blue">Anonyme</span>
                 {% endif %}
                 - {% if post.updatedAt is not null %}
-                Modifié le {{ post.updatedAt|date('d/m/Y') }} à {{ post.updatedAt|date('H') }}h{{ post.updatedAt|date('i') }}
+                Modifié le {{ post.updatedAt|date('d/m/Y') }} à {{ post.updatedAt|date('H',"Europe/Paris") }}h{{ post.updatedAt|date('i',"Europe/Paris") }}
                 {% else %}
-                    Créé le {{ post.createdAt|date('d/m/Y') }} à {{ post.createdAt|date('H') }}h{{ post.createdAt|date('i') }}
+                    Créé le {{ post.createdAt|date('d/m/Y') }} à {{ post.createdAt|date('H',"Europe/Paris") }}h{{ post.createdAt|date('i',"Europe/Paris") }}
                 {% endif %}
             </div>
         </div>
     </article>
 
-    <section class="container p-4">
+    <section class="container p-4" id="containerComments">
         <h4 class="text-left text-black mb-4">Commentaires {% if session.user is not defined %}<small style="font-size: 17px;font-weight: normal;">(connectez-vous pour laisser un commentaire)</small>{% endif %}</h4>
         <hr>
         {% if session.user %}
-        <form class="formComment mb-3" action="index.php?action=post&id={{ post.id_post }}" method="POST">
+        <form class="formComment mb-3" action="index.php?action=post&id={{ post.id_post }}#containerComments" method="POST">
             <input type="hidden" name="token" id="token" value="{{ token }}"/>
             <div class="form-group col-12">
                 <label for="comment">Mon commentaire</label>
@@ -60,7 +60,7 @@
                     <div class="pb-3">{{ comment.comment }}</div>
                     <div class="w-100 blocBtnCreated">
                             <i class="far fa-check-circle" style="margin-right: 10px"></i>
-                        <div>Posté le {{ comment.createdAt|date('d/m/Y') }} à {{ comment.createdAt|date('H') }}h{{ comment.createdAt|date('i') }}</div>
+                        <div>Posté le {{ comment.createdAt|date('d/m/Y') }} à {{ comment.createdAt|date('H',"Europe/Paris") }}h{{ comment.createdAt|date('i',"Europe/Paris") }}</div>
                     </div>
                 </div>
             {% endfor %}

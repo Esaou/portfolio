@@ -198,6 +198,7 @@ final class UserController
                 'token' => $token
             ]
         ]),200);
+
     }
 
     public function confirmUser():Response{

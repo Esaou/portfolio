@@ -18,7 +18,10 @@
         <main class="padMain">
             {% for type,values in flashes %}
                 <div class="containerFlashMessage">
-                {% if type == 'success' %}
+                    <div class="text-end pb-1">
+                        <span style="font-size: 20px;color: gray;cursor: pointer;" id="closeError"><i class="fas fa-times-circle"></i></span>
+                    </div>
+                        {% if type == 'success' %}
                     {% for message in values %}
                     <div class="alert alert-success flashMessage">
                         {{ message }}
@@ -56,9 +59,14 @@
             <script>
                 $( document ).ready(function() {
                     setTimeout(function() {
-                        $('.flashMessage').remove();
+                        $('.containerFlashMessage').remove();
                     }, 8000);
                 });
+
+                $('#closeError').on('click',()=>{
+                    $('.containerFlashMessage').remove();
+                })
+
             </script>
         {% endblock %}
     </body>

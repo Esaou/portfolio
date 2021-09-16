@@ -34,16 +34,22 @@ class Validator
 
         }
 
-        if (isset($data['lastname']) and (strlen($data['lastname']) < 1 or strlen($data['lastname']) > 30 or !preg_match('#[^0-9]#',$data['lastname']))) {
+        if (isset($data['lastname']) and (strlen($data['lastname']) < 1
+                or strlen($data['lastname']) > 30
+                or !preg_match('#[^0-9]#',$data['lastname'])
+                or preg_match('#[\W]#',$data['lastname']))) {
 
-            $this->session->addFlashes('danger', 'Le nom peut contenir de 2 à 30 caractères sans chiffres !');
+            $this->session->addFlashes('danger', 'Le nom peut contenir de 2 à 30 caractères sans chiffres ni caractères spéciaux !');
             $error = true;
 
         }
 
-        if (isset($data['firstname']) and (strlen($data['firstname']) < 1 or strlen($data['firstname']) > 30 or !preg_match('#[^0-9]#',$data['firstname']))) {
+        if (isset($data['firstname']) and (strlen($data['firstname']) < 1
+                or strlen($data['firstname']) > 30
+                or !preg_match('#[^0-9]#',$data['firstname'])
+                or preg_match('#[\W]#',$data['firstname']))) {
 
-            $this->session->addFlashes('danger', 'Le prénom peut contenir de 2 à 30 caractères !');
+            $this->session->addFlashes('danger', 'Le prénom peut contenir de 2 à 30 caractères sans chiffres ni caractères spéciaux !');
             $error = true;
 
         }

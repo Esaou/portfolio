@@ -15,12 +15,31 @@
     background-color: rgb(245,245,245);
 }
 
+.flashMessage{
+    width: 400px!important;
+}
+
 .containerFlashMessage{
     width: unset!important;
     position: fixed!important;
     bottom: 20px!important;
     right: 30px!important;
     z-index: 100000!important;
+}
+
+@media screen and (max-width: 850px) {
+
+    .containerFlashMessage{
+        position: fixed!important;
+        bottom: 20px!important;
+        right: 0px!important;
+        padding: 10px;
+    }
+
+    .flashMessage{
+        width: 100%!important;
+    }
+
 }
 
 /* NAV */

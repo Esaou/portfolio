@@ -9,6 +9,7 @@ use App\Controller\Frontoffice\UserController;
 use App\Model\Entity\Post;
 use App\Model\Repository\UserRepository;
 use App\Service\Authorization;
+use App\Service\FormValidator\EditPostValidator;
 use App\Service\Http\RedirectResponse;
 use App\Service\Http\Request;
 use App\Service\Http\Response;
@@ -27,7 +28,7 @@ final class PostAdminController
     private View $view;
     private Request $request;
     private Session $session;
-    private Validator $validator;
+    private EditPostValidator $validator;
 
     public function __construct(View $view,Request $request,Session $session,CommentRepository $commentRepository,UserRepository $userRepository,PostRepository $postRepository)
     {
@@ -38,7 +39,7 @@ final class PostAdminController
         $this->view = $view;
         $this->request = $request;
         $this->session = $session;
-        $this->validator = new Validator($this->session);
+        $this->validator = new EditPostValidator($this->session);
 
         $security = new Authorization($this->session,$this->request);
 

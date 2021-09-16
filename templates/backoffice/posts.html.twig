@@ -46,7 +46,7 @@
                                 <div class="modal-body" style="font-size: 16px;">
                                     <p class="text-black">Confirmez le suppression du post :</p>
                                     <p class="text-blue" style="font-weight: bold;">{{ post.title|slice(0,50) }}</p>
-                                    <p class="text-black">{{ post.content|slice(0,50)|raw }} ...</p>
+                                    <p class="text-black">{{ post.content|striptags|slice(0, 20) }} {% if post.content|length > 20 %}...{% endif %}</p>
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Annuler</button>

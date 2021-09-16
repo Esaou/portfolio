@@ -2,6 +2,14 @@
     color: red;
 }
 
+.containerFlashMessage{
+    width: unset!important;
+    position: fixed!important;
+    bottom: 20px!important;
+    right: 30px!important;
+    z-index: 100000!important;
+}
+
 @keyframes swing {
     0% {
         transform: rotate(0deg);

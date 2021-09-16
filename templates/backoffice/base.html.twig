@@ -16,21 +16,30 @@
             {% endblock %}
             <main class="page-content">
                 <div class="pb-5">
-                    {% for type,message in flashes %}
-                        {% if type == 'success' %}
-                            <div class="alert alert-success flashMessage">
-                                {{ message }}
-                            </div>
-                        {% elseif type == 'danger' %}
-                            <div class="alert alert-danger flashMessage">
-                                {{ message }}
-                            </div>
-                        {% elseif type == 'update' %}
-                            <div class="alert alert-primary flashMessage">
-                                {{ message }}
-                            </div>
-                        {% endif %}
+                    {% for type,values in flashes %}
+                        <div class="containerFlashMessage">
+                            {% if type == 'success' %}
+                                {% for message in values %}
+                                    <div class="alert alert-success flashMessage">
+                                        {{ message }}
+                                    </div>
+                                {% endfor %}
+                            {% elseif type == 'danger' %}
+                                {% for message in values %}
+                                    <div class="alert alert-danger flashMessage">
+                                        {{ message }}
+                                    </div>
+                                {% endfor %}
+                            {% elseif type == 'update' %}
+                                {% for message in values %}
+                                    <div class="alert alert-primary flashMessage">
+                                        {{ message }}
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
                     {% endfor %}
+
                     {% block content %}{% endblock %}
                 </div>
             </main>

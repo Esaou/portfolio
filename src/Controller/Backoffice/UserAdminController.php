@@ -4,17 +4,16 @@ declare(strict_types=1);
 
 namespace  App\Controller\Backoffice;
 
-use App\Controller\Frontoffice\SecurityController;
-use App\Controller\Frontoffice\UserController;
 use App\Model\Entity\User;
 use App\Model\Repository\UserRepository;
 use App\Service\Authorization;
+use App\Service\FormValidator\AccountValidator;
+use App\Service\FormValidator\EditPostValidator;
 use App\Service\Http\RedirectResponse;
 use App\Service\Http\Request;
 use App\Service\Http\Response;
 use App\Service\Http\Session\Session;
 use App\Service\Paginator;
-use App\Service\Validator;
 use App\View\View;
 use App\Model\Repository\PostRepository;
 use App\Model\Repository\CommentRepository;
@@ -28,7 +27,8 @@ final class UserAdminController
     private Request $request;
     private Session $session;
     private Authorization $security;
-    private Validator $validator;
+    private EditPostValidator $editPostValidator;
+    private AccountValidator $accountValidator;
 
     public function __construct(View $view,Request $request,Session $session,CommentRepository $commentRepository,UserRepository $userRepository,PostRepository $postRepository)
     {
@@ -40,7 +40,8 @@ final class UserAdminController
         $this->request = $request;
         $this->session = $session;
         $this->security = new Authorization($this->session,$this->request);
-        $this->validator = new Validator($this->session);
+        $this->editPostValidator = new EditPostValidator($this->session);
+        $this->accountValidator = new AccountValidator($this->session);
 
         if($this->security->notLogged() === true){
             new RedirectResponse('forbidden');
@@ -102,7 +103,7 @@ final class UserAdminController
             $data['tokenPost'] = $this->request->request()->get('token');
             $data['tokenSession'] = $this->session->get('token');
 
-            if ($this->validator->accountValidator($data)){
+            if ($this->accountValidator->accountValidator($data)){
 
                 $password = password_hash($data['password'], PASSWORD_BCRYPT);
                 $user = new User($user->getIdUtilisateur(), $data['firstname'], $data['lastname'], $data['email'], $password, $user->getIsValid(), $user->getRole(), $user->getToken());

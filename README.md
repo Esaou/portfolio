@@ -4,12 +4,14 @@
 ### **Pré-requis**
 
 - Installer WAMP ou un autre logiciel similaire.
+- Installer composer.
 - Vérifiez que PHP 8 est installé et configuré.
 - Installer Mailhog pour utiliser la fonctionnalité de mailing [ici](https://github.com/mailhog/MailHog/releases/v1.0.0).
 
 ### **Installation**
 
 - Cloner le repository
+- Lancer la commande " composer install " à la racine du projet.
 - Créez une nouvelle base de donnée " projet5 " dans votre gestionnaire de base de données.
 - Importez le fichier .dump qui se situe à la racine du projet.
 

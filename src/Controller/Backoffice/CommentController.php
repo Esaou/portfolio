@@ -4,8 +4,7 @@ declare(strict_types=1);
 
 namespace  App\Controller\Backoffice;
 
-use App\Controller\Frontoffice\SecurityController;
-use App\Controller\Frontoffice\UserController;
+use App\Model\Entity\Comment;
 use App\Model\Repository\UserRepository;
 use App\Service\Authorization;
 use App\Service\Http\RedirectResponse;
@@ -39,9 +38,9 @@ final class CommentController
         $this->paginator = new Paginator($this->request,$this->view);
         $security = new Authorization($this->session,$this->request);
 
-        if($security->notLogged() === true){
+        if(!$security->isLogged()){
             new RedirectResponse('forbidden');
-        }elseif($security->loggedAs('User') === true){
+        }elseif($security->loggedAs('User')){
             new RedirectResponse('forbidden');
         }
 
@@ -77,14 +76,14 @@ final class CommentController
         if(!is_null($this->request->query()->get('unvalidate'))){
 
             $id = $this->request->query()->get('id');
+            /** @var Comment $comment */
             $comment = $this->commentRepository->findOneBy(['id' => $id]);
+
             $comment->setIsChecked('Non');
             $this->commentRepository->update($comment);
 
-            if (!is_null($comment)){
-                $comment->setIsChecked('Non');
-                $this->session->addFlashes('success','Commentaire invalidé avec succès !');
-            }
+            $this->session->addFlashes('success','Commentaire invalidé avec succès !');
+
 
         }
 

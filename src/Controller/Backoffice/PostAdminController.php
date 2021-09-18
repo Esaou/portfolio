@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace  App\Controller\Backoffice;
 
-use App\Controller\Frontoffice\SecurityController;
-use App\Controller\Frontoffice\UserController;
 use App\Model\Entity\Post;
 use App\Model\Repository\UserRepository;
 use App\Service\Authorization;
@@ -46,9 +44,9 @@ final class PostAdminController
         $security = new Authorization($this->session,$this->request);
 
 
-        if($security->notLogged() === true){
+        if(!$security->isLogged()){
             new RedirectResponse('forbidden');
-        }elseif($security->loggedAs('User') === true){
+        }elseif($security->loggedAs('User')){
             new RedirectResponse('forbidden');
         }
 

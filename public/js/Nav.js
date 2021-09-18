@@ -1,6 +1,5 @@
 class Nav {
 
-
     constructor() {
 
         this.slideNav();

@@ -25,7 +25,7 @@ class Response
 
     }
 
-    public function setStatus(int $status){
+    public function setStatus(int $status):void{
         http_response_code($status);
     }
 

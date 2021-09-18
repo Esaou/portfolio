@@ -19,14 +19,14 @@ class Paginator
         $this->view = $view;
     }
 
-    public function paginate(int $tableRows,int $parPage,$route): array
+    public function paginate(int $tableRows,int $parPage,string $route): array
     {
 
         $page = (int)$this->request->query()->get('page');
 
         $pagesTotales = ceil($tableRows/$parPage);
 
-        if(isset($page) AND !empty($page) AND $page > 0 AND $page <= $pagesTotales){
+        if(!empty($page) AND $page > 0 AND $page <= $pagesTotales){
             $page = intval($page);
             $pageCourante = $page;
         }else{

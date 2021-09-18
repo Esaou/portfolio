@@ -54,14 +54,11 @@ final class PostController
 
             $data = $this->request->request()->all();
 
-            $user = $this->session->get('user');
-
             if ($this->validator->commentValidator($data)){
 
+                $user = $this->session->get('user');
                 $comment = new Comment(0,$data['comment'],$post,$user,'Non',new \DateTime('now'));
-
                 $this->commentRepository->create($comment);
-
                 $this->session->addFlashes('success','Commentaire posté avec succès !');
             }
 
@@ -70,9 +67,7 @@ final class PostController
         // PAGINATION
 
         $tableRows = $this->commentRepository->countAllCheckedComment($id);
-
         $paginator = $this->paginator->paginate($tableRows,4,'post&id='.$id);
-
         $comments = $this->commentRepository->findBy(['post_id' => $id,'isChecked' => 'Oui'],['createdDate' =>'desc'],$paginator['parPage'],$paginator['depart']);
 
         // RENDER
@@ -111,9 +106,7 @@ final class PostController
         // PAGINATION
 
         $tableRows = $this->postRepository->countAllPosts();
-
         $paginator = $this->paginator->paginate($tableRows,4,'posts');
-
         $posts = $this->postRepository->findBy([],['createdAt' =>'desc'],$paginator['parPage'],$paginator['depart']);
 
         return new Response($this->view->render([

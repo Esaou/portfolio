@@ -48,9 +48,9 @@ final class UserAdminController
         $this->csrf = new CsrfToken($this->session,$this->request);
         $this->paginator = new Paginator($this->request,$this->view);
 
-        if($this->security->notLogged() === true){
+        if(!$this->security->isLogged()){
             new RedirectResponse('forbidden');
-        }elseif($this->security->loggedAs('User') === true){
+        }elseif($this->security->loggedAs('User')){
             new RedirectResponse('forbidden');
         }
 
@@ -58,7 +58,7 @@ final class UserAdminController
 
     public function usersList():Response{
 
-        if($this->security->loggedAs('Dev') === false){
+        if(!$this->security->loggedAs('Dev')){
             new RedirectResponse('forbidden');
         }
 
@@ -77,9 +77,7 @@ final class UserAdminController
         // PAGINATION
 
         $tableRows = $this->userRepository->countAllUsers();
-
         $paginator = $this->paginator->paginate($tableRows,10,'users');
-
         $users = $this->userRepository->findBy([],['lastname' =>'asc'],$paginator['parPage'],$paginator['depart']);
 
         return new Response($this->view->render([
@@ -125,7 +123,7 @@ final class UserAdminController
     public function editUser(int $id):Response{
 
 
-        if($this->security->loggedAs('Dev') === false){
+        if(!$this->security->loggedAs('Dev')){
             new RedirectResponse('forbidden');
         }
 

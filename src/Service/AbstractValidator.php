@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-class Validator
+class AbstractValidator
 {
 
     private $session;
@@ -19,10 +19,10 @@ class Validator
 
         $error = false;
 
-        if ($data['tokenPost'] != $data['tokenSession']){
+        /*if ($data['tokenPost'] != $data['tokenSession']){
             $this->session->addFlashes('danger','Token de session expiré !');
             $error = true;
-        }
+        }*/
 
         if ((isset($data['lastname']) and $data['lastname'] == '')
             or (isset($data['firstname']) and $data['firstname'] == '')

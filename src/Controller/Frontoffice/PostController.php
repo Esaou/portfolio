@@ -6,6 +6,7 @@ namespace  App\Controller\Frontoffice;
 
 use App\Model\Entity\Comment;
 use App\Model\Repository\UserRepository;
+use App\Service\CsrfToken;
 use App\Service\FormValidator\CommentValidator;
 use App\Service\Http\RedirectResponse;
 use App\Service\Http\Request;
@@ -26,6 +27,7 @@ final class PostController
     private Request $request;
     private Session $session;
     private CommentValidator $validator;
+    private CsrfToken $csrf;
 
     public function __construct(View $view,Request $request,Session $session,CommentRepository $commentRepository,UserRepository $userRepository,PostRepository $postRepository)
     {
@@ -36,25 +38,20 @@ final class PostController
         $this->request = $request;
         $this->session = $session;
         $this->validator = new CommentValidator($this->session);
+        $this->csrf = new CsrfToken($this->session,$this->request);
     }
 
     public function displayOneAction(int $id): Response
     {
-
-        $token = base_convert(hash('sha256', time() . mt_rand()), 16, 36);
-
         // FIND A POST
 
         $post = $this->postRepository->findOneBy(['id_post' => $id]);
 
         // COMMENT FORM
 
-        if ($this->request->getMethod() === 'POST'){
+        if ($this->request->getMethod() === 'POST' and $this->csrf->tokenCheck()){
 
             $data = $this->request->request()->all();
-
-            $data['tokenSession'] = $this->session->get('token');
-            $data['tokenPost'] = $this->request->request()->get('token');
 
             $user = $this->session->get('user');
 
@@ -80,8 +77,6 @@ final class PostController
 
         // RENDER
 
-        $this->session->set('token', $token);
-
 
         if ($post !== null) {
 
@@ -92,7 +87,7 @@ final class PostController
                 [
                 'template' => 'post',
                 'data' => [
-                    'token' => $token,
+                    'token' => $this->csrf->newToken(),
                     'post' => $post,
                     'comments' => $comments,
                     'nextPost' => $nextPost,

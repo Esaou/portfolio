@@ -9,13 +9,13 @@ use App\Controller\Frontoffice\UserController;
 use App\Model\Entity\Post;
 use App\Model\Repository\UserRepository;
 use App\Service\Authorization;
+use App\Service\CsrfToken;
 use App\Service\FormValidator\EditPostValidator;
 use App\Service\Http\RedirectResponse;
 use App\Service\Http\Request;
 use App\Service\Http\Response;
 use App\Service\Http\Session\Session;
 use App\Service\Paginator;
-use App\Service\Validator;
 use App\View\View;
 use App\Model\Repository\PostRepository;
 use App\Model\Repository\CommentRepository;
@@ -29,6 +29,7 @@ final class PostAdminController
     private Request $request;
     private Session $session;
     private EditPostValidator $validator;
+    private CsrfToken $csrf;
 
     public function __construct(View $view,Request $request,Session $session,CommentRepository $commentRepository,UserRepository $userRepository,PostRepository $postRepository)
     {
@@ -40,7 +41,7 @@ final class PostAdminController
         $this->request = $request;
         $this->session = $session;
         $this->validator = new EditPostValidator($this->session);
-
+        $this->csrf = new CsrfToken($this->session,$this->request);
         $security = new Authorization($this->session,$this->request);
 
 
@@ -88,16 +89,12 @@ final class PostAdminController
 
     public function editPost(int $id):Response{
 
-        $token = base_convert(hash('sha256', time() . mt_rand()), 16, 36);
-
         $post = $this->postRepository->findOneBy(['id_post' => $id]);
         $users = $this->userRepository->findAll();
 
-        if ($this->request->getMethod() === 'POST'){
+        if ($this->request->getMethod() === 'POST' and $this->csrf->tokenCheck()){
 
             $data = $this->request->request()->all();
-            $data['tokenSession']= $this->session->get('token');
-            $data['tokenPost'] = $this->request->request()->get('token');
 
             if ($this->validator->editPostValidator($data)){
 
@@ -112,15 +109,13 @@ final class PostAdminController
 
         }
 
-        $this->session->set('token', $token);
-
         return new Response($this->view->render([
             'template' => 'editPost',
             'type' => 'backoffice',
             'data' => [
                 'users' => $users,
                 'post' => $post,
-                'token' => $token
+                'token' => $this->csrf->newToken()
             ],
         ]),200);
 
@@ -128,13 +123,9 @@ final class PostAdminController
 
     public function addPost():Response{
 
-        $token = base_convert(hash('sha256', time() . mt_rand()), 16, 36);
-
-        if ($this->request->getMethod() === 'POST'){
+        if ($this->request->getMethod() === 'POST' and $this->csrf->tokenCheck()){
 
             $data = $this->request->request()->all();
-            $data['tokenSession'] = $this->session->get('token');
-            $data['tokenPost'] = $this->request->request()->get('token');
 
             if ($this->validator->editPostValidator($data)){
 
@@ -148,13 +139,11 @@ final class PostAdminController
             }
         }
 
-        $this->session->set('token', $token);
-
         return new Response($this->view->render([
             'template' => 'addPost',
             'type' => 'backoffice',
             'data' => [
-                'token' => $token
+                'token' => $this->csrf->newToken()
             ]
         ]),200);
 

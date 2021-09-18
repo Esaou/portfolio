@@ -31,6 +31,7 @@ final class UserAdminController
     private EditPostValidator $editPostValidator;
     private AccountValidator $accountValidator;
     private CsrfToken $csrf;
+    private Paginator $paginator;
 
     public function __construct(View $view,Request $request,Session $session,CommentRepository $commentRepository,UserRepository $userRepository,PostRepository $postRepository)
     {
@@ -45,6 +46,7 @@ final class UserAdminController
         $this->editPostValidator = new EditPostValidator($this->session);
         $this->accountValidator = new AccountValidator($this->session);
         $this->csrf = new CsrfToken($this->session,$this->request);
+        $this->paginator = new Paginator($this->request,$this->view);
 
         if($this->security->notLogged() === true){
             new RedirectResponse('forbidden');
@@ -74,10 +76,9 @@ final class UserAdminController
 
         // PAGINATION
 
-        $page = (int)$this->request->query()->get('page');
         $tableRows = $this->userRepository->countAllUsers();
 
-        $paginator = (new Paginator($page,$tableRows,8))->paginate();
+        $paginator = $this->paginator->paginate($tableRows,10,'users');
 
         $users = $this->userRepository->findBy([],['lastname' =>'asc'],$paginator['parPage'],$paginator['depart']);
 
@@ -86,8 +87,7 @@ final class UserAdminController
             'type' => 'backoffice',
             'data' => [
                 'users' => $users,
-                'pagesTotales' => $paginator['pagesTotales'],
-                'pageCourante' => $paginator['pageCourante']
+                'paginator' => $paginator['paginator']
             ],
         ]),200);
     }

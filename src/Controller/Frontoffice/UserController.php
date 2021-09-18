@@ -48,7 +48,7 @@ final class UserController
     public function loginAction(Request $request): Response
     {
 
-        if($this->security->notLogged() === false){
+        if($this->security->isLogged()){
             new RedirectResponse('home');
         }
 
@@ -94,7 +94,7 @@ final class UserController
     public function register() :Response
     {
 
-        if($this->security->notLogged() === false){
+        if($this->security->isLogged()){
             new RedirectResponse('home');
         }
 
@@ -105,7 +105,6 @@ final class UserController
             $datas = $this->request->request()->all();
 
             $validEmail = $this->userRepository->findOneBy(['email'=>$datas['email']]);
-
             $datas['validEmail'] = $validEmail;
 
             if ($this->registerValidator->registerValidator($datas)){
@@ -155,7 +154,7 @@ final class UserController
     public function userAccount() :Response
     {
 
-        if($this->security->notLogged() === true or $this->security->loggedAs('User') !== true){
+        if(!$this->security->loggedAs('User')){
             new RedirectResponse('home');
         }
 
@@ -191,7 +190,9 @@ final class UserController
 
         $token = $this->request->query()->get('token');
         $user = $this->userRepository->findOneBy(['token'=>$token]);
+
         $user->setIsValid('Oui');
+
         $this->userRepository->update($user);
 
         $this->session->addFlashes('success','Votre compte est validé succès !');

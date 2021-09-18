@@ -5,12 +5,13 @@ declare(strict_types=1);
 namespace App\Service\FormValidator;
 
 use App\Service\AbstractValidator;
+use App\Service\Http\Session\Session;
 
 class LoginValidator extends AbstractValidator
 {
-    private $session;
+    private Session $session;
 
-    public function __construct($session)
+    public function __construct(Session $session)
     {
 
         parent::__construct($session);
@@ -26,17 +27,17 @@ class LoginValidator extends AbstractValidator
             $error = true;
         }
 
-        if ($data === null) {
+        if ($data == null) {
             $this->session->addFlashes('danger', 'Aucun identifiant renseigné !');
             $error = true;
         }
 
-        if ($data['user'] === null) {
+        if ($data['user'] == null) {
             $this->session->addFlashes('danger', 'Mauvais identifiants');
             $error = true;
         }
 
-        if($data['user']->getIsValid() === 'Non'){
+        if($data['user']->getIsValid() == 'Non'){
             $this->session->addFlashes('danger', 'Compte non valide !');
             $error = true;
         }
@@ -46,7 +47,7 @@ class LoginValidator extends AbstractValidator
             $error = true;
         }
 
-        if ($error === true){
+        if ($error == true){
             return false;
         }
 

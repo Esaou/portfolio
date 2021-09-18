@@ -20,7 +20,7 @@ class CsrfToken
 
     }
 
-    public function tokenCheck(){
+    public function tokenCheck():bool{
 
         $tokenPost = $this->request->request()->get('token');
         $tokenSession = $this->session->get('token');
@@ -36,7 +36,7 @@ class CsrfToken
 
     }
 
-    public function newToken(){
+    public function newToken():string{
 
         $token = base_convert(hash('sha256', time() . mt_rand()), 16, 36);
 

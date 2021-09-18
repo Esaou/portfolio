@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Service\FormValidator;
 
-use App\Service\Validator;
+use App\Service\AbstractValidator;
 
-class EditPostValidator extends Validator
+class EditPostValidator extends AbstractValidator
 {
     private $session;
 

@@ -7,6 +7,7 @@ namespace  App\Controller\Backoffice;
 use App\Model\Entity\User;
 use App\Model\Repository\UserRepository;
 use App\Service\Authorization;
+use App\Service\CsrfToken;
 use App\Service\FormValidator\AccountValidator;
 use App\Service\FormValidator\EditPostValidator;
 use App\Service\Http\RedirectResponse;
@@ -29,6 +30,7 @@ final class UserAdminController
     private Authorization $security;
     private EditPostValidator $editPostValidator;
     private AccountValidator $accountValidator;
+    private CsrfToken $csrf;
 
     public function __construct(View $view,Request $request,Session $session,CommentRepository $commentRepository,UserRepository $userRepository,PostRepository $postRepository)
     {
@@ -42,6 +44,7 @@ final class UserAdminController
         $this->security = new Authorization($this->session,$this->request);
         $this->editPostValidator = new EditPostValidator($this->session);
         $this->accountValidator = new AccountValidator($this->session);
+        $this->csrf = new CsrfToken($this->session,$this->request);
 
         if($this->security->notLogged() === true){
             new RedirectResponse('forbidden');
@@ -92,16 +95,12 @@ final class UserAdminController
     public function userAccount() :Response
     {
 
-        $token = base_convert(hash('sha256', time() . mt_rand()), 16, 36);
-
         $id = $this->request->query()->get('id');
         $user = $this->userRepository->findOneBy(['id_utilisateur' => $id]);
 
-        if ($this->request->getMethod() === 'POST'){
+        if ($this->request->getMethod() === 'POST' and $this->csrf->tokenCheck()){
 
             $data = $this->request->request()->all();
-            $data['tokenPost'] = $this->request->request()->get('token');
-            $data['tokenSession'] = $this->session->get('token');
 
             if ($this->accountValidator->accountValidator($data)){
 
@@ -112,25 +111,19 @@ final class UserAdminController
                 $this->session->addFlashes('update','Vos informations sont modifiées avec succès !');
             }
 
-
         }
-
-        $this->session->set('token', $token);
 
         return new Response($this->view->render([
             'template' => 'userAccount',
             'type' => 'backoffice',
             'data' => [
-                'token' => $token
+                'token' => $this->csrf->newToken()
             ]
         ]),200);
     }
 
     public function editUser(int $id):Response{
 
-        $token = base_convert(hash('sha256', time() . mt_rand()), 16, 36);
-        $tokenSession = $this->session->get('token');
-        $tokenPost = $this->request->request()->get('token');
 
         if($this->security->loggedAs('Dev') === false){
             new RedirectResponse('forbidden');
@@ -138,23 +131,17 @@ final class UserAdminController
 
         $user = $this->userRepository->findOneBy(['id_utilisateur' => $id]);
 
-        if ($this->request->getMethod() === 'POST'){
+        if ($this->request->getMethod() === 'POST' and $this->csrf->tokenCheck()){
 
+            $role = $this->request->request()->get('role');
 
-            if ($tokenPost != $tokenSession){
-                $this->session->addFlashes('danger','Token de session expiré !');
-            }else{
-                $role = $this->request->request()->get('role');
+            $user = new User($user->getIdUtilisateur(),$user->getFirstname(),$user->getLastname(),$user->getEmail(),$user->getPassword(),$user->getIsValid(),$role,$user->getToken());
 
-                $user = new User($user->getIdUtilisateur(),$user->getFirstname(),$user->getLastname(),$user->getEmail(),$user->getPassword(),$user->getIsValid(),$role,$user->getToken());
+            $this->userRepository->update($user);
 
-                $this->userRepository->update($user);
+            $this->session->addFlashes('update','Utilisateur modifié avec succès !');
 
-                $this->session->addFlashes('update','Utilisateur modifié avec succès !');
-            }
         }
-
-        $this->session->set('token', $token);
 
         return new Response($this->view->render([
 
@@ -162,7 +149,7 @@ final class UserAdminController
             'type' => 'backoffice',
             'data' => [
                 'user' => $user,
-                'token' => $token
+                'token' => $this->csrf->newToken()
             ],
         ]),200);
 

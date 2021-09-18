@@ -35,7 +35,6 @@ final class CommentController
         $this->view = $view;
         $this->request = $request;
         $this->session = $session;
-
         $security = new Authorization($this->session,$this->request);
 
         if($security->notLogged() === true){

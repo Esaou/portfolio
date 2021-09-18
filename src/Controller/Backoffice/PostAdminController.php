@@ -30,7 +30,7 @@ final class PostAdminController
     private Session $session;
     private EditPostValidator $validator;
     private CsrfToken $csrf;
-
+    private Paginator $paginator;
     public function __construct(View $view,Request $request,Session $session,CommentRepository $commentRepository,UserRepository $userRepository,PostRepository $postRepository)
     {
 
@@ -42,6 +42,7 @@ final class PostAdminController
         $this->session = $session;
         $this->validator = new EditPostValidator($this->session);
         $this->csrf = new CsrfToken($this->session,$this->request);
+        $this->paginator = new Paginator($this->request,$this->view);
         $security = new Authorization($this->session,$this->request);
 
 
@@ -69,10 +70,9 @@ final class PostAdminController
 
         // PAGINATION
 
-        $page = (int)$this->request->query()->get('page');
         $tableRows = $this->postRepository->countAllPosts();
 
-        $paginator = (new Paginator($page,$tableRows,8))->paginate();
+        $paginator = $this->paginator->paginate($tableRows,10,'postsAdmin');
 
         $posts = $this->postRepository->findBy([],['createdAt' =>'desc'],$paginator['parPage'],$paginator['depart']);
 
@@ -81,8 +81,7 @@ final class PostAdminController
             'type' => 'backoffice',
             'data' => [
                 'posts' => $posts,
-                'pagesTotales' => $paginator['pagesTotales'],
-                'pageCourante' => $paginator['pageCourante']
+                'paginator' => $paginator['paginator']
             ],
         ]),200);
     }

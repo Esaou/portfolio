@@ -12,7 +12,6 @@ use App\Service\Http\RedirectResponse;
 use App\Service\Http\Request;
 use App\Service\Http\Session\Session;
 use App\Service\Paginator;
-use App\Service\Validator;
 use App\View\View;
 use App\Service\Http\Response;
 use App\Model\Repository\PostRepository;
@@ -28,6 +27,7 @@ final class PostController
     private Session $session;
     private CommentValidator $validator;
     private CsrfToken $csrf;
+    private Paginator $paginator;
 
     public function __construct(View $view,Request $request,Session $session,CommentRepository $commentRepository,UserRepository $userRepository,PostRepository $postRepository)
     {
@@ -39,6 +39,7 @@ final class PostController
         $this->session = $session;
         $this->validator = new CommentValidator($this->session);
         $this->csrf = new CsrfToken($this->session,$this->request);
+        $this->paginator = new Paginator($this->request,$this->view);
     }
 
     public function displayOneAction(int $id): Response
@@ -68,10 +69,9 @@ final class PostController
 
         // PAGINATION
 
-        $page = (int)$this->request->query()->get('page');
         $tableRows = $this->commentRepository->countAllCheckedComment($id);
 
-        $paginator = (new Paginator($page,$tableRows,4))->paginate();
+        $paginator = $this->paginator->paginate($tableRows,4,'post&id='.$id);
 
         $comments = $this->commentRepository->findBy(['post_id' => $id,'isChecked' => 'Oui'],['createdDate' =>'desc'],$paginator['parPage'],$paginator['depart']);
 
@@ -92,8 +92,7 @@ final class PostController
                     'comments' => $comments,
                     'nextPost' => $nextPost,
                     'previousPost' => $previousPost,
-                    'pagesTotales' => $paginator['pagesTotales'],
-                    'pageCourante' => $paginator['pageCourante']
+                    'paginator' => $paginator['paginator']
                     ],
                 ],
             ),200);
@@ -111,19 +110,17 @@ final class PostController
 
         // PAGINATION
 
-        $page = (int)$this->request->query()->get('page');
         $tableRows = $this->postRepository->countAllPosts();
 
-        $paginator = (new Paginator($page,$tableRows,4))->paginate();
+        $paginator = $this->paginator->paginate($tableRows,4,'posts');
 
-        $posts = $this->postRepository->findBy([],['createdAt' =>'asc'],$paginator['parPage'],$paginator['depart']);
+        $posts = $this->postRepository->findBy([],['createdAt' =>'desc'],$paginator['parPage'],$paginator['depart']);
 
         return new Response($this->view->render([
             'template' => 'posts',
             'data' => [
                 'posts' => $posts,
-                'pagesTotales' => $paginator['pagesTotales'],
-                'pageCourante' => $paginator['pageCourante']
+                'paginator' => $paginator['paginator']
             ],
         ]),200);
     }

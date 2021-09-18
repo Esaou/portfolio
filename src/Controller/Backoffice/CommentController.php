@@ -25,6 +25,7 @@ final class CommentController
     private View $view;
     private Request $request;
     private Session $session;
+    private Paginator $paginator;
 
     public function __construct(View $view,Request $request,Session $session,CommentRepository $commentRepository,UserRepository $userRepository,PostRepository $postRepository)
     {
@@ -35,6 +36,7 @@ final class CommentController
         $this->view = $view;
         $this->request = $request;
         $this->session = $session;
+        $this->paginator = new Paginator($this->request,$this->view);
         $security = new Authorization($this->session,$this->request);
 
         if($security->notLogged() === true){
@@ -88,10 +90,9 @@ final class CommentController
 
         // PAGINATION
 
-        $page = (int)$this->request->query()->get('page');
         $tableRows = $this->commentRepository->countAllComment();
 
-        $paginator = (new Paginator($page,$tableRows,8))->paginate();
+        $paginator = $this->paginator->paginate($tableRows,10,'comments');
 
         $comments = $this->commentRepository->findBy([],['createdDate' =>'desc'],$paginator['parPage'],$paginator['depart']);
 
@@ -100,8 +101,7 @@ final class CommentController
             'type' => 'backoffice',
             'data' => [
                 'comments' => $comments,
-                'pagesTotales' => $paginator['pagesTotales'],
-                'pageCourante' => $paginator['pageCourante']
+                'paginator' => $paginator['paginator']
             ],
         ]));
     }

@@ -22,7 +22,7 @@ final class PostRepository implements EntityRepositoryInterface
     {
         $data = $this->findBy(['id'=>$id]);
 
-        if (!empty($data)){
+        if (!empty($data)) {
             $data = current($data);
         }
 
@@ -37,9 +37,9 @@ final class PostRepository implements EntityRepositoryInterface
     {
 
         $user = null;
-        $data = $this->findBy($criteria,$orderBy);
+        $data = $this->findBy($criteria, $orderBy);
 
-        if (!is_null($data)){
+        if (!is_null($data)) {
             $data = current($data);
         }
 
@@ -50,23 +50,23 @@ final class PostRepository implements EntityRepositoryInterface
     {
         $sql = "select * from post inner join user on post.user_id = user.id_utilisateur ";
 
-        if (!empty($criteria)){
+        if (!empty($criteria)) {
             $sql .= $this->database->setCondition($criteria);
         }
 
-        if (!is_null($orderBy)){
+        if (!is_null($orderBy)) {
             $sql .= ' order by '.$this->database->setOrderBy($orderBy);
         }
 
-        if (!is_null($limit)){
+        if (!is_null($limit)) {
             $sql .= ' limit '.$limit;
         }
 
-        if (!is_null($offset)){
+        if (!is_null($offset)) {
             $sql .= ' offset '.$offset;
         }
 
-        $data = $this->database->prepare($sql,$criteria);
+        $data = $this->database->prepare($sql, $criteria);
 
         if (empty($data)) {
             return null;
@@ -74,13 +74,32 @@ final class PostRepository implements EntityRepositoryInterface
 
         $posts = [];
 
-        foreach ($data as $post) {
-            $post->createdAt = new \DateTime($post->createdAt);
-            if (!is_null($post->updatedAt)){
-                $post->updatedAt = new \DateTime($post->updatedAt);
+        if (is_iterable($data)) {
+            foreach ($data as $post) {
+                $post->createdAt = new \DateTime($post->createdAt);
+                if (!is_null($post->updatedAt)) {
+                    $post->updatedAt = new \DateTime($post->updatedAt);
+                }
+                $user = new User(
+                    (int)$post->id_utilisateur,
+                    $post->firstname,
+                    $post->lastname,
+                    $post->email,
+                    $post->password,
+                    $post->isValid,
+                    $post->role,
+                    $post->token
+                );
+                $posts[] = new Post(
+                    (int)$post->id_post,
+                    $post->chapo,
+                    $post->title,
+                    $post->content,
+                    $post->createdAt,
+                    $post->updatedAt,
+                    $user
+                );
             }
-            $user = new User((int)$post->id_utilisateur, $post->firstname,$post->lastname, $post->email, $post->password,$post->isValid,$post->role,$post->token);
-            $posts[] = new Post((int)$post->id_post,$post->chapo, $post->title, $post->content,$post->createdAt,$post->updatedAt,$user);
         }
 
         return $posts;
@@ -99,49 +118,52 @@ final class PostRepository implements EntityRepositoryInterface
 
     public function create(object $post): bool
     {
-        $criteria = false;
+        $criteria = [];
+
+        $post = get_object_vars($post);
 
         foreach ($post as $key => $value) {
-
-            if ($key === 'createdAt'){
+            if ($key === 'createdAt') {
                 $criteria[$key] = $value->format('Y-m-d H:i:s');
-            }elseif ($key === 'user'){
+            } elseif ($key === 'user') {
                 $criteria[$key] = $value->id_utilisateur;
-            } elseif ($key === 'id_post'){
-
-            }else{
+            } elseif ($key === 'id_post') {
+            } else {
                 $criteria[$key] = $value;
             }
         }
 
-        $sql = "INSERT INTO post (title,chapo,content, createdAt,updatedAt,user_id) VALUES (:title,:chapo,:content,:createdAt,:updatedAt,:user )";
-        $result = $this->database->prepare($sql,$criteria);
 
-        if ($result === true){
+        $sql = "INSERT INTO post (title,chapo,content, createdAt,updatedAt,user_id) 
+                VALUES (:title,:chapo,:content,:createdAt,:updatedAt,:user )";
+
+        $result = $this->database->prepare($sql, $criteria);
+
+        if ($result === true) {
             return true;
-        }else{
-            return false;
         }
+
+        return false;
     }
 
     public function update(object $post): bool
     {
         $criteria = [];
 
-        foreach ($post as $key => $value) {
+        $post = get_object_vars($post);
 
-            if ($key === 'createdAt'){
+        foreach ($post as $key => $value) {
+            if ($key === 'createdAt') {
                 $criteria[$key] = $value->format('Y-m-d H:i:s');
-            }elseif ($key === 'updatedAt'){
+            } elseif ($key === 'updatedAt') {
                 $criteria[$key] = $value->format('Y-m-d H:i:s');
-            }
-            elseif ($key === 'user'){
+            } elseif ($key === 'user') {
                 $criteria['user_id'] = $value->id_utilisateur;
-            }else{
+            } else {
                 $criteria[$key] = $value;
             }
-
         }
+
 
         $set = $this->database->setConditionUpdatePost($criteria);
 
@@ -149,28 +171,30 @@ final class PostRepository implements EntityRepositoryInterface
 
         $sql .= $set;
 
-        $sql.= " where id_post = ".$post->id_post;
+        $sql.= " where id_post = ".$post['id_post'];
 
-        $result = $this->database->prepare($sql,$criteria);
+        $result = $this->database->prepare($sql, $criteria);
 
-        if ($result === true){
+        if ($result === true) {
             return true;
-        }else{
-            return false;
         }
+
+        return false;
     }
 
     public function delete(object $post): bool
     {
-        $sql = "DELETE FROM post where id_post = $post->id_post ";
+        $post = get_object_vars($post);
+
+        $sql = "DELETE FROM post where id_post = " . $post['id_post'];
 
         $result = $this->database->query($sql);
 
-        if ($result === true){
+        if ($result === true) {
             return true;
-        }else{
-            return false;
         }
+
+        return false;
     }
 
     public function nextPost(\DateTime $createdAt): int|null
@@ -179,18 +203,17 @@ final class PostRepository implements EntityRepositoryInterface
         $createdAt = $createdAt->format('Y-m-d H:i:s');
 
         $last = $this->database->query("SELECT * FROM post ORDER BY createdAt DESC LIMIT 0 ");
-        $nextPost = $this->database->query("SELECT * FROM post WHERE createdAt < '$createdAt' ORDER BY createdAt DESC LIMIT 0,1 ");
+        $nextPost = $this->database->query("SELECT * 
+        FROM post 
+        WHERE createdAt < '$createdAt' 
+        ORDER BY createdAt DESC LIMIT 0,1 ");
 
-        if($nextPost !== $last){
-
-            $nextPost = current($nextPost)->id_post;
-            return (int)$nextPost;
-
-        }else{
-
-            return null;
-
+        if ($nextPost !== $last && is_iterable($nextPost)) {
+                $nextPost = current($nextPost)->id_post;
+                return (int)$nextPost;
         }
+
+        return null;
     }
 
     public function previousPost(\DateTime $createdAt): int|null
@@ -201,23 +224,21 @@ final class PostRepository implements EntityRepositoryInterface
 
         $previousPost = $this->database->query("SELECT * FROM post WHERE createdAt > '$createdAt' LIMIT 0,1 ");
 
-        if(!empty($previousPost)){
-
-            $previousPost = current($previousPost)->id_post;
-            return (int)$previousPost;
-
-        }else{
-
-            return null;
-
+        if (!empty($previousPost) && is_iterable($previousPost)) {
+                $previousPost = current($previousPost)->id_post;
+                return (int)$previousPost;
         }
+
+        return null;
     }
 
     public function countAllPosts():int
     {
 
         $data = $this->database->query("SELECT COUNT(*) AS nb FROM post ORDER BY createdAt desc ");
-        $data = current($data);
+        if (is_array($data)) {
+            $data = current($data);
+        }
 
         return (int)$data->nb;
     }

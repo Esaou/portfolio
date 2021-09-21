@@ -24,7 +24,7 @@ final class CommentRepository implements EntityRepositoryInterface
     {
         $data = $this->findBy(['id'=>$id]);
 
-        if (!empty($data)){
+        if (!empty($data)) {
             $data = current($data);
         }
 
@@ -37,9 +37,9 @@ final class CommentRepository implements EntityRepositoryInterface
 
     public function findOneBy(array $criteria, array $orderBy = null): ?Comment
     {
-        $data = $this->findBy($criteria,$orderBy);
+        $data = $this->findBy($criteria, $orderBy);
 
-        if (!is_null($data)){
+        if (!is_null($data)) {
             $data = current($data);
         }
 
@@ -48,25 +48,28 @@ final class CommentRepository implements EntityRepositoryInterface
 
     public function findBy(array $criteria, array $orderBy = null, int $limit = null, int $offset = null): ?array
     {
-        $sql = "select * from comment left join user on comment.id_user = user.id_utilisateur left join post on comment.post_id = post.id_post ";
+        $sql = "select *
+                from comment
+                left join user on comment.id_user = user.id_utilisateur
+                left join post on comment.post_id = post.id_post ";
 
-        if (!empty($criteria)){
+        if (!empty($criteria)) {
             $sql .= $this->database->setCondition($criteria);
         }
 
-        if (!is_null($orderBy)){
+        if (!is_null($orderBy)) {
             $sql .= ' order by '.$this->database->setOrderBy($orderBy);
         }
 
-        if (!is_null($limit)){
+        if (!is_null($limit)) {
             $sql .= ' limit '.$limit;
         }
 
-        if (!is_null($offset)){
+        if (!is_null($offset)) {
             $sql .= ' offset '.$offset;
         }
 
-        $data = $this->database->prepare($sql,$criteria);
+        $data = $this->database->prepare($sql, $criteria);
 
         if (empty($data)) {
             return null;
@@ -74,15 +77,41 @@ final class CommentRepository implements EntityRepositoryInterface
 
         $comments = [];
 
-        foreach ($data as $comment) {
-            $comment->createdAt = new \DateTime($comment->createdAt);
-            if (!is_null($comment->updatedAt)){
-                $comment->updatedAt = new \DateTime($comment->updatedAt);
+        if (is_iterable($data)) {
+            foreach ($data as $comment) {
+                $comment->createdAt = new \DateTime($comment->createdAt);
+                if (!is_null($comment->updatedAt)) {
+                    $comment->updatedAt = new \DateTime($comment->updatedAt);
+                }
+                $comment->createdDate = new \DateTime($comment->createdDate);
+                $post = new Post(
+                    (int)$comment->id_post,
+                    $comment->chapo,
+                    $comment->title,
+                    $comment->content,
+                    $comment->createdAt,
+                    $comment->updatedAt,
+                    null
+                );
+                $user = new User(
+                    (int)$comment->id_utilisateur,
+                    $comment->firstname,
+                    $comment->lastname,
+                    $comment->email,
+                    $comment->password,
+                    $comment->isValid,
+                    $comment->role,
+                    $comment->token
+                );
+                $comments[] = new Comment(
+                    (int)$comment->id,
+                    $comment->comment,
+                    $post,
+                    $user,
+                    $comment->isChecked,
+                    $comment->createdDate
+                );
             }
-            $comment->createdDate = new \DateTime($comment->createdDate);
-            $post = new Post((int)$comment->id_post,$comment->chapo,$comment->title,$comment->content,$comment->createdAt,$comment->updatedAt,null);
-            $user = new User((int)$comment->id_utilisateur, $comment->firstname,$comment->lastname, $comment->email, $comment->password,$comment->isValid,$comment->role,$comment->token);
-            $comments[] = new Comment((int)$comment->id, $comment->comment,$post,$user,$comment->isChecked,$comment->createdDate);
         }
 
         return $comments;
@@ -104,50 +133,49 @@ final class CommentRepository implements EntityRepositoryInterface
 
         $criteria = false;
 
+        $comment = get_object_vars($comment);
+
         foreach ($comment as $key => $value) {
-
-            if ($key === 'createdDate'){
+            if ($key === 'createdDate') {
                 $criteria[$key] = $value->format('Y-m-d H:i:s');
-            }elseif ($key === 'id_user'){
+            } elseif ($key === 'id_user') {
                 $criteria[$key] = $value->id_utilisateur;
-            }elseif ($key === 'post_id'){
+            } elseif ($key === 'post_id') {
                 $criteria[$key] = $value->id_post;
-            } elseif ($key === 'id'){
-
-            }else{
+            } elseif ($key === 'id') {
+            } else {
                 $criteria[$key] = $value;
             }
         }
 
-        $sql = "INSERT INTO comment (id_user,comment, post_id,isChecked,createdDate) VALUES (:id_user,:comment,:post_id,:isChecked,:createdDate )";
+        $sql = "INSERT INTO comment (id_user,comment, post_id,isChecked,createdDate)
+                VALUES (:id_user,:comment,:post_id,:isChecked,:createdDate )";
 
+        $result = $this->database->prepare($sql, $criteria);
 
-        $result = $this->database->prepare($sql,$criteria);
-
-        if ($result === true){
+        if ($result === true) {
             return true;
-        }else{
-            return false;
         }
 
+        return false;
     }
 
     public function update(object $comment): bool
     {
         $criteria = [];
 
-        foreach ($comment as $key => $value) {
+        $comment = get_object_vars($comment);
 
-            if ($key === 'createdDate'){
+        foreach ($comment as $key => $value) {
+            if ($key === 'createdDate') {
                 $criteria[$key] = $value->format('Y-m-d H:i:s');
-            } elseif ($key === 'id_user'){
+            } elseif ($key === 'id_user') {
                 $criteria['id_user'] = $value->id_utilisateur;
-            } elseif ($key === 'post_id'){
+            } elseif ($key === 'post_id') {
                 $criteria['post_id'] = $value->id_post;
-            }else{
+            } else {
                 $criteria[$key] = $value;
             }
-
         }
 
         $set = $this->database->setConditionUpdatePost($criteria);
@@ -156,41 +184,51 @@ final class CommentRepository implements EntityRepositoryInterface
 
         $sql .= $set;
 
-        $sql.= " where id = ".$comment->id;
+        $sql.= " where id = ".$comment['id'];
 
-        $result = $this->database->prepare($sql,$criteria);
+        $result = $this->database->prepare($sql, $criteria);
 
-        if ($result === true){
+        if ($result === true) {
             return true;
-        }else{
-            return false;
         }
+
+        return false;
     }
 
     public function delete(object $comment): bool
     {
-        $sql = "DELETE FROM comment where id = $comment->id ";
+        $comment = get_object_vars($comment);
+
+        $sql = "DELETE FROM comment where id = " . $comment['id'];
 
         $result = $this->database->query($sql);
 
-        if ($result === true){
+        if ($result === true) {
             return true;
-        }else{
-            return false;
         }
+
+        return false;
     }
 
     public function countAllCheckedComment(int $id):int
     {
-        $data = $this->database->query("SELECT COUNT(*) AS nb FROM comment WHERE post_id = $id and isChecked = 'Oui' ORDER BY id DESC");
-        $data = current($data);
+        $data = $this->database->query("SELECT COUNT(*) AS nb 
+            FROM comment 
+            WHERE post_id = $id and isChecked = 'Oui' 
+            ORDER BY id DESC");
+
+        if (is_iterable($data)) {
+            $data = current($data);
+        }
         return (int)$data->nb;
     }
 
     public function countAllComment():int
     {
         $data = $this->database->query("SELECT COUNT(*) AS nb FROM comment ORDER BY id DESC");
-        $data = current($data);
+        if (is_iterable($data)) {
+            $data = current($data);
+        }
         return (int)$data->nb;
     }
 }

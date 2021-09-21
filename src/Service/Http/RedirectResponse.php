@@ -20,7 +20,6 @@ class RedirectResponse extends Response
         $this->headers = $headers;
 
         $this->setTargetUrl($this->url);
-
     }
 
     public function setTargetUrl(string $url):void
@@ -29,6 +28,4 @@ class RedirectResponse extends Response
         header('Location: index.php?action=' . $url);
         exit();
     }
-
-
 }

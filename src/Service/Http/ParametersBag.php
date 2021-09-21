@@ -19,8 +19,9 @@ class ParametersBag
     }
 
     /**
-    * @return mixed
-    */
+     * @param string $key
+     * @return mixed
+     */
     public function get(string $key) : mixed
     {
         return $this->has($key) ? $this->parameters[$key] : null;
@@ -32,9 +33,10 @@ class ParametersBag
     }
 
     /**
+     * @param string $key
      * @param mixed $value
      */
-    public function set(string $key,mixed $value): void
+    public function set(string $key, mixed $value): void
     {
         $this->parameters[$key] = $value;
     }

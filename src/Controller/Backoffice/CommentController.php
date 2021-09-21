@@ -26,8 +26,14 @@ final class CommentController
     private Session $session;
     private Paginator $paginator;
 
-    public function __construct(View $view,Request $request,Session $session,CommentRepository $commentRepository,UserRepository $userRepository,PostRepository $postRepository)
-    {
+    public function __construct(
+        View $view,
+        Request $request,
+        Session $session,
+        CommentRepository $commentRepository,
+        UserRepository $userRepository,
+        PostRepository $postRepository
+    ) {
 
         $this->postRepository = $postRepository;
         $this->commentRepository = $commentRepository;
@@ -35,46 +41,41 @@ final class CommentController
         $this->view = $view;
         $this->request = $request;
         $this->session = $session;
-        $this->paginator = new Paginator($this->request,$this->view);
-        $security = new Authorization($this->session,$this->request);
+        $this->paginator = new Paginator($this->request, $this->view);
+        $security = new Authorization($this->session, $this->request);
 
-        if(!$security->isLogged()){
+        if (!$security->isLogged()) {
             new RedirectResponse('forbidden');
-        }elseif($security->loggedAs('User')){
+        } elseif ($security->loggedAs('User')) {
             new RedirectResponse('forbidden');
         }
-
     }
 
-    public function commentList():Response{
+    public function commentList():Response
+    {
 
-        if(!is_null($this->request->query()->get('delete'))){
-
+        if (!is_null($this->request->query()->get('delete'))) {
             $id = $this->request->query()->get('id');
             $comment = $this->commentRepository->findOneBy(['id' => $id]);
 
-            if (!is_null($comment)){
+            if (!is_null($comment)) {
                 $this->commentRepository->delete($comment);
-                $this->session->addFlashes('danger','Commentaire supprimé avec succès !');
+                $this->session->addFlashes('danger', 'Commentaire supprimé avec succès !');
             }
-
         }
 
-        if(!is_null($this->request->query()->get('validate'))){
-
+        if (!is_null($this->request->query()->get('validate'))) {
             $id = $this->request->query()->get('id');
             $comment = $this->commentRepository->findOneBy(['id' => $id]);
 
-            if (!is_null($comment)){
+            if (!is_null($comment)) {
                 $comment->setIsChecked('Oui');
                 $this->commentRepository->update($comment);
-                $this->session->addFlashes('success','Commentaire validé avec succès !');
+                $this->session->addFlashes('success', 'Commentaire validé avec succès !');
             }
-
         }
 
-        if(!is_null($this->request->query()->get('unvalidate'))){
-
+        if (!is_null($this->request->query()->get('unvalidate'))) {
             $id = $this->request->query()->get('id');
             /** @var Comment $comment */
             $comment = $this->commentRepository->findOneBy(['id' => $id]);
@@ -82,18 +83,21 @@ final class CommentController
             $comment->setIsChecked('Non');
             $this->commentRepository->update($comment);
 
-            $this->session->addFlashes('success','Commentaire invalidé avec succès !');
-
-
+            $this->session->addFlashes('success', 'Commentaire invalidé avec succès !');
         }
 
         // PAGINATION
 
         $tableRows = $this->commentRepository->countAllComment();
 
-        $paginator = $this->paginator->paginate($tableRows,10,'comments');
+        $paginator = $this->paginator->paginate($tableRows, 10, 'comments');
 
-        $comments = $this->commentRepository->findBy([],['createdDate' =>'desc'],$paginator['parPage'],$paginator['depart']);
+        $comments = $this->commentRepository->findBy(
+            [],
+            ['createdDate' =>'desc'],
+            $paginator['parPage'],
+            $paginator['depart']
+        );
 
         return new Response($this->view->render([
             'template' => 'comments',
@@ -104,6 +108,4 @@ final class CommentController
             ],
         ]));
     }
-
-
 }

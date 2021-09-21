@@ -15,13 +15,14 @@ class Mailer
 
     private View $view;
 
-    public function __construct(View $view){
+    public function __construct(View $view)
+    {
 
         $this->view = $view;
-
     }
 
-    public function mail(string $subject,string $from,string $to,string $type,array $data):int{
+    public function mail(string $subject, string $from, string $to, string $type, array $data):int
+    {
 
         $transport = (new Swift_SmtpTransport('localhost', 1025));
 
@@ -29,7 +30,7 @@ class Mailer
 
         $content = '';
 
-        if ($type == 'contact'){
+        if ($type == 'contact') {
             $content = $this->view->render([
                 'template' => 'contactMail',
                 'data' => [
@@ -38,7 +39,7 @@ class Mailer
             ]);
         }
 
-        if ($type == 'register'){
+        if ($type == 'register') {
             $content = $this->view->render([
                 'template' => 'registerMail',
                 'data' => [
@@ -53,7 +54,5 @@ class Mailer
             ->setBody($content, 'text/html');
 
         return $mailer->send($message);
-
     }
-
 }

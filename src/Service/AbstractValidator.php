@@ -21,61 +21,50 @@ class AbstractValidator
 
         $error = false;
 
-        /*if ($data['tokenPost'] != $data['tokenSession']){
-            $this->session->addFlashes('danger','Token de session expiré !');
-            $error = true;
-        }*/
-
-        if ((isset($data['lastname']) and $data['lastname'] == '')
-            or (isset($data['firstname']) and $data['firstname'] == '')
-            or (isset($data['email']) and $data['email'] == '')
-            or (isset($data['password']) and $data['password'] == '')) {
-
+        if ((isset($data['lastname']) && $data['lastname'] == '')
+            || (isset($data['firstname']) && $data['firstname'] == '')
+            || (isset($data['email']) && $data['email'] == '')
+            || (isset($data['password']) && $data['password'] == '')) {
             $this->session->addFlashes('danger', 'Tous les champs doivent être remplis !');
             $error = true;
-
         }
 
-        if (isset($data['lastname']) and (strlen($data['lastname']) < 1
-                or strlen($data['lastname']) > 30
-                or !preg_match('#[^0-9]#',$data['lastname'])
-                or preg_match('~[^\\pL\d]+~u',$data['lastname']))) {
-
-            $this->session->addFlashes('danger', 'Le nom peut contenir de 2 à 30 caractères sans chiffres ni caractères spéciaux !');
+        if (isset($data['lastname']) && (strlen($data['lastname']) < 1
+                || strlen($data['lastname']) > 30
+                || !preg_match('#[^0-9]#', $data['lastname'])
+                || preg_match('~[^\\pL\d]+~u', $data['lastname']))) {
+            $this->session->addFlashes(
+                'danger',
+                'Le nom peut contenir de 2 à 30 caractères sans chiffres ni caractères spéciaux !'
+            );
             $error = true;
-
         }
 
-        if (isset($data['firstname']) and (strlen($data['firstname']) < 1
-                or strlen($data['firstname']) > 30
-                or !preg_match('#[^0-9]#',$data['firstname'])
-                or preg_match('~[^\\pL\d]+~u',$data['firstname']))) {
-
-            $this->session->addFlashes('danger', 'Le prénom peut contenir de 2 à 30 caractères sans chiffres ni caractères spéciaux !');
+        if (isset($data['firstname']) && (strlen($data['firstname']) < 1
+                || strlen($data['firstname']) > 30
+                || !preg_match('#[^0-9]#', $data['firstname'])
+                || preg_match('~[^\\pL\d]+~u', $data['firstname']))) {
+            $this->session->addFlashes(
+                'danger',
+                'Le prénom peut contenir de 2 à 30 caractères sans chiffres ni caractères spéciaux !'
+            );
             $error = true;
-
         }
 
-        if (isset($data['email']) and !filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
-
+        if (isset($data['email']) && !filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
             $this->session->addFlashes('danger', 'L\'email renseigné n\'est pas valide !');
             $error = true;
-
         }
 
-        if (isset($data['passwordConfirm']) and $data['passwordConfirm'] !== $data['password']){
-
+        if (isset($data['passwordConfirm']) && $data['passwordConfirm'] !== $data['password']) {
             $this->session->addFlashes('danger', 'Mots de passe non identiques !');
             $error = true;
-
         }
 
-        if ($error === true){
+        if ($error === true) {
             return false;
         }
 
         return true;
     }
-
-
 }

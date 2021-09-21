@@ -16,14 +16,14 @@ class LoginValidator extends AbstractValidator
 
         parent::__construct($session);
         $this->session = $session;
-
     }
 
-    public function loginValidator(array $data):bool{
+    public function loginValidator(array $data):bool
+    {
 
         $error = false;
 
-        if (!$this->validate($data)){
+        if (!$this->validate($data)) {
             $error = true;
         }
 
@@ -37,21 +37,20 @@ class LoginValidator extends AbstractValidator
             $error = true;
         }
 
-        if($data['user']->getIsValid() == 'Non'){
+        if ($data['user']->getIsValid() == 'Non') {
             $this->session->addFlashes('danger', 'Compte non valide !');
             $error = true;
         }
 
-        if(!password_verify($data['password'], $data['user']->getPassword())) {
+        if (!password_verify($data['password'], $data['user']->getPassword())) {
             $this->session->addFlashes('danger', 'Mauvais identifiants');
             $error = true;
         }
 
-        if ($error == true){
+        if ($error == true) {
             return false;
         }
 
         return true;
     }
-
 }

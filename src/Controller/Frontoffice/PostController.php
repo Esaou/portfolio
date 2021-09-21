@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace  App\Controller\Frontoffice;
 
 use App\Model\Entity\Comment;
+use App\Model\Entity\Post;
 use App\Model\Repository\UserRepository;
 use App\Service\CsrfToken;
 use App\Service\FormValidator\CommentValidator;
@@ -29,8 +30,14 @@ final class PostController
     private CsrfToken $csrf;
     private Paginator $paginator;
 
-    public function __construct(View $view,Request $request,Session $session,CommentRepository $commentRepository,UserRepository $userRepository,PostRepository $postRepository)
-    {
+    public function __construct(
+        View $view,
+        Request $request,
+        Session $session,
+        CommentRepository $commentRepository,
+        UserRepository $userRepository,
+        PostRepository $postRepository
+    ) {
         $this->postRepository = $postRepository;
         $this->commentRepository = $commentRepository;
         $this->userRepository = $userRepository;
@@ -38,8 +45,8 @@ final class PostController
         $this->request = $request;
         $this->session = $session;
         $this->validator = new CommentValidator($this->session);
-        $this->csrf = new CsrfToken($this->session,$this->request);
-        $this->paginator = new Paginator($this->request,$this->view);
+        $this->csrf = new CsrfToken($this->session, $this->request);
+        $this->paginator = new Paginator($this->request, $this->view);
     }
 
     public function displayOneAction(int $id): Response
@@ -50,31 +57,37 @@ final class PostController
 
         // COMMENT FORM
 
-        if ($this->request->getMethod() === 'POST' and $this->csrf->tokenCheck()){
+        if ($this->request->getMethod() === 'POST' && $this->csrf->tokenCheck()) {
 
+            /** @var array $data */
             $data = $this->request->request()->all();
 
-            if ($this->validator->commentValidator($data)){
+            if ($this->validator->commentValidator($data)) {
+
+                /** @var Post $post */
 
                 $user = $this->session->get('user');
-                $comment = new Comment(0,$data['comment'],$post,$user,'Non',new \DateTime('now'));
+                $comment = new Comment(0, $data['comment'], $post, $user, 'Non', new \DateTime('now'));
                 $this->commentRepository->create($comment);
-                $this->session->addFlashes('success','Commentaire posté avec succès !');
+                $this->session->addFlashes('success', 'Commentaire posté avec succès !');
             }
-
         }
 
         // PAGINATION
 
         $tableRows = $this->commentRepository->countAllCheckedComment($id);
-        $paginator = $this->paginator->paginate($tableRows,4,'post&id='.$id);
-        $comments = $this->commentRepository->findBy(['post_id' => $id,'isChecked' => 'Oui'],['createdDate' =>'desc'],$paginator['parPage'],$paginator['depart']);
+        $paginator = $this->paginator->paginate($tableRows, 4, 'post&id='.$id);
+        $comments = $this->commentRepository->findBy(
+            ['post_id' => $id,'isChecked' => 'Oui'],
+            ['createdDate' =>'desc'],
+            $paginator['parPage'],
+            $paginator['depart']
+        );
 
         // RENDER
 
 
         if ($post !== null) {
-
             $nextPost = $this->postRepository->nextPost($post->getCreatedAt());
             $previousPost = $this->postRepository->previousPost($post->getCreatedAt());
 
@@ -90,10 +103,10 @@ final class PostController
                     'paginator' => $paginator['paginator']
                     ],
                 ],
-            ),200);
+            ), 200);
         }
 
-        if (is_null($post)){
+        if (is_null($post)) {
             $response = new RedirectResponse('postNotFound');
         }
 
@@ -106,8 +119,8 @@ final class PostController
         // PAGINATION
 
         $tableRows = $this->postRepository->countAllPosts();
-        $paginator = $this->paginator->paginate($tableRows,4,'posts');
-        $posts = $this->postRepository->findBy([],['createdAt' =>'desc'],$paginator['parPage'],$paginator['depart']);
+        $paginator = $this->paginator->paginate($tableRows, 4, 'posts');
+        $posts = $this->postRepository->findBy([], ['createdAt' =>'desc'], $paginator['parPage'], $paginator['depart']);
 
         return new Response($this->view->render([
             'template' => 'posts',
@@ -115,7 +128,6 @@ final class PostController
                 'posts' => $posts,
                 'paginator' => $paginator['paginator']
             ],
-        ]),200);
+        ]), 200);
     }
-
 }

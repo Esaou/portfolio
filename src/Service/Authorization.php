@@ -14,21 +14,21 @@ class Authorization
     private Session $session;
     private Request $request;
 
-    public function __construct(Session $session,Request $request)
+    public function __construct(Session $session, Request $request)
     {
 
         $this->session = $session;
         $this->request = $request;
     }
 
-    public function isLogged():bool{
+    public function isLogged():bool
+    {
 
-        if (is_null($this->session->get('user'))){
+        if (is_null($this->session->get('user'))) {
             return false;
         }
 
         return true;
-
     }
 
 
@@ -37,16 +37,14 @@ class Authorization
 
         $user = $this->session->get('user');
 
-        if (is_null($user)){
+        if (is_null($user)) {
             return false;
         }
 
-        if ($user->getRole() == $role){
+        if ($user->getRole() == $role) {
             return true;
         }
 
         return false;
-
     }
-
 }

@@ -16,7 +16,6 @@ class ContactValidator extends AbstractValidator
 
         parent::__construct($session);
         $this->session = $session;
-
     }
 
     public function homeContactValidator(array $data): bool
@@ -24,20 +23,17 @@ class ContactValidator extends AbstractValidator
 
         $error = false;
 
-        if (!$this->validate($data)){
+        if (!$this->validate($data)) {
             $error = true;
         }
-        if ($data['content'] == ''){
-
-            $this->session->addFlashes('danger','Tous les champs doivent être remplis !');
+        if ($data['content'] == '') {
+            $this->session->addFlashes('danger', 'Le message ne peut être vide !');
             $error = true;
-
         }
-        if ($error === true){
+        if ($error === true) {
             return false;
         }
 
         return true;
-
     }
 }

@@ -11,6 +11,7 @@ final class Request
     private ParametersBag $files; // $_FILES
     private ParametersBag $server; // $_SERVER
 
+
     function __construct(array $query, array $request, array $files, array $server)
     {
         $this->query = new ParametersBag($query);

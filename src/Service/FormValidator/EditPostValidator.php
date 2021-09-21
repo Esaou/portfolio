@@ -16,26 +16,25 @@ class EditPostValidator extends AbstractValidator
 
         parent::__construct($session);
         $this->session = $session;
-
     }
 
-    public function editPostValidator(array $data):bool{
+    public function editPostValidator(array $data):bool
+    {
 
         $error = false;
 
-        if (!$this->validate($data)){
+        if (!$this->validate($data)) {
             $error = true;
         }
-        if ($data['title'] == '' or $data['chapo'] == '' or $data['content'] == ''){
-            $this->session->addFlashes('danger','Tous les champs doivent être remplis !');
+        if ($data['title'] == '' && $data['chapo'] == '' || $data['content'] == '') {
+            $this->session->addFlashes('danger', 'Tous les champs doivent être remplis !');
             $error = true;
         }
 
-        if ($error === true){
+        if ($error === true) {
             return false;
         }
 
         return true;
     }
-
 }

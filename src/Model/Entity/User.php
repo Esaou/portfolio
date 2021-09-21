@@ -6,6 +6,7 @@ namespace App\Model\Entity;
 
 final class User
 {
+
     public int $id_utilisateur;
     public string $email;
     public string $firstname;
@@ -15,8 +16,16 @@ final class User
     public string $role;
     public string $token;
 
-    public function __construct(int $id_utilisateur, string $firstname,string $lastname, string $email, string $password,string $isValid,string $role,string $token)
-    {
+    public function __construct(
+        int $id_utilisateur,
+        string $firstname,
+        string $lastname,
+        string $email,
+        string $password,
+        string $isValid,
+        string $role,
+        string $token
+    ) {
         $this->id_utilisateur = $id_utilisateur;
         $this->firstname = $firstname;
         $this->lastname = $lastname;
@@ -109,9 +118,9 @@ final class User
         return $this;
     }
 
-    public function __toString(){
+    public function __toString(): string
+    {
 
         return $this->email;
-
     }
 }

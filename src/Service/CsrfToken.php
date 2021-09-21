@@ -13,30 +13,31 @@ class CsrfToken
     private Session $session;
     private Request $request;
 
-    public function __construct(Session $session,Request $request){
+    public function __construct(Session $session, Request $request)
+    {
 
         $this->session = $session;
         $this->request = $request;
-
     }
 
-    public function tokenCheck():bool{
+    public function tokenCheck():bool
+    {
 
         $tokenPost = $this->request->request()->get('token');
         $tokenSession = $this->session->get('token');
 
         $result = true;
 
-        if ($tokenPost != $tokenSession){
-            $this->session->addFlashes('danger','Token de session expiré !');
+        if ($tokenPost != $tokenSession) {
+            $this->session->addFlashes('danger', 'Token de session expiré !');
             $result = false;
         }
 
         return $result;
-
     }
 
-    public function newToken():string{
+    public function newToken():string
+    {
 
         $token = base_convert(hash('sha256', time() . mt_rand()), 16, 36);
 
@@ -44,5 +45,4 @@ class CsrfToken
 
         return $token;
     }
-
 }

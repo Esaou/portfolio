@@ -36,11 +36,9 @@ class Database
     public function query(string $statement): array|bool
     {
         $req = $this->getPDO()->query($statement);
-        if (
-            mb_strpos($statement, 'UPDATE') === 0 ||
+        if (mb_strpos($statement, 'UPDATE') === 0 ||
             mb_strpos($statement, 'INSERT') === 0 ||
             mb_strpos($statement, 'DELETE') === 0) {
-
             return true;
         }
 
@@ -57,8 +55,7 @@ class Database
         $req = $this->getPDO()->prepare($statement);
         $res = $req->execute($attributes);
 
-        if (
-            mb_strpos($statement, 'UPDATE') === 0 ||
+        if (mb_strpos($statement, 'UPDATE') === 0 ||
             mb_strpos($statement, 'INSERT') === 0 ||
             mb_strpos($statement, 'DELETE') === 0) {
             return $res;
@@ -70,7 +67,8 @@ class Database
         return $datas;
     }
 
-    public function setCondition(array $fields):string{
+    public function setCondition(array $fields):string
+    {
         $sqlParts = [];
 
         foreach ($fields as $k => $v) {
@@ -83,7 +81,8 @@ class Database
         return $sqlParts;
     }
 
-    public function setOrderBy(array $fields):string{
+    public function setOrderBy(array $fields):string
+    {
         $sqlParts = [];
 
         foreach ($fields as $k => $v) {
@@ -95,13 +94,14 @@ class Database
         return $sqlParts;
     }
 
-    public function setConditionUpdate(array $fields):string{
+    public function setConditionUpdate(array $fields):string
+    {
         $sqlParts = [];
 
         foreach ($fields as $k => $v) {
-            if (is_string($v)){
+            if (is_string($v)) {
                 $sqlParts[] = "$k = '$v'";
-            }else{
+            } else {
                 $sqlParts[] = "$k = $v";
             }
         }
@@ -111,7 +111,8 @@ class Database
         return $sqlParts;
     }
 
-    public function setConditionUpdatePost(array $fields):string{
+    public function setConditionUpdatePost(array $fields):string
+    {
         $sqlParts = [];
 
         foreach ($fields as $k => $v) {
@@ -123,6 +124,4 @@ class Database
 
         return $sqlParts;
     }
-
 }
-

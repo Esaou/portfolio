@@ -28,7 +28,9 @@ final class PostAdminController
     private Session $session;
     private EditPostValidator $validator;
     private CsrfToken $csrf;
+    private RedirectResponse $redirect;
     private Paginator $paginator;
+
     public function __construct(
         View $view,
         Request $request,
@@ -48,12 +50,11 @@ final class PostAdminController
         $this->csrf = new CsrfToken($this->session, $this->request);
         $this->paginator = new Paginator($this->request, $this->view);
         $security = new Authorization($this->session, $this->request);
+        $this->redirect = new RedirectResponse();
 
 
-        if (!$security->isLogged()) {
-            new RedirectResponse('forbidden');
-        } elseif ($security->loggedAs('User')) {
-            new RedirectResponse('forbidden');
+        if (!$security->isLogged() || $security->loggedAs('User')) {
+            $this->redirect->redirect('forbidden');
         }
     }
 
@@ -103,6 +104,7 @@ final class PostAdminController
                 $user = $this->userRepository->findOneBy(['id_utilisateur'=>(int)$data['author']]);
 
                 if ($post) {
+
                     $post = new Post(
                         $post->getIdPost(),
                         $data['chapo'],
@@ -112,10 +114,11 @@ final class PostAdminController
                         new \DateTime(),
                         $user
                     );
-                    $this->postRepository->update($post);
-                }
 
-                $this->session->addFlashes('update', 'Post modifié avec succès !');
+                    $this->postRepository->update($post);
+
+                    $this->session->addFlashes('update', 'Post modifié avec succès !');
+                }
             }
         }
 

@@ -36,7 +36,6 @@ final class PostRepository implements EntityRepositoryInterface
     public function findOneBy(array $criteria, array $orderBy = null): ?Post
     {
 
-        $user = null;
         $data = $this->findBy($criteria, $orderBy);
 
         if (!is_null($data)) {
@@ -236,6 +235,7 @@ final class PostRepository implements EntityRepositoryInterface
     {
 
         $data = $this->database->query("SELECT COUNT(*) AS nb FROM post ORDER BY createdAt desc ");
+
         if (is_array($data)) {
             $data = current($data);
         }

@@ -178,6 +178,7 @@ final class UserRepository implements EntityRepositoryInterface
         if (is_array($data)) {
             $data = current($data);
         }
+
         return (int)$data->nb;
     }
 }

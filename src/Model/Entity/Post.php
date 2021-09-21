@@ -16,8 +16,15 @@ final class Post
     public \DateTime|null $updatedAt;
     public User|null $user;
 
-    public function __construct(int $id_post,string $chapo,string $title, string $content,Datetime $createdAt,Datetime|null $updatedAt,User|null $user)
-    {
+    public function __construct(
+        int $id_post,
+        string $chapo,
+        string $title,
+        string $content,
+        Datetime $createdAt,
+        Datetime|null $updatedAt,
+        User|null $user
+    ) {
         $this->id_post = $id_post;
         $this->title = $title;
         $this->content = $content;
@@ -98,9 +105,9 @@ final class Post
         return $this;
     }
 
-    public function __toString(){
+    public function __toString(): string
+    {
 
         return $this->title;
-
     }
 }

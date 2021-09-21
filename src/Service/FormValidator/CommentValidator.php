@@ -16,32 +16,31 @@ class CommentValidator extends AbstractValidator
 
         parent::__construct($session);
         $this->session = $session;
-
     }
 
-    public function commentValidator(array $data):bool{
+    public function commentValidator(array $data):bool
+    {
 
         $error = false;
 
-        if (!$this->validate($data)){
+        if (!$this->validate($data)) {
             $error = true;
         }
 
-        if(strlen($data['comment']) > 5000){
-            $this->session->addFlashes('danger','Votre commentaire peut contenir de 1 à 5000 caractères');
-            return false;
+        if (strlen($data['comment']) > 5000) {
+            $this->session->addFlashes('danger', 'Votre commentaire peut contenir de 1 à 5000 caractères');
+            $error = true;
         }
 
-        if (strlen($data['comment']) < 1){
-            $this->session->addFlashes('danger','Votre commentaire ne peut pas être vide !');
-            return false;
+        if (strlen($data['comment']) < 1) {
+            $this->session->addFlashes('danger', 'Votre commentaire ne peut pas être vide !');
+            $error = true;
         }
 
-        if ($error === true){
+        if ($error === true) {
             return false;
         }
 
         return true;
     }
-
 }

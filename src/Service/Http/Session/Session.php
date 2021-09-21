@@ -16,16 +16,18 @@ final class Session
     }
 
     /**
+     * @param string $name
      * @param mixed $value
      */
-    public function set(string $name,mixed $value): void
+    public function set(string $name, mixed $value): void
     {
         $this->sessionParamBag->set($name, $value);
     }
 
     /**
-    * @return mixed
-    */
+     * @param string $name
+     * @return mixed
+     */
     public function get(string $name): mixed
     {
         return $this->sessionParamBag->get($name);
@@ -46,11 +48,11 @@ final class Session
 
         $flashes = $this->getFlashes();
 
-        if (!isset($flashes[$type])){
+        if (!isset($flashes[$type])) {
             $flashes[$type] = [];
         }
 
-        array_push($flashes[$type],$message);
+        array_push($flashes[$type], $message);
 
         $this->set('flashes', $flashes);
     }

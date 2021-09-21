@@ -21,20 +21,20 @@ final class HomeController
 
     private Session $session;
 
-    private AbstractValidator $validator;
+    private ContactValidator $validator;
 
     private Mailer $mailer;
 
     private CsrfToken $csrf;
 
-    public function __construct(View $view,Request $request,Session $session)
+    public function __construct(View $view, Request $request, Session $session)
     {
         $this->view = $view;
         $this->request = $request;
         $this->session = $session;
         $this->validator = new ContactValidator($this->session);
         $this->mailer = new Mailer($this->view);
-        $this->csrf = new CsrfToken($this->session,$this->request);
+        $this->csrf = new CsrfToken($this->session, $this->request);
     }
 
     public function home(): Response
@@ -42,13 +42,19 @@ final class HomeController
 
         $data = [];
 
-        if ($this->request->getMethod() === 'POST' and $this->csrf->tokenCheck()) {
+        if ($this->request->getMethod() === 'POST' && $this->csrf->tokenCheck()) {
 
+            /** @var array $data */
             $data = $this->request->request()->all();
 
             if ($this->validator->homeContactValidator($data)) {
-
-                $result = $this->mailer->mail('Message de '.$data['firstname'].' '.$data['lastname'],$data['email'],'eric.saou3@gmail.com','contact',$data);
+                $result = $this->mailer->mail(
+                    'Message de '.$data['firstname'].' '.$data['lastname'],
+                    $data['email'],
+                    'eric.saou3@gmail.com',
+                    'contact',
+                    $data
+                );
 
                 if ($result) {
                     $this->session->addFlashes('success', 'Message posté avec succès !');
@@ -56,9 +62,7 @@ final class HomeController
                 if (!$result) {
                     $this->session->addFlashes('danger', 'Erreur lors de l\'envoi du message !');
                 }
-
             }
-
         }
 
         return new Response($this->view->render([
@@ -67,8 +71,6 @@ final class HomeController
                 'token' => $this->csrf->newToken(),
                 'formData' => $data
             ]
-        ]),200);
+        ]), 200);
     }
-
-
 }

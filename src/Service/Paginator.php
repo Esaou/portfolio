@@ -13,23 +13,23 @@ class Paginator
     private View $view;
     private Request $request;
 
-    public function __construct(Request $request,View $view)
+    public function __construct(Request $request, View $view)
     {
         $this->request = $request;
         $this->view = $view;
     }
 
-    public function paginate(int $tableRows,int $parPage,string $route): array
+    public function paginate(int $tableRows, int $parPage, string $route): array
     {
 
         $page = (int)$this->request->query()->get('page');
 
         $pagesTotales = ceil($tableRows/$parPage);
 
-        if(!empty($page) AND $page > 0 AND $page <= $pagesTotales){
+        if (!empty($page) && $page > 0 && $page <= $pagesTotales) {
             $page = intval($page);
             $pageCourante = $page;
-        }else{
+        } else {
             $pageCourante = 1;
         }
 
@@ -53,8 +53,5 @@ class Paginator
             // pour l'affichage de la pagination de le template
             "paginator" => $paginator
         ];
-
-
     }
-
 }

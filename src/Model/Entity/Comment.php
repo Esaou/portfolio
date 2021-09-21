@@ -13,8 +13,14 @@ final class Comment
     public string $isChecked;
     public \DateTime $createdDate;
 
-    public function __construct(int $id, string $comment, Post $post_id,User|null $id_user,string $isChecked,\DateTime $createdDate)
-    {
+    public function __construct(
+        int $id,
+        string $comment,
+        Post $post_id,
+        User|null $id_user,
+        string $isChecked,
+        \DateTime $createdDate
+    ) {
         $this->id = $id;
         $this->id_user = $id_user;
         $this->comment = $comment;
@@ -83,9 +89,9 @@ final class Comment
         return $this->post_id;
     }
 
-    public function __toString(){
+    public function __toString(): string
+    {
 
         return $this->comment;
-
     }
 }

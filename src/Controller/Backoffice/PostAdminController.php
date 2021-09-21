@@ -29,8 +29,14 @@ final class PostAdminController
     private EditPostValidator $validator;
     private CsrfToken $csrf;
     private Paginator $paginator;
-    public function __construct(View $view,Request $request,Session $session,CommentRepository $commentRepository,UserRepository $userRepository,PostRepository $postRepository)
-    {
+    public function __construct(
+        View $view,
+        Request $request,
+        Session $session,
+        CommentRepository $commentRepository,
+        UserRepository $userRepository,
+        PostRepository $postRepository
+    ) {
 
         $this->postRepository = $postRepository;
         $this->commentRepository = $commentRepository;
@@ -39,40 +45,38 @@ final class PostAdminController
         $this->request = $request;
         $this->session = $session;
         $this->validator = new EditPostValidator($this->session);
-        $this->csrf = new CsrfToken($this->session,$this->request);
-        $this->paginator = new Paginator($this->request,$this->view);
-        $security = new Authorization($this->session,$this->request);
+        $this->csrf = new CsrfToken($this->session, $this->request);
+        $this->paginator = new Paginator($this->request, $this->view);
+        $security = new Authorization($this->session, $this->request);
 
 
-        if(!$security->isLogged()){
+        if (!$security->isLogged()) {
             new RedirectResponse('forbidden');
-        }elseif($security->loggedAs('User')){
+        } elseif ($security->loggedAs('User')) {
             new RedirectResponse('forbidden');
         }
-
     }
 
-    public function postsList():Response{
+    public function postsList():Response
+    {
 
-        if(!is_null($this->request->query()->get('delete'))){
-
+        if (!is_null($this->request->query()->get('delete'))) {
             $id = $this->request->query()->get('id');
             $post = $this->postRepository->findOneBy(['id_post' => $id]);
 
-            if (!is_null($post)){
+            if (!is_null($post)) {
                 $this->postRepository->delete($post);
-                $this->session->addFlashes('danger','Post supprimé avec succès !');
+                $this->session->addFlashes('danger', 'Post supprimé avec succès !');
             }
-
         }
 
         // PAGINATION
 
         $tableRows = $this->postRepository->countAllPosts();
 
-        $paginator = $this->paginator->paginate($tableRows,10,'postsAdmin');
+        $paginator = $this->paginator->paginate($tableRows, 10, 'postsAdmin');
 
-        $posts = $this->postRepository->findBy([],['createdAt' =>'desc'],$paginator['parPage'],$paginator['depart']);
+        $posts = $this->postRepository->findBy([], ['createdAt' =>'desc'], $paginator['parPage'], $paginator['depart']);
 
         return new Response($this->view->render([
             'template' => 'posts',
@@ -81,29 +85,38 @@ final class PostAdminController
                 'posts' => $posts,
                 'paginator' => $paginator['paginator']
             ],
-        ]),200);
+        ]), 200);
     }
 
-    public function editPost(int $id):Response{
+    public function editPost(int $id):Response
+    {
 
         $post = $this->postRepository->findOneBy(['id_post' => $id]);
         $users = $this->userRepository->findAll();
 
-        if ($this->request->getMethod() === 'POST' and $this->csrf->tokenCheck()){
+        if ($this->request->getMethod() === 'POST' && $this->csrf->tokenCheck()) {
 
+            /** @var array $data */
             $data = $this->request->request()->all();
 
-            if ($this->validator->editPostValidator($data)){
-
+            if ($this->validator->editPostValidator($data)) {
                 $user = $this->userRepository->findOneBy(['id_utilisateur'=>(int)$data['author']]);
 
-                $post = new Post($post->getIdPost(),$data['chapo'],$data['title'],$data['content'],$post->getCreatedAt(),new \DateTime(),$user);
+                if ($post) {
+                    $post = new Post(
+                        $post->getIdPost(),
+                        $data['chapo'],
+                        $data['title'],
+                        $data['content'],
+                        $post->getCreatedAt(),
+                        new \DateTime(),
+                        $user
+                    );
+                    $this->postRepository->update($post);
+                }
 
-                $this->postRepository->update($post);
-
-                $this->session->addFlashes('update','Post modifié avec succès !');
+                $this->session->addFlashes('update', 'Post modifié avec succès !');
             }
-
         }
 
         return new Response($this->view->render([
@@ -114,25 +127,33 @@ final class PostAdminController
                 'post' => $post,
                 'token' => $this->csrf->newToken()
             ],
-        ]),200);
-
+        ]), 200);
     }
 
-    public function addPost():Response{
+    public function addPost():Response
+    {
 
-        if ($this->request->getMethod() === 'POST' and $this->csrf->tokenCheck()){
+        if ($this->request->getMethod() === 'POST' && $this->csrf->tokenCheck()) {
 
+            /** @var array $data */
             $data = $this->request->request()->all();
 
-            if ($this->validator->editPostValidator($data)){
-
+            if ($this->validator->editPostValidator($data)) {
                 $user = $this->session->get('user');
 
-                $post = new Post(0,$data['chapo'],$data['title'],$data['content'],new \DateTime('now'),null,$user);
+                $post = new Post(
+                    0,
+                    $data['chapo'],
+                    $data['title'],
+                    $data['content'],
+                    new \DateTime('now'),
+                    null,
+                    $user
+                );
 
                 $this->postRepository->create($post);
 
-                $this->session->addFlashes('success','Post ajouté avec succès !');
+                $this->session->addFlashes('success', 'Post ajouté avec succès !');
             }
         }
 
@@ -142,8 +163,6 @@ final class PostAdminController
             'data' => [
                 'token' => $this->csrf->newToken()
             ]
-        ]),200);
-
+        ]), 200);
     }
-
 }

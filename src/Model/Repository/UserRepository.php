@@ -22,7 +22,7 @@ final class UserRepository implements EntityRepositoryInterface
     {
         $data = $this->findBy(['id'=>$id]);
 
-        if (!empty($data)){
+        if (!empty($data)) {
             $data = current($data);
         }
 
@@ -35,9 +35,9 @@ final class UserRepository implements EntityRepositoryInterface
 
     public function findOneBy(array $criteria, array $orderBy = null): ?User
     {
-        $data = $this->findBy($criteria,$orderBy);
+        $data = $this->findBy($criteria, $orderBy);
 
-        if (!is_null($data)){
+        if (!is_null($data)) {
             $data = current($data);
         }
 
@@ -48,23 +48,23 @@ final class UserRepository implements EntityRepositoryInterface
     {
         $sql = "select * from user ";
 
-        if (!empty($criteria)){
+        if (!empty($criteria)) {
             $sql .= $this->database->setCondition($criteria);
         }
 
-        if (!is_null($orderBy)){
+        if (!is_null($orderBy)) {
             $sql .= ' order by '.$this->database->setOrderBy($orderBy);
         }
 
-        if (!is_null($limit)){
+        if (!is_null($limit)) {
             $sql .= ' limit '.$limit;
         }
 
-        if (!is_null($offset)){
+        if (!is_null($offset)) {
             $sql .= ' offset '.$offset;
         }
 
-        $data = $this->database->prepare($sql,$criteria);
+        $data = $this->database->prepare($sql, $criteria);
 
         if (empty($data)) {
             return null;
@@ -72,8 +72,19 @@ final class UserRepository implements EntityRepositoryInterface
 
         $users = [];
 
-        foreach ($data as $user) {
-            $users[] = new User((int)$user->id_utilisateur, $user->firstname,$user->lastname, $user->email, $user->password,$user->isValid,$user->role,$user->token);
+        if (is_iterable($data)) {
+            foreach ($data as $user) {
+                $users[] = new User(
+                    (int)$user->id_utilisateur,
+                    $user->firstname,
+                    $user->lastname,
+                    $user->email,
+                    $user->password,
+                    $user->isValid,
+                    $user->role,
+                    $user->token
+                );
+            }
         }
 
         return $users;
@@ -94,30 +105,37 @@ final class UserRepository implements EntityRepositoryInterface
     {
         $criteria = false;
 
+        $user = get_object_vars($user);
+
         foreach ($user as $key => $value) {
-
             $criteria[$key] = $value;
-
         }
 
-        $sql = "INSERT INTO user (id_utilisateur,firstname, lastname,email,password,isValid,role,token) VALUES (:id_utilisateur,:firstname,:lastname,:email,:password,:isValid,:role,:token )";
-        $result = $this->database->prepare($sql,$criteria);
+        $sql = "INSERT INTO user (id_utilisateur,firstname, lastname,email,password,isValid,role,token) 
+                VALUES (:id_utilisateur,:firstname,:lastname,:email,:password,:isValid,:role,:token )";
 
-        if ($result === true){
+        $result = '';
+
+        if (is_array($criteria)) {
+            $result = $this->database->prepare($sql, $criteria);
+        }
+
+        if ($result === true) {
             return true;
-        }else{
-            return false;
         }
+
+        return false;
     }
 
     public function update(object $user): bool
     {
+
         $criteria = [];
 
+        $user = get_object_vars($user);
+
         foreach ($user as $key => $value) {
-
             $criteria[$key] = $value;
-
         }
 
         $criteria = $this->database->setConditionUpdate($criteria);
@@ -126,36 +144,40 @@ final class UserRepository implements EntityRepositoryInterface
 
         $sql .= $criteria;
 
-        $sql.= " where id_utilisateur = ".$user->id_utilisateur;
+        $sql.= " where id_utilisateur = ".$user['id_utilisateur'];
 
 
         $result = $this->database->query($sql);
 
-        if ($result === true){
+        if ($result === true) {
             return true;
-        }else{
-            return false;
         }
+
+        return false;
     }
 
     public function delete(object $user): bool
     {
-        $sql = "DELETE FROM user where id_utilisateur = $user->id_utilisateur ";
+        $user = get_object_vars($user);
+
+        $sql = "DELETE FROM user where id_utilisateur = " . $user['id_utilisateur'];
 
         $result = $this->database->query($sql);
 
-        if ($result === true){
+        if ($result === true) {
             return true;
-        }else{
-            return false;
         }
+
+        return false;
     }
 
     public function countAllUsers():int
     {
         $data = $this->database->query("SELECT COUNT(*) AS nb FROM user ORDER BY id_utilisateur DESC");
-        $data = current($data);
+
+        if (is_array($data)) {
+            $data = current($data);
+        }
         return (int)$data->nb;
     }
-
 }

@@ -30,6 +30,7 @@ final class UserController
     private Mailer $mailer;
     private Authorization $security;
     private CsrfToken $csrf;
+    private RedirectResponse $redirect;
 
     public function __construct(UserRepository $userRepository, View $view, Session $session, Request $request)
     {
@@ -43,16 +44,15 @@ final class UserController
         $this->mailer = new Mailer($this->view);
         $this->security = new Authorization($this->session, $this->request);
         $this->csrf = new CsrfToken($this->session, $this->request);
+        $this->redirect = new RedirectResponse();
     }
 
     public function loginAction(Request $request): Response
     {
 
         if ($this->security->isLogged()) {
-            new RedirectResponse('home');
+            $this->redirect->redirect('home');
         }
-
-        $data = [];
 
         if ($request->getMethod() === 'POST' and $this->csrf->tokenCheck()) {
             $data = $request->request()->all();
@@ -65,20 +65,21 @@ final class UserController
 
             $data['user'] = $user;
 
+
             if ($this->loginValidator->loginValidator($data)) {
                 $this->session->set('user', $data['user']);
                 $user = $this->session->get('user');
                 if ($user->getRole() === 'User') {
-                    new RedirectResponse('home');
+                    $this->redirect->redirect('home');
                 } else {
-                    new RedirectResponse('postsAdmin');
+                    $this->redirect->redirect('postsAdmin');
                 }
             }
         }
 
         return new Response($this->view->render(['template' => 'login', 'data' => [
             'token' => $this->csrf->newToken(),
-            'formData' => $data
+            'formData' => (isset($data)) ? $data : []
         ]]), 200);
     }
 
@@ -97,7 +98,7 @@ final class UserController
     {
 
         if ($this->security->isLogged()) {
-            new RedirectResponse('home');
+            $this->redirect->redirect('home');
         }
 
         $datas = [];
@@ -130,13 +131,11 @@ final class UserController
                 );
                 $resultUser = $this->userRepository->create($user);
 
-                // ADD TOKEN TO MAIL DATA
-
-                $datas['token'] = $tokenUser;
-
                 // SEND CONFIRMATION MAIL
 
                 if ($resultUser) {
+                    $datas['token'] = $tokenUser;
+
                     $result = $this->mailer->mail(
                         'Confirmation de compte',
                         'eric.saou3@gmail.com',
@@ -171,11 +170,11 @@ final class UserController
         ]), 200);
     }
 
-    public function userAccount() :Response
+    public function userAccount(int $id) :Response
     {
 
         if (!$this->security->loggedAs('User')) {
-            new RedirectResponse('home');
+            $this->redirect->redirect('home');
         }
 
         if ($this->request->getMethod() === 'POST' && $this->csrf->tokenCheck()) {
@@ -185,7 +184,7 @@ final class UserController
             $data = $this->request->request()->all();
 
             if ($this->accountValidator->accountValidator($data)) {
-                $id = $this->request->query()->get('id');
+
                 $user = $this->userRepository->findOneBy(['id_utilisateur' => $id]);
 
                 $password = password_hash($data['password'], PASSWORD_BCRYPT);
@@ -202,9 +201,10 @@ final class UserController
                         $user->getToken()
                     );
                     $this->userRepository->update($user);
+                    $this->session->set('user', $user);
+                    $this->session->addFlashes('update', 'Vos informations sont modifiées avec succès !');
                 }
-                $this->session->set('user', $user);
-                $this->session->addFlashes('update', 'Vos informations sont modifiées avec succès !');
+
             }
         }
 
@@ -225,9 +225,9 @@ final class UserController
         if ($user) {
             $user->setIsValid('Oui');
             $this->userRepository->update($user);
+            $this->session->addFlashes('success', 'Votre compte est validé succès !');
         }
 
-        $this->session->addFlashes('success', 'Votre compte est validé succès !');
 
         return new Response($this->view->render([
             'template' => 'login',

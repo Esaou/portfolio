@@ -131,7 +131,7 @@ final class CommentRepository implements EntityRepositoryInterface
     public function create(object $comment): bool
     {
 
-        $criteria = false;
+        $criteria = [];
 
         $comment = get_object_vars($comment);
 
@@ -220,15 +220,18 @@ final class CommentRepository implements EntityRepositoryInterface
         if (is_iterable($data)) {
             $data = current($data);
         }
+
         return (int)$data->nb;
     }
 
     public function countAllComment():int
     {
         $data = $this->database->query("SELECT COUNT(*) AS nb FROM comment ORDER BY id DESC");
+
         if (is_iterable($data)) {
             $data = current($data);
         }
+
         return (int)$data->nb;
     }
 }

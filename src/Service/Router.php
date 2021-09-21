@@ -28,6 +28,7 @@ final class Router
     private View $view;
     private Request $request;
     private Session $session;
+    private RedirectResponse $redirect;
 
     public function __construct(Request $request)
     {
@@ -36,6 +37,7 @@ final class Router
         $this->session = new Session();
         $this->view = new View($this->session);
         $this->request = $request;
+        $this->redirect = new RedirectResponse();
     }
 
     public function run(): Response
@@ -148,7 +150,7 @@ final class Router
                 $userRepo,
                 $postRepo
             );
-            return $controller->userAccount();
+            return $controller->userAccount((int) $this->request->query()->get('id'));
         } elseif ($action === 'editPost') {
             $postRepo = new PostRepository($this->database);
             $userRepo = new UserRepository($this->database);
@@ -191,7 +193,7 @@ final class Router
         } elseif ($action === 'userAccountFrontOffice') {
             $userRepo = new UserRepository($this->database);
             $controller = new UserController($userRepo, $this->view, $this->session, $this->request);
-            return $controller->userAccount();
+            return $controller->userAccount((int) $this->request->query()->get('id'));
         } elseif ($action === 'postNotFound') {
             $controller = new SecurityController($this->view);
             return $controller->postNotFound();
@@ -200,6 +202,8 @@ final class Router
             return $controller->notFound();
         }
 
-        return new RedirectResponse('notFound');
+        return new Response($this->view->render([
+            'template' => 'notFound'
+        ]), 404);
     }
 }

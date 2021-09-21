@@ -8,7 +8,6 @@ use App\Service\CsrfToken;
 use App\Service\FormValidator\ContactValidator;
 use App\Service\Http\Session\Session;
 use App\Service\Mailer;
-use App\Service\AbstractValidator;
 use App\View\View;
 use App\Service\Http\Response;
 use App\Service\Http\Request;
@@ -40,8 +39,6 @@ final class HomeController
     public function home(): Response
     {
 
-        $data = [];
-
         if ($this->request->getMethod() === 'POST' && $this->csrf->tokenCheck()) {
 
             /** @var array $data */
@@ -69,7 +66,7 @@ final class HomeController
             'template' => 'home',
             'data' => [
                 'token' => $this->csrf->newToken(),
-                'formData' => $data
+                'formData' => (isset($data)) ? $data : []
             ]
         ]), 200);
     }

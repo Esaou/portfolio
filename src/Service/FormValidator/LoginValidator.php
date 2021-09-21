@@ -37,12 +37,12 @@ class LoginValidator extends AbstractValidator
             $error = true;
         }
 
-        if ($data['user']->getIsValid() == 'Non') {
+        if (!is_null($data['user']) && $data['user']->getIsValid() == 'Non') {
             $this->session->addFlashes('danger', 'Compte non valide !');
             $error = true;
         }
 
-        if (!password_verify($data['password'], $data['user']->getPassword())) {
+        if (!is_null($data['user']) && !password_verify($data['password'], $data['user']->getPassword())) {
             $this->session->addFlashes('danger', 'Mauvais identifiants');
             $error = true;
         }

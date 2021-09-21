@@ -29,6 +29,7 @@ final class PostController
     private CommentValidator $validator;
     private CsrfToken $csrf;
     private Paginator $paginator;
+    private RedirectResponse $redirect;
 
     public function __construct(
         View $view,
@@ -47,6 +48,7 @@ final class PostController
         $this->validator = new CommentValidator($this->session);
         $this->csrf = new CsrfToken($this->session, $this->request);
         $this->paginator = new Paginator($this->request, $this->view);
+        $this->redirect = new RedirectResponse();
     }
 
     public function displayOneAction(int $id): Response
@@ -70,6 +72,7 @@ final class PostController
                 $comment = new Comment(0, $data['comment'], $post, $user, 'Non', new \DateTime('now'));
                 $this->commentRepository->create($comment);
                 $this->session->addFlashes('success', 'Commentaire posté avec succès !');
+
             }
         }
 
@@ -86,31 +89,32 @@ final class PostController
 
         // RENDER
 
+        if (is_null($post)) {
+            $this->redirect->redirect('postNotFound');
+        }
 
-        if ($post !== null) {
+        $nextPost = false;
+        $previousPost = false;
+
+        if ($post){
             $nextPost = $this->postRepository->nextPost($post->getCreatedAt());
             $previousPost = $this->postRepository->previousPost($post->getCreatedAt());
+        }
 
-            $response = new Response($this->view->render(
-                [
-                'template' => 'post',
-                'data' => [
-                    'token' => $this->csrf->newToken(),
-                    'post' => $post,
-                    'comments' => $comments,
-                    'nextPost' => $nextPost,
-                    'previousPost' => $previousPost,
-                    'paginator' => $paginator['paginator']
-                    ],
+        return  new Response($this->view->render(
+            [
+            'template' => 'post',
+            'data' => [
+                'token' => $this->csrf->newToken(),
+                'post' => $post,
+                'comments' => $comments,
+                'nextPost' => $nextPost,
+                'previousPost' => $previousPost,
+                'paginator' => $paginator['paginator']
                 ],
-            ), 200);
-        }
+            ],
+        ), 200);
 
-        if (is_null($post)) {
-            $response = new RedirectResponse('postNotFound');
-        }
-
-        return $response;
     }
 
     public function displayAllAction(): Response

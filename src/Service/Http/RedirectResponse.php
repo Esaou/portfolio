@@ -7,25 +7,22 @@ namespace App\Service\Http;
 class RedirectResponse extends Response
 {
 
-    private string $url;
     private int $status;
     private array $headers;
 
-    public function __construct(string $action, int $status = 302, array $headers = [])
+    public function __construct(int $status = 302, array $headers = [])
     {
         parent::__construct('', $status, $headers);
 
-        $this->url = $action;
         $this->status = $status;
         $this->headers = $headers;
 
-        $this->setTargetUrl($this->url);
     }
 
-    public function setTargetUrl(string $url):void
+    public function redirect(string $action):void
     {
         $this->setStatus($this->status);
-        header('Location: index.php?action=' . $url);
+        header('Location: index.php?action=' . $action);
         exit();
     }
 }

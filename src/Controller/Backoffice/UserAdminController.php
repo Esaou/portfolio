@@ -32,6 +32,7 @@ final class UserAdminController
     private AccountValidator $accountValidator;
     private CsrfToken $csrf;
     private Paginator $paginator;
+    private RedirectResponse $redirect;
 
     public function __construct(
         View $view,
@@ -53,11 +54,10 @@ final class UserAdminController
         $this->accountValidator = new AccountValidator($this->session);
         $this->csrf = new CsrfToken($this->session, $this->request);
         $this->paginator = new Paginator($this->request, $this->view);
+        $this->redirect = new RedirectResponse();
 
-        if (!$this->security->isLogged()) {
-            new RedirectResponse('forbidden');
-        } elseif ($this->security->loggedAs('User')) {
-            new RedirectResponse('forbidden');
+        if (!$this->security->isLogged() || $this->security->loggedAs('User')) {
+            $this->redirect->redirect('forbidden');
         }
     }
 
@@ -65,7 +65,7 @@ final class UserAdminController
     {
 
         if (!$this->security->loggedAs('Dev')) {
-            new RedirectResponse('forbidden');
+            $this->redirect->redirect('forbidden');
         }
 
         if (!is_null($this->request->query()->get('delete'))) {
@@ -94,10 +94,9 @@ final class UserAdminController
         ]), 200);
     }
 
-    public function userAccount() :Response
+    public function userAccount(int $id) :Response
     {
 
-        $id = $this->request->query()->get('id');
         $user = $this->userRepository->findOneBy(['id_utilisateur' => $id]);
 
         if ($this->request->getMethod() === 'POST' && $this->csrf->tokenCheck()) {
@@ -119,9 +118,9 @@ final class UserAdminController
                         $user->getToken()
                     );
                     $this->userRepository->update($user);
+                    $this->session->set('user', $user);
+                    $this->session->addFlashes('update', 'Vos informations sont modifiées avec succès !');
                 }
-                $this->session->set('user', $user);
-                $this->session->addFlashes('update', 'Vos informations sont modifiées avec succès !');
             }
         }
 
@@ -137,9 +136,8 @@ final class UserAdminController
     public function editUser(int $id):Response
     {
 
-
         if (!$this->security->loggedAs('Dev')) {
-            new RedirectResponse('forbidden');
+            $this->redirect->redirect('forbidden');
         }
 
         $user = $this->userRepository->findOneBy(['id_utilisateur' => $id]);

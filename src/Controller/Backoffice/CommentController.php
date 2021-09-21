@@ -25,6 +25,7 @@ final class CommentController
     private Request $request;
     private Session $session;
     private Paginator $paginator;
+    private RedirectResponse $redirect;
 
     public function __construct(
         View $view,
@@ -43,11 +44,10 @@ final class CommentController
         $this->session = $session;
         $this->paginator = new Paginator($this->request, $this->view);
         $security = new Authorization($this->session, $this->request);
+        $this->redirect = new RedirectResponse();
 
-        if (!$security->isLogged()) {
-            new RedirectResponse('forbidden');
-        } elseif ($security->loggedAs('User')) {
-            new RedirectResponse('forbidden');
+        if (!$security->isLogged() || $security->loggedAs('User')) {
+            $this->redirect->redirect('forbidden');
         }
     }
 

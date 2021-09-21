@@ -1,7 +1,5 @@
 class Validator {
 
-
-
     constructor() {
 
         this.firstname = document.getElementById('firstname');
@@ -18,33 +16,21 @@ class Validator {
         this.passCheck = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[-+!*$@%_])([-+!*$@%_\w]{8,100})$/;
 
         if(this.submitRegister){
-
             this.submitRegister.addEventListener('click', (event)=>{
-
                 this.registerValidator(event);
-
             });
-
         }
 
         if(this.submitContact){
-
             this.submitContact.addEventListener('click', (event)=>{
-
                 this.contactValidator(event);
-
             });
-
         }
 
         if(this.submitAccount){
-
             this.submitAccount.addEventListener('click', (event)=>{
-
                 this.registerValidator(event);
-
             });
-
         }
 
     }

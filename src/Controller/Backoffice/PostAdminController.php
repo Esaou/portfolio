@@ -4,18 +4,16 @@ declare(strict_types=1);
 
 namespace  App\Controller\Backoffice;
 
-use App\Controller\Frontoffice\SecurityController;
-use App\Controller\Frontoffice\UserController;
 use App\Model\Entity\Post;
 use App\Model\Repository\UserRepository;
 use App\Service\Authorization;
+use App\Service\CsrfToken;
 use App\Service\FormValidator\EditPostValidator;
 use App\Service\Http\RedirectResponse;
 use App\Service\Http\Request;
 use App\Service\Http\Response;
 use App\Service\Http\Session\Session;
 use App\Service\Paginator;
-use App\Service\Validator;
 use App\View\View;
 use App\Model\Repository\PostRepository;
 use App\Model\Repository\CommentRepository;
@@ -29,7 +27,8 @@ final class PostAdminController
     private Request $request;
     private Session $session;
     private EditPostValidator $validator;
-
+    private CsrfToken $csrf;
+    private Paginator $paginator;
     public function __construct(View $view,Request $request,Session $session,CommentRepository $commentRepository,UserRepository $userRepository,PostRepository $postRepository)
     {
 
@@ -40,13 +39,14 @@ final class PostAdminController
         $this->request = $request;
         $this->session = $session;
         $this->validator = new EditPostValidator($this->session);
-
+        $this->csrf = new CsrfToken($this->session,$this->request);
+        $this->paginator = new Paginator($this->request,$this->view);
         $security = new Authorization($this->session,$this->request);
 
 
-        if($security->notLogged() === true){
+        if(!$security->isLogged()){
             new RedirectResponse('forbidden');
-        }elseif($security->loggedAs('User') === true){
+        }elseif($security->loggedAs('User')){
             new RedirectResponse('forbidden');
         }
 
@@ -68,10 +68,9 @@ final class PostAdminController
 
         // PAGINATION
 
-        $page = (int)$this->request->query()->get('page');
         $tableRows = $this->postRepository->countAllPosts();
 
-        $paginator = (new Paginator($page,$tableRows,8))->paginate();
+        $paginator = $this->paginator->paginate($tableRows,10,'postsAdmin');
 
         $posts = $this->postRepository->findBy([],['createdAt' =>'desc'],$paginator['parPage'],$paginator['depart']);
 
@@ -80,24 +79,19 @@ final class PostAdminController
             'type' => 'backoffice',
             'data' => [
                 'posts' => $posts,
-                'pagesTotales' => $paginator['pagesTotales'],
-                'pageCourante' => $paginator['pageCourante']
+                'paginator' => $paginator['paginator']
             ],
         ]),200);
     }
 
     public function editPost(int $id):Response{
 
-        $token = base_convert(hash('sha256', time() . mt_rand()), 16, 36);
-
         $post = $this->postRepository->findOneBy(['id_post' => $id]);
         $users = $this->userRepository->findAll();
 
-        if ($this->request->getMethod() === 'POST'){
+        if ($this->request->getMethod() === 'POST' and $this->csrf->tokenCheck()){
 
             $data = $this->request->request()->all();
-            $data['tokenSession']= $this->session->get('token');
-            $data['tokenPost'] = $this->request->request()->get('token');
 
             if ($this->validator->editPostValidator($data)){
 
@@ -112,15 +106,13 @@ final class PostAdminController
 
         }
 
-        $this->session->set('token', $token);
-
         return new Response($this->view->render([
             'template' => 'editPost',
             'type' => 'backoffice',
             'data' => [
                 'users' => $users,
                 'post' => $post,
-                'token' => $token
+                'token' => $this->csrf->newToken()
             ],
         ]),200);
 
@@ -128,13 +120,9 @@ final class PostAdminController
 
     public function addPost():Response{
 
-        $token = base_convert(hash('sha256', time() . mt_rand()), 16, 36);
-
-        if ($this->request->getMethod() === 'POST'){
+        if ($this->request->getMethod() === 'POST' and $this->csrf->tokenCheck()){
 
             $data = $this->request->request()->all();
-            $data['tokenSession'] = $this->session->get('token');
-            $data['tokenPost'] = $this->request->request()->get('token');
 
             if ($this->validator->editPostValidator($data)){
 
@@ -148,13 +136,11 @@ final class PostAdminController
             }
         }
 
-        $this->session->set('token', $token);
-
         return new Response($this->view->render([
             'template' => 'addPost',
             'type' => 'backoffice',
             'data' => [
-                'token' => $token
+                'token' => $this->csrf->newToken()
             ]
         ]),200);
 

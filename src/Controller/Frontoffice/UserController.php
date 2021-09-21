@@ -6,6 +6,7 @@ namespace  App\Controller\Frontoffice;
 
 use App\Model\Entity\User;
 use App\Service\Authorization;
+use App\Service\CsrfToken;
 use App\Service\FormValidator\AccountValidator;
 use App\Service\FormValidator\LoginValidator;
 use App\Service\FormValidator\RegisterValidator;
@@ -28,6 +29,7 @@ final class UserController
     private AccountValidator $accountValidator;
     private Mailer $mailer;
     private Authorization $security;
+    private CsrfToken $csrf;
 
     public function __construct(UserRepository $userRepository, View $view, Session $session,Request $request)
     {
@@ -40,27 +42,24 @@ final class UserController
         $this->accountValidator = new AccountValidator($this->session);
         $this->mailer = new Mailer($this->view);
         $this->security = new Authorization($this->session,$this->request);
+        $this->csrf = new CsrfToken($this->session,$this->request);
     }
 
     public function loginAction(Request $request): Response
     {
 
-        if($this->security->notLogged() === false){
+        if($this->security->isLogged()){
             new RedirectResponse('home');
         }
 
-        $token = base_convert(hash('sha256', time() . mt_rand()), 16, 36);
-
         $data = [];
 
-        if ($request->getMethod() === 'POST') {
+        if ($request->getMethod() === 'POST' and $this->csrf->tokenCheck()) {
 
             $data = $request->request()->all();
 
             $user = $this->userRepository->findOneBy(['email' => $data['email']]);
 
-            $data['tokenSession'] = $this->session->get('token');
-            $data['tokenPost'] = $this->request->request()->get('token');
             $data['user'] = $user;
 
             if ($this->loginValidator->loginValidator($data)){
@@ -75,10 +74,8 @@ final class UserController
 
         }
 
-        $this->session->set('token', $token);
-
         return new Response($this->view->render(['template' => 'login', 'data' => [
-            'token' => $token,
+            'token' => $this->csrf->newToken(),
             'formData' => $data
         ]]),200);
     }
@@ -97,23 +94,18 @@ final class UserController
     public function register() :Response
     {
 
-        if($this->security->notLogged() === false){
+        if($this->security->isLogged()){
             new RedirectResponse('home');
         }
 
-        $token = base_convert(hash('sha256', time() . mt_rand()), 16, 36);
-
         $datas = [];
 
-        if ($this->request->getMethod() === 'POST') {
+        if ($this->request->getMethod() === 'POST' and $this->csrf->tokenCheck()) {
 
             $datas = $this->request->request()->all();
 
             $validEmail = $this->userRepository->findOneBy(['email'=>$datas['email']]);
-
             $datas['validEmail'] = $validEmail;
-            $datas['tokenPost'] = $this->request->request()->get('token');
-            $datas['tokenSession'] = $this->session->get('token');
 
             if ($this->registerValidator->registerValidator($datas)){
 
@@ -149,12 +141,11 @@ final class UserController
             }
         }
 
-        $this->session->set('token', $token);
 
         return new Response($this->view->render([
             'template' => 'register',
             'data' => [
-                'token' => $token,
+                'token' => $this->csrf->newToken(),
                 'formData' => $datas
             ],
         ]),200);
@@ -163,17 +154,13 @@ final class UserController
     public function userAccount() :Response
     {
 
-        if($this->security->notLogged() === true or $this->security->loggedAs('User') !== true){
+        if(!$this->security->loggedAs('User')){
             new RedirectResponse('home');
         }
 
-        $token = base_convert(hash('sha256', time() . mt_rand()), 16, 36);
-
-        if ($this->request->getMethod() === 'POST'){
+        if ($this->request->getMethod() === 'POST' and $this->csrf->tokenCheck()){
 
             $data = $this->request->request()->all();
-            $data['tokenPost'] = $this->request->request()->get('token');
-            $data['tokenSession'] = $this->session->get('token');
 
             if ($this->accountValidator->accountValidator($data)){
 
@@ -190,12 +177,10 @@ final class UserController
             }
         }
 
-        $this->session->set('token', $token);
-
         return new Response($this->view->render([
             'template' => 'userAccount',
             'data' => [
-                'token' => $token
+                'token' => $this->csrf->newToken()
             ]
         ]),200);
 
@@ -205,7 +190,9 @@ final class UserController
 
         $token = $this->request->query()->get('token');
         $user = $this->userRepository->findOneBy(['token'=>$token]);
+
         $user->setIsValid('Oui');
+
         $this->userRepository->update($user);
 
         $this->session->addFlashes('success','Votre compte est validé succès !');

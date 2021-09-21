@@ -23,7 +23,7 @@ class RedirectResponse extends Response
 
     }
 
-    public function setTargetUrl(string $url)
+    public function setTargetUrl(string $url):void
     {
         $this->setStatus($this->status);
         header('Location: index.php?action=' . $url);

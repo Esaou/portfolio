@@ -1,6 +1,8 @@
 <?php
 
 
+declare(strict_types=1);
+
 namespace App\Service;
 
 use App\View\View;
@@ -19,7 +21,7 @@ class Mailer
 
     }
 
-    public function mail($subject,$from,$to,$type,$data){
+    public function mail(string $subject,string $from,string $to,string $type,array $data):int{
 
         $transport = (new Swift_SmtpTransport('localhost', 1025));
 

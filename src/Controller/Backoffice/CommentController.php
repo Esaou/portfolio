@@ -4,8 +4,7 @@ declare(strict_types=1);
 
 namespace  App\Controller\Backoffice;
 
-use App\Controller\Frontoffice\SecurityController;
-use App\Controller\Frontoffice\UserController;
+use App\Model\Entity\Comment;
 use App\Model\Repository\UserRepository;
 use App\Service\Authorization;
 use App\Service\Http\RedirectResponse;
@@ -25,6 +24,7 @@ final class CommentController
     private View $view;
     private Request $request;
     private Session $session;
+    private Paginator $paginator;
 
     public function __construct(View $view,Request $request,Session $session,CommentRepository $commentRepository,UserRepository $userRepository,PostRepository $postRepository)
     {
@@ -35,12 +35,12 @@ final class CommentController
         $this->view = $view;
         $this->request = $request;
         $this->session = $session;
-
+        $this->paginator = new Paginator($this->request,$this->view);
         $security = new Authorization($this->session,$this->request);
 
-        if($security->notLogged() === true){
+        if(!$security->isLogged()){
             new RedirectResponse('forbidden');
-        }elseif($security->loggedAs('User') === true){
+        }elseif($security->loggedAs('User')){
             new RedirectResponse('forbidden');
         }
 
@@ -76,23 +76,22 @@ final class CommentController
         if(!is_null($this->request->query()->get('unvalidate'))){
 
             $id = $this->request->query()->get('id');
+            /** @var Comment $comment */
             $comment = $this->commentRepository->findOneBy(['id' => $id]);
+
             $comment->setIsChecked('Non');
             $this->commentRepository->update($comment);
 
-            if (!is_null($comment)){
-                $comment->setIsChecked('Non');
-                $this->session->addFlashes('success','Commentaire invalidé avec succès !');
-            }
+            $this->session->addFlashes('success','Commentaire invalidé avec succès !');
+
 
         }
 
         // PAGINATION
 
-        $page = (int)$this->request->query()->get('page');
         $tableRows = $this->commentRepository->countAllComment();
 
-        $paginator = (new Paginator($page,$tableRows,8))->paginate();
+        $paginator = $this->paginator->paginate($tableRows,10,'comments');
 
         $comments = $this->commentRepository->findBy([],['createdDate' =>'desc'],$paginator['parPage'],$paginator['depart']);
 
@@ -101,8 +100,7 @@ final class CommentController
             'type' => 'backoffice',
             'data' => [
                 'comments' => $comments,
-                'pagesTotales' => $paginator['pagesTotales'],
-                'pageCourante' => $paginator['pageCourante']
+                'paginator' => $paginator['paginator']
             ],
         ]));
     }

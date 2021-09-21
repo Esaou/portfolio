@@ -4,38 +4,54 @@ declare(strict_types=1);
 
 namespace App\Service;
 
+use App\Service\Http\Request;
+use App\View\View;
+
 class Paginator
 {
-    private int|null $page;
-    private int $tableRows;
-    private int $parPage;
 
-    public function __construct(int|null $page,int $tableRows,int $parPage)
+    private View $view;
+    private Request $request;
+
+    public function __construct(Request $request,View $view)
     {
-        $this->page = $page;
-        $this->tableRows = $tableRows;
-        $this->parPage = $parPage;
+        $this->request = $request;
+        $this->view = $view;
     }
 
-    public function paginate(): array
+    public function paginate(int $tableRows,int $parPage,string $route): array
     {
 
-        $pagesTotales = ceil($this->tableRows/$this->parPage);
+        $page = (int)$this->request->query()->get('page');
 
-        if(isset($this->page) AND !empty($this->page) AND $this->page > 0 AND $this->page <= $pagesTotales){
-            $this->page = intval($this->page);
-            $pageCourante = $this->page;
+        $pagesTotales = ceil($tableRows/$parPage);
+
+        if(!empty($page) AND $page > 0 AND $page <= $pagesTotales){
+            $page = intval($page);
+            $pageCourante = $page;
         }else{
             $pageCourante = 1;
         }
 
-        $depart = ($pageCourante - 1)*$this->parPage;
+        $depart = ($pageCourante - 1)*$parPage;
+
+        $paginator = $this->view->render([
+            'template' => 'paginator',
+            'data' => [
+                "parPage" => $parPage,
+                "depart" => $depart,
+                "pagesTotales" => $pagesTotales,
+                "pageCourante" => $pageCourante,
+                "action" => $route
+            ]
+        ]);
 
         return [
-            "parPage" => $this->parPage,
+            // pour récuperer les posts selon la page dans la requete du controller
+            "parPage" => $parPage,
             "depart" => $depart,
-            "pagesTotales" => $pagesTotales,
-            "pageCourante" => $pageCourante
+            // pour l'affichage de la pagination de le template
+            "paginator" => $paginator
         ];
 
 

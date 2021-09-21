@@ -6,12 +6,12 @@ namespace  App\Controller\Frontoffice;
 
 use App\Model\Entity\Comment;
 use App\Model\Repository\UserRepository;
+use App\Service\CsrfToken;
 use App\Service\FormValidator\CommentValidator;
 use App\Service\Http\RedirectResponse;
 use App\Service\Http\Request;
 use App\Service\Http\Session\Session;
 use App\Service\Paginator;
-use App\Service\Validator;
 use App\View\View;
 use App\Service\Http\Response;
 use App\Model\Repository\PostRepository;
@@ -26,6 +26,8 @@ final class PostController
     private Request $request;
     private Session $session;
     private CommentValidator $validator;
+    private CsrfToken $csrf;
+    private Paginator $paginator;
 
     public function __construct(View $view,Request $request,Session $session,CommentRepository $commentRepository,UserRepository $userRepository,PostRepository $postRepository)
     {
@@ -36,34 +38,27 @@ final class PostController
         $this->request = $request;
         $this->session = $session;
         $this->validator = new CommentValidator($this->session);
+        $this->csrf = new CsrfToken($this->session,$this->request);
+        $this->paginator = new Paginator($this->request,$this->view);
     }
 
     public function displayOneAction(int $id): Response
     {
-
-        $token = base_convert(hash('sha256', time() . mt_rand()), 16, 36);
-
         // FIND A POST
 
         $post = $this->postRepository->findOneBy(['id_post' => $id]);
 
         // COMMENT FORM
 
-        if ($this->request->getMethod() === 'POST'){
+        if ($this->request->getMethod() === 'POST' and $this->csrf->tokenCheck()){
 
             $data = $this->request->request()->all();
 
-            $data['tokenSession'] = $this->session->get('token');
-            $data['tokenPost'] = $this->request->request()->get('token');
-
-            $user = $this->session->get('user');
-
             if ($this->validator->commentValidator($data)){
 
+                $user = $this->session->get('user');
                 $comment = new Comment(0,$data['comment'],$post,$user,'Non',new \DateTime('now'));
-
                 $this->commentRepository->create($comment);
-
                 $this->session->addFlashes('success','Commentaire posté avec succès !');
             }
 
@@ -71,16 +66,11 @@ final class PostController
 
         // PAGINATION
 
-        $page = (int)$this->request->query()->get('page');
         $tableRows = $this->commentRepository->countAllCheckedComment($id);
-
-        $paginator = (new Paginator($page,$tableRows,4))->paginate();
-
+        $paginator = $this->paginator->paginate($tableRows,4,'post&id='.$id);
         $comments = $this->commentRepository->findBy(['post_id' => $id,'isChecked' => 'Oui'],['createdDate' =>'desc'],$paginator['parPage'],$paginator['depart']);
 
         // RENDER
-
-        $this->session->set('token', $token);
 
 
         if ($post !== null) {
@@ -92,13 +82,12 @@ final class PostController
                 [
                 'template' => 'post',
                 'data' => [
-                    'token' => $token,
+                    'token' => $this->csrf->newToken(),
                     'post' => $post,
                     'comments' => $comments,
                     'nextPost' => $nextPost,
                     'previousPost' => $previousPost,
-                    'pagesTotales' => $paginator['pagesTotales'],
-                    'pageCourante' => $paginator['pageCourante']
+                    'paginator' => $paginator['paginator']
                     ],
                 ],
             ),200);
@@ -116,19 +105,15 @@ final class PostController
 
         // PAGINATION
 
-        $page = (int)$this->request->query()->get('page');
         $tableRows = $this->postRepository->countAllPosts();
-
-        $paginator = (new Paginator($page,$tableRows,4))->paginate();
-
-        $posts = $this->postRepository->findBy([],['createdAt' =>'asc'],$paginator['parPage'],$paginator['depart']);
+        $paginator = $this->paginator->paginate($tableRows,4,'posts');
+        $posts = $this->postRepository->findBy([],['createdAt' =>'desc'],$paginator['parPage'],$paginator['depart']);
 
         return new Response($this->view->render([
             'template' => 'posts',
             'data' => [
                 'posts' => $posts,
-                'pagesTotales' => $paginator['pagesTotales'],
-                'pageCourante' => $paginator['pageCourante']
+                'paginator' => $paginator['paginator']
             ],
         ]),200);
     }

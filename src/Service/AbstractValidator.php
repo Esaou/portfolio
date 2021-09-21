@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-class Validator
+use App\Service\Http\Session\Session;
+
+class AbstractValidator
 {
 
-    private $session;
+    private Session $session;
 
-    public function __construct($session)
+    public function __construct(Session $session)
     {
         $this->session = $session;
     }
@@ -19,10 +21,10 @@ class Validator
 
         $error = false;
 
-        if ($data['tokenPost'] != $data['tokenSession']){
+        /*if ($data['tokenPost'] != $data['tokenSession']){
             $this->session->addFlashes('danger','Token de session expiré !');
             $error = true;
-        }
+        }*/
 
         if ((isset($data['lastname']) and $data['lastname'] == '')
             or (isset($data['firstname']) and $data['firstname'] == '')
@@ -37,7 +39,7 @@ class Validator
         if (isset($data['lastname']) and (strlen($data['lastname']) < 1
                 or strlen($data['lastname']) > 30
                 or !preg_match('#[^0-9]#',$data['lastname'])
-                or preg_match('#[\W]#',$data['lastname']))) {
+                or preg_match('~[^\\pL\d]+~u',$data['lastname']))) {
 
             $this->session->addFlashes('danger', 'Le nom peut contenir de 2 à 30 caractères sans chiffres ni caractères spéciaux !');
             $error = true;
@@ -47,7 +49,7 @@ class Validator
         if (isset($data['firstname']) and (strlen($data['firstname']) < 1
                 or strlen($data['firstname']) > 30
                 or !preg_match('#[^0-9]#',$data['firstname'])
-                or preg_match('#[\W]#',$data['firstname']))) {
+                or preg_match('~[^\\pL\d]+~u',$data['firstname']))) {
 
             $this->session->addFlashes('danger', 'Le prénom peut contenir de 2 à 30 caractères sans chiffres ni caractères spéciaux !');
             $error = true;

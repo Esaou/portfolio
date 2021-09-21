@@ -1,0 +1,23 @@
+{% if pagesTotales > 0 and pagesTotales != 1 %}
+    {% for i in 1.. pagesTotales %}
+        {% if i == 1 and pageCourante >= 4 %}
+            <a href='index.php?action={{ action }}&page={{ i }}' style='margin:5px;text-decoration:none;'>{{ i }}</a>
+        {% endif %}
+        {% if i == 1 and pageCourante >= 5 %}
+            <span style='margin: 5px;font-size:17px;'>-</span>
+        {% endif %}
+        {% if (pageCourante - 3) < i and i < (pageCourante + 3) %}
+            {% if i == pageCourante %}
+                <span style='margin:5px;color: blue'>{{ i }}</span>
+            {% else %}
+                <a href='index.php?action={{ action }}&page={{ i }}' style='margin:5px;text-decoration:none;'>{{ i }}</a>
+            {% endif %}
+        {% endif %}
+        {% if i == pagesTotales and pageCourante < (pagesTotales - 3) %}
+            <span style='margin:5px;'>-</span>
+        {% endif %}
+        {% if i == pagesTotales and pageCourante <= (pagesTotales - 3) %}
+            <a href='index.php?action={{ action }}&page={{ i }}' style='margin:5px;text-decoration:none;'>{{ i }}</a>
+        {% endif %}
+    {% endfor %}
+{% endif %}

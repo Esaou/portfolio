@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace  App\Controller\Frontoffice;
 
+use App\Service\CsrfToken;
 use App\Service\FormValidator\ContactValidator;
 use App\Service\Http\Session\Session;
 use App\Service\Mailer;
-use App\Service\Validator;
+use App\Service\AbstractValidator;
 use App\View\View;
 use App\Service\Http\Response;
 use App\Service\Http\Request;
@@ -20,9 +21,11 @@ final class HomeController
 
     private Session $session;
 
-    private Validator $validator;
+    private AbstractValidator $validator;
 
     private Mailer $mailer;
+
+    private CsrfToken $csrf;
 
     public function __construct(View $view,Request $request,Session $session)
     {
@@ -31,20 +34,17 @@ final class HomeController
         $this->session = $session;
         $this->validator = new ContactValidator($this->session);
         $this->mailer = new Mailer($this->view);
+        $this->csrf = new CsrfToken($this->session,$this->request);
     }
 
     public function home(): Response
     {
 
-        $token = base_convert(hash('sha256', time() . mt_rand()), 16, 36);
-
         $data = [];
 
-        if ($this->request->getMethod() === 'POST') {
+        if ($this->request->getMethod() === 'POST' and $this->csrf->tokenCheck()) {
 
             $data = $this->request->request()->all();
-            $data['tokenPost'] = $this->request->request()->get('token');
-            $data['tokenSession'] = $this->session->get('token');
 
             if ($this->validator->homeContactValidator($data)) {
 
@@ -61,12 +61,10 @@ final class HomeController
 
         }
 
-        $this->session->set('token', $token);
-
         return new Response($this->view->render([
             'template' => 'home',
             'data' => [
-                'token' => $token,
+                'token' => $this->csrf->newToken(),
                 'formData' => $data
             ]
         ]),200);

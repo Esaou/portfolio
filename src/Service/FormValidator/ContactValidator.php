@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace App\Service\FormValidator;
 
-use App\Service\Validator;
+use App\Service\AbstractValidator;
+use App\Service\Http\Session\Session;
 
-class ContactValidator extends Validator
+class ContactValidator extends AbstractValidator
 {
-    private $session;
+    private Session $session;
 
-    public function __construct($session)
+    public function __construct(Session $session)
     {
 
         parent::__construct($session);

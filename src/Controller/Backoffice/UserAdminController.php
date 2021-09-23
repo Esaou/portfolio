@@ -40,7 +40,13 @@ final class UserAdminController
         Session $session,
         CommentRepository $commentRepository,
         UserRepository $userRepository,
-        PostRepository $postRepository
+        PostRepository $postRepository,
+        Authorization $security,
+        EditPostValidator $editPostValidator,
+        AccountValidator $accountValidator,
+        CsrfToken $csrf,
+        Paginator $paginator,
+        RedirectResponse $redirect
     ) {
 
         $this->postRepository = $postRepository;
@@ -49,12 +55,12 @@ final class UserAdminController
         $this->view = $view;
         $this->request = $request;
         $this->session = $session;
-        $this->security = new Authorization($this->session, $this->request);
-        $this->editPostValidator = new EditPostValidator($this->session);
-        $this->accountValidator = new AccountValidator($this->session);
-        $this->csrf = new CsrfToken($this->session, $this->request);
-        $this->paginator = new Paginator($this->request, $this->view);
-        $this->redirect = new RedirectResponse();
+        $this->security = $security;
+        $this->editPostValidator = $editPostValidator;
+        $this->accountValidator = $accountValidator;
+        $this->csrf = $csrf;
+        $this->paginator = $paginator;
+        $this->redirect = $redirect;
 
         if (!$this->security->isLogged() || $this->security->loggedAs('User')) {
             $this->redirect->redirect('forbidden');
@@ -81,15 +87,20 @@ final class UserAdminController
         // PAGINATION
 
         $tableRows = $this->userRepository->countAllUsers();
-        $paginator = $this->paginator->paginate($tableRows, 10, 'users');
-        $users = $this->userRepository->findBy([], ['lastname' =>'asc'], $paginator['parPage'], $paginator['depart']);
+        $this->paginator->paginate($tableRows, 10, 'users');
+        $users = $this->userRepository->findBy(
+            [],
+            ['lastname' =>'asc'],
+            $this->paginator->getLimit(),
+            $this->paginator->getOffset()
+        );
 
         return new Response($this->view->render([
             'template' => 'users',
             'type' => 'backoffice',
             'data' => [
                 'users' => $users,
-                'paginator' => $paginator['paginator']
+                'paginator' => $this->paginator->getPaginator()
             ],
         ]), 200);
     }

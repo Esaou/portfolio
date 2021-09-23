@@ -23,7 +23,10 @@ final class View
     public function render(array $data): string
     {
         $data['data']['session'] = $this->session->toArray();
-        $data['data']['flashes'] = $this->session->getFlashes();
+
+        if (!isset($data['paginator']) || $data['paginator'] !== true) {
+            $data['data']['flashes'] = $this->session->getFlashes();
+        }
 
         if (isset($data['type']) && $data['type'] == 'backoffice') {
             return $this->twig->render("backoffice/${data['template']}.html.twig", $data['data']);

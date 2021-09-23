@@ -30,6 +30,7 @@ final class PostAdminController
     private CsrfToken $csrf;
     private RedirectResponse $redirect;
     private Paginator $paginator;
+    private Authorization $security;
 
     public function __construct(
         View $view,
@@ -37,7 +38,12 @@ final class PostAdminController
         Session $session,
         CommentRepository $commentRepository,
         UserRepository $userRepository,
-        PostRepository $postRepository
+        PostRepository $postRepository,
+        EditPostValidator $editPostValidator,
+        CsrfToken $csrf,
+        Paginator $paginator,
+        Authorization $security,
+        RedirectResponse $redirect
     ) {
 
         $this->postRepository = $postRepository;
@@ -46,14 +52,14 @@ final class PostAdminController
         $this->view = $view;
         $this->request = $request;
         $this->session = $session;
-        $this->validator = new EditPostValidator($this->session);
-        $this->csrf = new CsrfToken($this->session, $this->request);
-        $this->paginator = new Paginator($this->request, $this->view);
-        $security = new Authorization($this->session, $this->request);
-        $this->redirect = new RedirectResponse();
+        $this->validator = $editPostValidator;
+        $this->csrf = $csrf;
+        $this->paginator = $paginator;
+        $this->security = $security;
+        $this->redirect = $redirect;
 
 
-        if (!$security->isLogged() || $security->loggedAs('User')) {
+        if (!$this->security->isLogged() || $this->security->loggedAs('User')) {
             $this->redirect->redirect('forbidden');
         }
     }
@@ -75,16 +81,21 @@ final class PostAdminController
 
         $tableRows = $this->postRepository->countAllPosts();
 
-        $paginator = $this->paginator->paginate($tableRows, 10, 'postsAdmin');
+        $this->paginator->paginate($tableRows, 10, 'postsAdmin');
 
-        $posts = $this->postRepository->findBy([], ['createdAt' =>'desc'], $paginator['parPage'], $paginator['depart']);
+        $posts = $this->postRepository->findBy(
+            [],
+            ['createdAt' =>'desc'],
+            $this->paginator->getLimit(),
+            $this->paginator->getOffset()
+        );
 
         return new Response($this->view->render([
             'template' => 'posts',
             'type' => 'backoffice',
             'data' => [
                 'posts' => $posts,
-                'paginator' => $paginator['paginator']
+                'paginator' => $this->paginator->getPaginator()
             ],
         ]), 200);
     }
@@ -102,9 +113,7 @@ final class PostAdminController
 
             if ($this->validator->editPostValidator($data)) {
                 $user = $this->userRepository->findOneBy(['id_utilisateur'=>(int)$data['author']]);
-
                 if ($post) {
-
                     $post = new Post(
                         $post->getIdPost(),
                         $data['chapo'],

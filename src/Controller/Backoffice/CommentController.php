@@ -26,6 +26,7 @@ final class CommentController
     private Session $session;
     private Paginator $paginator;
     private RedirectResponse $redirect;
+    private Authorization $security;
 
     public function __construct(
         View $view,
@@ -33,7 +34,10 @@ final class CommentController
         Session $session,
         CommentRepository $commentRepository,
         UserRepository $userRepository,
-        PostRepository $postRepository
+        PostRepository $postRepository,
+        Paginator $paginator,
+        Authorization $security,
+        RedirectResponse $redirectResponse
     ) {
 
         $this->postRepository = $postRepository;
@@ -42,11 +46,11 @@ final class CommentController
         $this->view = $view;
         $this->request = $request;
         $this->session = $session;
-        $this->paginator = new Paginator($this->request, $this->view);
-        $security = new Authorization($this->session, $this->request);
-        $this->redirect = new RedirectResponse();
+        $this->paginator = $paginator;
+        $this->security = $security;
+        $this->redirect = $redirectResponse;
 
-        if (!$security->isLogged() || $security->loggedAs('User')) {
+        if (!$this->security->isLogged() || $this->security->loggedAs('User')) {
             $this->redirect->redirect('forbidden');
         }
     }
@@ -90,13 +94,13 @@ final class CommentController
 
         $tableRows = $this->commentRepository->countAllComment();
 
-        $paginator = $this->paginator->paginate($tableRows, 10, 'comments');
+        $this->paginator->paginate($tableRows, 10, 'comments');
 
         $comments = $this->commentRepository->findBy(
             [],
             ['createdDate' =>'desc'],
-            $paginator['parPage'],
-            $paginator['depart']
+            $this->paginator->getLimit(),
+            $this->paginator->getOffset()
         );
 
         return new Response($this->view->render([
@@ -104,7 +108,7 @@ final class CommentController
             'type' => 'backoffice',
             'data' => [
                 'comments' => $comments,
-                'paginator' => $paginator['paginator']
+                'paginator' => $this->paginator->getPaginator()
             ],
         ]));
     }

@@ -32,19 +32,30 @@ final class UserController
     private CsrfToken $csrf;
     private RedirectResponse $redirect;
 
-    public function __construct(UserRepository $userRepository, View $view, Session $session, Request $request)
-    {
+    public function __construct(
+        UserRepository $userRepository,
+        View $view,
+        Session $session,
+        Request $request,
+        LoginValidator $loginValidator,
+        RegisterValidator $registerValidator,
+        AccountValidator $accountValidator,
+        Mailer $mailer,
+        Authorization $security,
+        CsrfToken $csrf,
+        RedirectResponse $redirect
+    ) {
         $this->userRepository = $userRepository;
         $this->view = $view;
         $this->session = $session;
         $this->request = $request;
-        $this->loginValidator = new LoginValidator($this->session);
-        $this->registerValidator = new RegisterValidator($this->session);
-        $this->accountValidator = new AccountValidator($this->session);
-        $this->mailer = new Mailer($this->view);
-        $this->security = new Authorization($this->session, $this->request);
-        $this->csrf = new CsrfToken($this->session, $this->request);
-        $this->redirect = new RedirectResponse();
+        $this->loginValidator = $loginValidator;
+        $this->registerValidator = $registerValidator;
+        $this->accountValidator = $accountValidator;
+        $this->mailer = $mailer;
+        $this->security = $security;
+        $this->csrf = $csrf;
+        $this->redirect = $redirect;
     }
 
     public function loginAction(Request $request): Response
@@ -141,7 +152,8 @@ final class UserController
                         'eric.saou3@gmail.com',
                         $datas['email'],
                         'register',
-                        $datas
+                        $datas,
+                        'registerMail'
                     );
 
                     if ($result) {
@@ -234,3 +246,4 @@ final class UserController
         ]), 200);
     }
 }
+

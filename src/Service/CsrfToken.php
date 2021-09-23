@@ -20,7 +20,7 @@ class CsrfToken
         $this->request = $request;
     }
 
-    public function tokenCheck():bool
+    public function checkToken():bool
     {
 
         $tokenPost = $this->request->request()->get('token');
@@ -28,7 +28,7 @@ class CsrfToken
 
         $result = true;
 
-        if ($tokenPost != $tokenSession) {
+        if ($tokenPost !== $tokenSession) {
             $this->session->addFlashes('danger', 'Token de session expiré !');
             $result = false;
         }

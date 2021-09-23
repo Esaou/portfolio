@@ -63,7 +63,7 @@ final class PostController
 
         // COMMENT FORM
 
-        if ($this->request->getMethod() === 'POST' && $this->csrf->tokenCheck()) {
+        if ($this->request->getMethod() === 'POST' && $this->csrf->checkToken()) {
 
             /** @var array $data */
             $data = $this->request->request()->all();

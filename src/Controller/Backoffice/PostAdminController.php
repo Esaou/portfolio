@@ -106,7 +106,7 @@ final class PostAdminController
         $post = $this->postRepository->findOneBy(['id_post' => $id]);
         $users = $this->userRepository->findAll();
 
-        if ($this->request->getMethod() === 'POST' && $this->csrf->tokenCheck()) {
+        if ($this->request->getMethod() === 'POST' && $this->csrf->checkToken()) {
 
             /** @var array $data */
             $data = $this->request->request()->all();
@@ -145,7 +145,7 @@ final class PostAdminController
     public function addPost():Response
     {
 
-        if ($this->request->getMethod() === 'POST' && $this->csrf->tokenCheck()) {
+        if ($this->request->getMethod() === 'POST' && $this->csrf->checkToken()) {
 
             /** @var array $data */
             $data = $this->request->request()->all();

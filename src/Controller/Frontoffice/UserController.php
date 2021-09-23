@@ -65,7 +65,7 @@ final class UserController
             $this->redirect->redirect('home');
         }
 
-        if ($request->getMethod() === 'POST' and $this->csrf->tokenCheck()) {
+        if ($request->getMethod() === 'POST' and $this->csrf->checkToken()) {
             $data = $request->request()->all();
 
             $user = '';
@@ -114,7 +114,7 @@ final class UserController
 
         $datas = [];
 
-        if ($this->request->getMethod() === 'POST' && $this->csrf->tokenCheck()) {
+        if ($this->request->getMethod() === 'POST' && $this->csrf->checkToken()) {
             $datas = $this->request->request()->all();
 
             $validEmail = '';
@@ -189,7 +189,7 @@ final class UserController
             $this->redirect->redirect('home');
         }
 
-        if ($this->request->getMethod() === 'POST' && $this->csrf->tokenCheck()) {
+        if ($this->request->getMethod() === 'POST' && $this->csrf->checkToken()) {
 
 
             /** @var array $data */

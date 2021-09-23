@@ -45,7 +45,7 @@ final class HomeController
     public function home(): Response
     {
 
-        if ($this->request->getMethod() === 'POST' && $this->csrf->tokenCheck()) {
+        if ($this->request->getMethod() === 'POST' && $this->csrf->checkToken()) {
 
             /** @var array $data */
             $data = $this->request->request()->all();

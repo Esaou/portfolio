@@ -37,7 +37,11 @@ final class PostController
         Session $session,
         CommentRepository $commentRepository,
         UserRepository $userRepository,
-        PostRepository $postRepository
+        PostRepository $postRepository,
+        CommentValidator $validator,
+        CsrfToken $csrf,
+        Paginator $paginator,
+        RedirectResponse $redirectResponse,
     ) {
         $this->postRepository = $postRepository;
         $this->commentRepository = $commentRepository;
@@ -45,10 +49,10 @@ final class PostController
         $this->view = $view;
         $this->request = $request;
         $this->session = $session;
-        $this->validator = new CommentValidator($this->session);
-        $this->csrf = new CsrfToken($this->session, $this->request);
-        $this->paginator = new Paginator($this->request, $this->view);
-        $this->redirect = new RedirectResponse();
+        $this->validator = $validator;
+        $this->csrf = $csrf;
+        $this->paginator = $paginator;
+        $this->redirect = $redirectResponse;
     }
 
     public function displayOneAction(int $id): Response
@@ -79,12 +83,12 @@ final class PostController
         // PAGINATION
 
         $tableRows = $this->commentRepository->countAllCheckedComment($id);
-        $paginator = $this->paginator->paginate($tableRows, 4, 'post&id='.$id);
+        $this->paginator->paginate($tableRows, 4, 'post&id='.$id);
         $comments = $this->commentRepository->findBy(
             ['post_id' => $id,'isChecked' => 'Oui'],
             ['createdDate' =>'desc'],
-            $paginator['parPage'],
-            $paginator['depart']
+            $this->paginator->getLimit(),
+            $this->paginator->getOffset()
         );
 
         // RENDER
@@ -96,7 +100,7 @@ final class PostController
         $nextPost = false;
         $previousPost = false;
 
-        if ($post){
+        if ($post) {
             $nextPost = $this->postRepository->nextPost($post->getCreatedAt());
             $previousPost = $this->postRepository->previousPost($post->getCreatedAt());
         }
@@ -110,11 +114,10 @@ final class PostController
                 'comments' => $comments,
                 'nextPost' => $nextPost,
                 'previousPost' => $previousPost,
-                'paginator' => $paginator['paginator']
+                'paginator' => $this->paginator->getPaginator()
                 ],
             ],
         ), 200);
-
     }
 
     public function displayAllAction(): Response
@@ -123,14 +126,19 @@ final class PostController
         // PAGINATION
 
         $tableRows = $this->postRepository->countAllPosts();
-        $paginator = $this->paginator->paginate($tableRows, 4, 'posts');
-        $posts = $this->postRepository->findBy([], ['createdAt' =>'desc'], $paginator['parPage'], $paginator['depart']);
+        $this->paginator->paginate($tableRows, 4, 'posts');
+        $posts = $this->postRepository->findBy(
+            [],
+            ['createdAt' =>'desc'],
+            $this->paginator->getLimit(),
+            $this->paginator->getOffset()
+        );
 
         return new Response($this->view->render([
             'template' => 'posts',
             'data' => [
                 'posts' => $posts,
-                'paginator' => $paginator['paginator']
+                'paginator' => $this->paginator->getPaginator()
             ],
         ]), 200);
     }

@@ -26,14 +26,20 @@ final class HomeController
 
     private CsrfToken $csrf;
 
-    public function __construct(View $view, Request $request, Session $session)
-    {
+    public function __construct(
+        View $view,
+        Request $request,
+        Session $session,
+        ContactValidator $validator,
+        CsrfToken $csrf,
+        Mailer $mailer
+    ) {
         $this->view = $view;
         $this->request = $request;
         $this->session = $session;
-        $this->validator = new ContactValidator($this->session);
-        $this->mailer = new Mailer($this->view);
-        $this->csrf = new CsrfToken($this->session, $this->request);
+        $this->validator = $validator;
+        $this->mailer = $mailer;
+        $this->csrf = $csrf;
     }
 
     public function home(): Response
@@ -50,7 +56,8 @@ final class HomeController
                     $data['email'],
                     'eric.saou3@gmail.com',
                     'contact',
-                    $data
+                    $data,
+                    'contactMail'
                 );
 
                 if ($result) {

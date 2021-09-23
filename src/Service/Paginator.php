@@ -12,17 +12,24 @@ class Paginator
 
     private View $view;
     private Request $request;
+    public int $parPage;
+    public int $depart;
+    public string $paginator;
 
-    public function __construct(Request $request, View $view)
+    public function __construct(Request $request, View $view, int $parPage = 10, int $depart = 10, $paginator = '')
     {
         $this->request = $request;
         $this->view = $view;
+        $this->parPage = $parPage;
+        $this->depart = $depart;
+        $this->paginator = $paginator;
     }
 
-    public function paginate(int $tableRows, int $parPage, string $route): array
+    public function paginate(int $tableRows, int $parPage, string $route): void
     {
 
         $page = (int)$this->request->query()->get('page');
+        $this->parPage = $parPage;
 
         $pagesTotales = ceil($tableRows/$parPage);
 
@@ -33,25 +40,33 @@ class Paginator
             $pageCourante = 1;
         }
 
-        $depart = ($pageCourante - 1)*$parPage;
+        $this->depart = ($pageCourante - 1)*$parPage;
 
-        $paginator = $this->view->render([
+        $this->paginator = $this->view->render([
             'template' => 'paginator',
+            'paginator' => true,
             'data' => [
-                "parPage" => $parPage,
-                "depart" => $depart,
+                "parPage" => $this->parPage,
+                "depart" => $this->depart,
                 "pagesTotales" => $pagesTotales,
                 "pageCourante" => $pageCourante,
                 "action" => $route
             ]
         ]);
+    }
 
-        return [
-            // pour récuperer les posts selon la page dans la requete du controller
-            "parPage" => $parPage,
-            "depart" => $depart,
-            // pour l'affichage de la pagination de le template
-            "paginator" => $paginator
-        ];
+    public function getLimit():int
+    {
+        return $this->parPage;
+    }
+
+    public function getOffset():int
+    {
+        return $this->depart;
+    }
+
+    public function getPaginator():string
+    {
+        return  $this->paginator;
     }
 }

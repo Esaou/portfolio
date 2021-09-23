@@ -16,6 +16,12 @@ use App\Model\Entity\User;
 use App\Model\Repository\PostRepository;
 use App\Model\Repository\CommentRepository;
 use App\Model\Repository\UserRepository;
+use App\Service\FormValidator\AccountValidator;
+use App\Service\FormValidator\CommentValidator;
+use App\Service\FormValidator\ContactValidator;
+use App\Service\FormValidator\EditPostValidator;
+use App\Service\FormValidator\LoginValidator;
+use App\Service\FormValidator\RegisterValidator;
 use App\Service\Http\RedirectResponse;
 use App\Service\Http\Request;
 use App\Service\Http\Response;
@@ -29,15 +35,35 @@ final class Router
     private Request $request;
     private Session $session;
     private RedirectResponse $redirect;
+    private Mailer $mailer;
+    private CsrfToken $csrf;
+    private Paginator $paginator;
+    private Authorization $security;
+    private UserRepository $userRepo;
+    private LoginValidator $loginValidator;
+    private RegisterValidator $registerValidator;
+    private AccountValidator $accountValidator;
+    private PostRepository $postRepo;
+    private CommentRepository $commentRepo;
 
     public function __construct(Request $request)
     {
         // dépendance
+        $this->request = $request;
         $this->database = new Database();
         $this->session = new Session();
         $this->view = new View($this->session);
-        $this->request = $request;
+        $this->paginator = new Paginator($this->request, $this->view);
         $this->redirect = new RedirectResponse();
+        $this->mailer = new Mailer($this->view);
+        $this->csrf = new CsrfToken($this->session, $this->request);
+        $this->security = new Authorization($this->session, $this->request);
+        $this->userRepo = new UserRepository($this->database);
+        $this->postRepo = new PostRepository($this->database);
+        $this->commentRepo = new CommentRepository($this->database);
+        $this->loginValidator = new LoginValidator($this->session);
+        $this->registerValidator = new RegisterValidator($this->session);
+        $this->accountValidator = new AccountValidator($this->session);
     }
 
     public function run(): Response
@@ -47,152 +73,240 @@ final class Router
 
         if ($action === 'posts') {
             //injection des dépendances et instanciation du controller
-            $postRepo = new PostRepository($this->database);
-            $userRepo = new UserRepository($this->database);
-            $commentRepo = new CommentRepository($this->database);
+            $validator = new CommentValidator($this->session);
             $controller = new PostController(
                 $this->view,
                 $this->request,
                 $this->session,
-                $commentRepo,
-                $userRepo,
-                $postRepo
+                $this->commentRepo,
+                $this->userRepo,
+                $this->postRepo,
+                $validator,
+                $this->csrf,
+                $this->paginator,
+                $this->redirect
             );
 
             return $controller->displayAllAction();
         } elseif ($action === 'post' && $this->request->query()->has('id')) {
             //injection des dépendances et instanciation du controller
-            $postRepo = new PostRepository($this->database);
-            $userRepo = new UserRepository($this->database);
-            $commentRepo = new CommentRepository($this->database);
+            $validator = new CommentValidator($this->session);
             $controller = new PostController(
                 $this->view,
                 $this->request,
                 $this->session,
-                $commentRepo,
-                $userRepo,
-                $postRepo
+                $this->commentRepo,
+                $this->userRepo,
+                $this->postRepo,
+                $validator,
+                $this->csrf,
+                $this->paginator,
+                $this->redirect
             );
 
             return $controller->displayOneAction((int) $this->request->query()->get('id'));
         } elseif ($action === 'login') {
-            $userRepo = new UserRepository($this->database);
-            $controller = new UserController($userRepo, $this->view, $this->session, $this->request);
+            $controller = new UserController(
+                $this->userRepo,
+                $this->view,
+                $this->session,
+                $this->request,
+                $this->loginValidator,
+                $this->registerValidator,
+                $this->accountValidator,
+                $this->mailer,
+                $this->security,
+                $this->csrf,
+                $this->redirect
+            );
 
             return $controller->loginAction($this->request);
         } elseif ($action === 'logout') {
-            $userRepo = new UserRepository($this->database);
-            $controller = new UserController($userRepo, $this->view, $this->session, $this->request);
+            $controller = new UserController(
+                $this->userRepo,
+                $this->view,
+                $this->session,
+                $this->request,
+                $this->loginValidator,
+                $this->registerValidator,
+                $this->accountValidator,
+                $this->mailer,
+                $this->security,
+                $this->csrf,
+                $this->redirect
+            );
 
             return $controller->logoutAction();
         } elseif ($action === 'home') {
-            $controller = new HomeController($this->view, $this->request, $this->session);
+            $validator = new ContactValidator($this->session);
+            $controller = new HomeController(
+                $this->view,
+                $this->request,
+                $this->session,
+                $validator,
+                $this->csrf,
+                $this->mailer
+            );
             return $controller->home();
         } elseif ($action === 'register') {
-            $userRepo = new UserRepository($this->database);
-            $controller = new UserController($userRepo, $this->view, $this->session, $this->request);
+            $controller = new UserController(
+                $this->userRepo,
+                $this->view,
+                $this->session,
+                $this->request,
+                $this->loginValidator,
+                $this->registerValidator,
+                $this->accountValidator,
+                $this->mailer,
+                $this->security,
+                $this->csrf,
+                $this->redirect
+            );
             return $controller->register();
         } elseif ($action === 'confirmUser') {
-            $userRepo = new UserRepository($this->database);
-            $controller = new UserController($userRepo, $this->view, $this->session, $this->request);
+            $controller = new UserController(
+                $this->userRepo,
+                $this->view,
+                $this->session,
+                $this->request,
+                $this->loginValidator,
+                $this->registerValidator,
+                $this->accountValidator,
+                $this->mailer,
+                $this->security,
+                $this->csrf,
+                $this->redirect
+            );
             return $controller->confirmUser();
         } elseif ($action === 'forbidden') {
             $controller = new SecurityController($this->view);
             return $controller->forbidden();
         } elseif ($action === 'postsAdmin') {
-            $postRepo = new PostRepository($this->database);
-            $userRepo = new UserRepository($this->database);
-            $commentRepo = new CommentRepository($this->database);
+            $editPostValidator = new EditPostValidator($this->session);
             $controller = new PostAdminController(
                 $this->view,
                 $this->request,
                 $this->session,
-                $commentRepo,
-                $userRepo,
-                $postRepo
+                $this->commentRepo,
+                $this->userRepo,
+                $this->postRepo,
+                $editPostValidator,
+                $this->csrf,
+                $this->paginator,
+                $this->security,
+                $this->redirect,
             );
             return $controller->postsList();
         } elseif ($action === 'comments') {
-            $postRepo = new PostRepository($this->database);
-            $userRepo = new UserRepository($this->database);
-            $commentRepo = new CommentRepository($this->database);
             $controller = new CommentController(
                 $this->view,
                 $this->request,
                 $this->session,
-                $commentRepo,
-                $userRepo,
-                $postRepo
+                $this->commentRepo,
+                $this->userRepo,
+                $this->postRepo,
+                $this->paginator,
+                $this->security,
+                $this->redirect
             );
             return $controller->commentList();
         } elseif ($action === 'users') {
-            $postRepo = new PostRepository($this->database);
-            $userRepo = new UserRepository($this->database);
-            $commentRepo = new CommentRepository($this->database);
+            $editPostValidator = new EditPostValidator($this->session);
             $controller = new UserAdminController(
                 $this->view,
                 $this->request,
                 $this->session,
-                $commentRepo,
-                $userRepo,
-                $postRepo
+                $this->commentRepo,
+                $this->userRepo,
+                $this->postRepo,
+                $this->security,
+                $editPostValidator,
+                $this->accountValidator,
+                $this->csrf,
+                $this->paginator,
+                $this->redirect
             );
             return $controller->usersList();
         } elseif ($action === 'userAccount') {
-            $postRepo = new PostRepository($this->database);
-            $userRepo = new UserRepository($this->database);
-            $commentRepo = new CommentRepository($this->database);
+            $editPostValidator = new EditPostValidator($this->session);
             $controller = new UserAdminController(
                 $this->view,
                 $this->request,
                 $this->session,
-                $commentRepo,
-                $userRepo,
-                $postRepo
+                $this->commentRepo,
+                $this->userRepo,
+                $this->postRepo,
+                $this->security,
+                $editPostValidator,
+                $this->accountValidator,
+                $this->csrf,
+                $this->paginator,
+                $this->redirect
             );
             return $controller->userAccount((int) $this->request->query()->get('id'));
         } elseif ($action === 'editPost') {
-            $postRepo = new PostRepository($this->database);
-            $userRepo = new UserRepository($this->database);
-            $commentRepo = new CommentRepository($this->database);
+            $editPostValidator = new EditPostValidator($this->session);
             $controller = new PostAdminController(
                 $this->view,
                 $this->request,
                 $this->session,
-                $commentRepo,
-                $userRepo,
-                $postRepo
+                $this->commentRepo,
+                $this->userRepo,
+                $this->postRepo,
+                $editPostValidator,
+                $this->csrf,
+                $this->paginator,
+                $this->security,
+                $this->redirect,
             );
             return $controller->editPost((int) $this->request->query()->get('id'));
         } elseif ($action === 'addPost') {
-            $postRepo = new PostRepository($this->database);
-            $userRepo = new UserRepository($this->database);
-            $commentRepo = new CommentRepository($this->database);
+            $editPostValidator = new EditPostValidator($this->session);
             $controller = new PostAdminController(
                 $this->view,
                 $this->request,
                 $this->session,
-                $commentRepo,
-                $userRepo,
-                $postRepo
+                $this->commentRepo,
+                $this->userRepo,
+                $this->postRepo,
+                $editPostValidator,
+                $this->csrf,
+                $this->paginator,
+                $this->security,
+                $this->redirect,
             );
             return $controller->addPost();
         } elseif ($action === 'editUser') {
-            $postRepo = new PostRepository($this->database);
-            $userRepo = new UserRepository($this->database);
-            $commentRepo = new CommentRepository($this->database);
+            $editPostValidator = new EditPostValidator($this->session);
             $controller = new UserAdminController(
                 $this->view,
                 $this->request,
                 $this->session,
-                $commentRepo,
-                $userRepo,
-                $postRepo
+                $this->commentRepo,
+                $this->userRepo,
+                $this->postRepo,
+                $this->security,
+                $editPostValidator,
+                $this->accountValidator,
+                $this->csrf,
+                $this->paginator,
+                $this->redirect
             );
             return $controller->editUser((int) $this->request->query()->get('id'));
         } elseif ($action === 'userAccountFrontOffice') {
-            $userRepo = new UserRepository($this->database);
-            $controller = new UserController($userRepo, $this->view, $this->session, $this->request);
+            $controller = new UserController(
+                $this->userRepo,
+                $this->view,
+                $this->session,
+                $this->request,
+                $this->loginValidator,
+                $this->registerValidator,
+                $this->accountValidator,
+                $this->mailer,
+                $this->security,
+                $this->csrf,
+                $this->redirect
+            );
             return $controller->userAccount((int) $this->request->query()->get('id'));
         } elseif ($action === 'postNotFound') {
             $controller = new SecurityController($this->view);

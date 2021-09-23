@@ -32,12 +32,11 @@ class Paginator
         $this->parPage = $parPage;
 
         $pagesTotales = ceil($tableRows/$parPage);
+        $pageCourante = 1;
 
         if (!empty($page) && $page > 0 && $page <= $pagesTotales) {
             $page = intval($page);
             $pageCourante = $page;
-        } else {
-            $pageCourante = 1;
         }
 
         $this->depart = ($pageCourante - 1)*$parPage;

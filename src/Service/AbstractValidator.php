@@ -6,7 +6,7 @@ namespace App\Service;
 
 use App\Service\Http\Session\Session;
 
-class AbstractValidator
+abstract class AbstractValidator
 {
 
     private Session $session;
@@ -46,7 +46,7 @@ class AbstractValidator
                 || preg_match('~[^\\pL\d]+~u', $data['firstname']))) {
             $this->session->addFlashes(
                 'danger',
-                'Le prénom peut contenir de 2 à 30 caractères sans chiffres ni caractères spéciaux !'
+                'Le champ prénom peut contenir de 2 à 30 caractères sans chiffres ni caractères spéciaux !'
             );
             $error = true;
         }
@@ -67,4 +67,72 @@ class AbstractValidator
 
         return true;
     }
+
+    public function testValidEmail(string $email):bool
+    {
+        $isValid = true;
+
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $isValid = false;
+            $this->session->addFlashes('danger', 'L\'email renseigné n\'est pas valide !');
+        }
+
+        return $isValid;
+    }
+
+    public function isNotEmpty(string $string, string $fieldName):bool
+    {
+        $isValid = true;
+
+        if ($string === ''){
+            $isValid = false;
+            $this->session->addFlashes(
+                'danger',
+                'Le champ '. $fieldName .' doit être rempli !'
+            );
+        }
+
+        return $isValid;
+    }
+
+    public function testString(string $string,string $fieldName):bool
+    {
+
+        $isValid = true;
+
+        if (!preg_match('#[^0-9]#', $string)){
+            $isValid = false;
+            $this->session->addFlashes(
+                'danger',
+                'Le champ '. $fieldName .' ne peut pas contenir de chiffres !'
+            );
+        }
+
+        if (preg_match('~[^\\pL\d]+~u', $string)){
+            $isValid = false;
+            $this->session->addFlashes(
+                'danger',
+                'Le champ '. $fieldName .' ne peut pas contenir de caractères spéciaux !'
+            );
+        }
+
+        return $isValid;
+    }
+
+    public function testStringLength(string $string,int $min,int $max, string $fieldName):bool
+    {
+
+        $isValid = true;
+
+        if (strlen($string) < $min || strlen($string) > $max){
+            $isValid = false;
+            $this->session->addFlashes(
+                'danger',
+                'Le champ '. $fieldName .' doit contenir entre '.$min.' et '.$max.' caractères !'
+            );
+        }
+
+        return $isValid;
+    }
+
 }

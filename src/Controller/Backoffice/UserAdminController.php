@@ -110,7 +110,7 @@ final class UserAdminController
 
         $user = $this->userRepository->findOneBy(['id_utilisateur' => $id]);
 
-        if ($this->request->getMethod() === 'POST' && $this->csrf->tokenCheck()) {
+        if ($this->request->getMethod() === 'POST' && $this->csrf->checkToken()) {
 
             /** @var array $data */
             $data = $this->request->request()->all();
@@ -153,7 +153,7 @@ final class UserAdminController
 
         $user = $this->userRepository->findOneBy(['id_utilisateur' => $id]);
 
-        if ($this->request->getMethod() === 'POST' && $this->csrf->tokenCheck()) {
+        if ($this->request->getMethod() === 'POST' && $this->csrf->checkToken()) {
             $role = $this->request->request()->get('role');
 
             if ($user) {

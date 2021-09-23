@@ -19,7 +19,6 @@ class Response
 
     public function send(): void
     {
-        // TODO Il faut renvoyer aussi le status de la réponse
         $this->setStatus($this->status);
         echo $this->content;
     }

@@ -173,8 +173,14 @@ final class PostAdminController
         $post = $this->postRepository->findOneBy(['id_post' => $id]);
 
         if (!is_null($post)) {
-            $this->postRepository->delete($post);
-            $this->session->addFlashes('danger', 'Post supprimé avec succès !');
+            $resultDelete = $this->postRepository->delete($post);
+            if ($resultDelete) {
+                $this->session->addFlashes('danger', 'Post supprimé avec succès !');
+            }
+            if (!$resultDelete) {
+                $this->session->addFlashes('danger', 'Erreur lors de la supression !');
+            }
+
         }
 
         return $this->postsList();

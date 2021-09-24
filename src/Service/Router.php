@@ -197,6 +197,22 @@ final class Router
                 $this->redirect,
             );
             return $controller->postsList();
+        } elseif ($action === 'deletePost') {
+            $editPostValidator = new EditPostValidator($this->session);
+            $controller = new PostAdminController(
+                $this->view,
+                $this->request,
+                $this->session,
+                $this->commentRepo,
+                $this->userRepo,
+                $this->postRepo,
+                $editPostValidator,
+                $this->csrf,
+                $this->paginator,
+                $this->security,
+                $this->redirect,
+            );
+            return $controller->deletePost((int) $this->request->request()->get('id'));
         } elseif ($action === 'comments') {
             $controller = new CommentController(
                 $this->view,
@@ -210,6 +226,45 @@ final class Router
                 $this->redirect
             );
             return $controller->commentList();
+        } elseif ($action === 'deleteComment') {
+            $controller = new CommentController(
+                $this->view,
+                $this->request,
+                $this->session,
+                $this->commentRepo,
+                $this->userRepo,
+                $this->postRepo,
+                $this->paginator,
+                $this->security,
+                $this->redirect
+            );
+            return $controller->deleteComment((int) $this->request->request()->get('id'));
+        } elseif ($action === 'validateComment') {
+            $controller = new CommentController(
+                $this->view,
+                $this->request,
+                $this->session,
+                $this->commentRepo,
+                $this->userRepo,
+                $this->postRepo,
+                $this->paginator,
+                $this->security,
+                $this->redirect
+            );
+            return $controller->validateComment((int) $this->request->request()->get('id'));
+        } elseif ($action === 'unvalidateComment') {
+            $controller = new CommentController(
+                $this->view,
+                $this->request,
+                $this->session,
+                $this->commentRepo,
+                $this->userRepo,
+                $this->postRepo,
+                $this->paginator,
+                $this->security,
+                $this->redirect
+            );
+            return $controller->unvalidateComment((int) $this->request->request()->get('id'));
         } elseif ($action === 'users') {
             $editPostValidator = new EditPostValidator($this->session);
             $controller = new UserAdminController(
@@ -227,6 +282,23 @@ final class Router
                 $this->redirect
             );
             return $controller->usersList();
+        } elseif ($action === 'deleteUser') {
+            $editPostValidator = new EditPostValidator($this->session);
+            $controller = new UserAdminController(
+                $this->view,
+                $this->request,
+                $this->session,
+                $this->commentRepo,
+                $this->userRepo,
+                $this->postRepo,
+                $this->security,
+                $editPostValidator,
+                $this->accountValidator,
+                $this->csrf,
+                $this->paginator,
+                $this->redirect
+            );
+            return $controller->deleteUser((int) $this->request->request()->get('id'));
         } elseif ($action === 'userAccount') {
             $editPostValidator = new EditPostValidator($this->session);
             $controller = new UserAdminController(

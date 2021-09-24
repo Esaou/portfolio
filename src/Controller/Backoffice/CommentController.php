@@ -58,38 +58,6 @@ final class CommentController
     public function commentList():Response
     {
 
-        if (!is_null($this->request->query()->get('delete'))) {
-            $id = $this->request->query()->get('id');
-            $comment = $this->commentRepository->findOneBy(['id' => $id]);
-
-            if (!is_null($comment)) {
-                $this->commentRepository->delete($comment);
-                $this->session->addFlashes('danger', 'Commentaire supprimé avec succès !');
-            }
-        }
-
-        if (!is_null($this->request->query()->get('validate'))) {
-            $id = $this->request->query()->get('id');
-            $comment = $this->commentRepository->findOneBy(['id' => $id]);
-
-            if (!is_null($comment)) {
-                $comment->setIsChecked('Oui');
-                $this->commentRepository->update($comment);
-                $this->session->addFlashes('success', 'Commentaire validé avec succès !');
-            }
-        }
-
-        if (!is_null($this->request->query()->get('unvalidate'))) {
-            $id = $this->request->query()->get('id');
-            /** @var Comment $comment */
-            $comment = $this->commentRepository->findOneBy(['id' => $id]);
-
-            $comment->setIsChecked('Non');
-            $this->commentRepository->update($comment);
-
-            $this->session->addFlashes('success', 'Commentaire invalidé avec succès !');
-        }
-
         // PAGINATION
 
         $tableRows = $this->commentRepository->countAllComment();
@@ -111,5 +79,45 @@ final class CommentController
                 'paginator' => $this->paginator->getPaginator()
             ],
         ]));
+    }
+
+    public function deleteComment(int $id):Response
+    {
+
+        $comment = $this->commentRepository->findOneBy(['id' => $id]);
+
+        if (!is_null($comment)) {
+            $this->commentRepository->delete($comment);
+            $this->session->addFlashes('danger', 'Commentaire supprimé avec succès !');
+        }
+
+        return $this->commentList();
+    }
+
+    public function validateComment(int $id):Response
+    {
+        $comment = $this->commentRepository->findOneBy(['id' => $id]);
+
+        if (!is_null($comment)) {
+            $comment->setIsChecked('Oui');
+            $this->commentRepository->update($comment);
+            $this->session->addFlashes('success', 'Commentaire validé avec succès !');
+        }
+        return $this->commentList();
+    }
+
+    public function unvalidateComment(int $id):Response
+    {
+
+        /** @var Comment $comment */
+        $comment = $this->commentRepository->findOneBy(['id' => $id]);
+
+        if (!is_null($comment)) {
+            $comment->setIsChecked('Non');
+            $this->commentRepository->update($comment);
+            $this->session->addFlashes('danger', 'Commentaire invalidé avec succès !');
+        }
+
+        return $this->commentList();
     }
 }

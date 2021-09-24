@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\Model\Entity\User;
-use App\Model\Repository\UserRepository;
 use App\Service\Http\Session\Session;
 
 abstract class AbstractValidator

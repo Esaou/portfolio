@@ -65,7 +65,7 @@ final class UserController
             $this->redirect->redirect('home');
         }
 
-        if ($request->getMethod() === 'POST' and $this->csrf->checkToken()) {
+        if ($request->getMethod() === 'POST' && $this->csrf->checkToken()) {
             $data = $request->request()->all();
 
             $user = '';
@@ -140,14 +140,14 @@ final class UserController
                     'User',
                     $tokenUser
                 );
-                $resultUser = $this->userRepository->create($user);
+                $resultCreate = $this->userRepository->create($user);
 
                 // SEND CONFIRMATION MAIL
 
-                if ($resultUser) {
+                if ($resultCreate) {
                     $datas['token'] = $tokenUser;
 
-                    $result = $this->mailer->mail(
+                    $resultMail = $this->mailer->mail(
                         'Confirmation de compte',
                         'eric.saou3@gmail.com',
                         $datas['email'],
@@ -156,17 +156,17 @@ final class UserController
                         'registerMail'
                     );
 
-                    if ($result) {
+                    if ($resultMail) {
                         $this->session->addFlashes(
                             'success',
                             'Inscription réalisée, consultez vos mails pour valider votre compte !'
                         );
                     }
-                    if (!$result) {
+                    if (!$resultMail) {
                         $this->session->addFlashes('danger', 'Erreur lors de l\'envoi du mail !');
                     }
                 }
-                if (!$resultUser) {
+                if (!$resultCreate) {
                     $this->session->addFlashes('danger', 'Erreur lors de la création de l\'utilisateur !');
                 }
             }
@@ -211,9 +211,16 @@ final class UserController
                         $user->getRole(),
                         $user->getToken()
                     );
-                    $this->userRepository->update($user);
-                    $this->session->set('user', $user);
-                    $this->session->addFlashes('update', 'Vos informations sont modifiées avec succès !');
+                    $resultUpdate = $this->userRepository->update($user);
+
+                    if ($resultUpdate) {
+                        $this->session->set('user', $user);
+                        $this->session->addFlashes('update', 'Vos informations sont modifiées avec succès !');
+                    }
+
+                    if (!$resultUpdate) {
+                        $this->session->addFlashes('danger', 'Erreur lors de la modification !');
+                    }
                 }
 
             }
@@ -239,6 +246,9 @@ final class UserController
             $this->session->addFlashes('success', 'Votre compte est validé succès !');
         }
 
+        if (!$user) {
+            $this->session->addFlashes('danger', 'Erreur lors de la validation du compte !');
+        }
 
         return new Response($this->view->render([
             'template' => 'login',

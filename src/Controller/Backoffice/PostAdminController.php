@@ -66,17 +66,6 @@ final class PostAdminController
 
     public function postsList():Response
     {
-
-        if (!is_null($this->request->query()->get('delete'))) {
-            $id = $this->request->query()->get('id');
-            $post = $this->postRepository->findOneBy(['id_post' => $id]);
-
-            if (!is_null($post)) {
-                $this->postRepository->delete($post);
-                $this->session->addFlashes('danger', 'Post supprimé avec succès !');
-            }
-        }
-
         // PAGINATION
 
         $tableRows = $this->postRepository->countAllPosts();
@@ -176,5 +165,18 @@ final class PostAdminController
                 'token' => $this->csrf->newToken()
             ]
         ]), 200);
+    }
+
+    public function deletePost(int $id):Response
+    {
+
+        $post = $this->postRepository->findOneBy(['id_post' => $id]);
+
+        if (!is_null($post)) {
+            $this->postRepository->delete($post);
+            $this->session->addFlashes('danger', 'Post supprimé avec succès !');
+        }
+
+        return $this->postsList();
     }
 }

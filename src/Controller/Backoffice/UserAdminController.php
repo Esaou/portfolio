@@ -74,16 +74,6 @@ final class UserAdminController
             $this->redirect->redirect('forbidden');
         }
 
-        if (!is_null($this->request->query()->get('delete'))) {
-            $id = $this->request->query()->get('id');
-            $comment = $this->userRepository->findOneBy(['id_utilisateur' => $id]);
-
-            if (!is_null($comment)) {
-                $this->userRepository->delete($comment);
-                $this->session->addFlashes('danger', 'Utilisateur supprimé avec succès !');
-            }
-        }
-
         // PAGINATION
 
         $tableRows = $this->userRepository->countAllUsers();
@@ -128,9 +118,16 @@ final class UserAdminController
                         $user->getRole(),
                         $user->getToken()
                     );
-                    $this->userRepository->update($user);
-                    $this->session->set('user', $user);
-                    $this->session->addFlashes('update', 'Vos informations sont modifiées avec succès !');
+                    $resultUpdate = $this->userRepository->update($user);
+
+                    if ($resultUpdate) {
+                        $this->session->set('user', $user);
+                        $this->session->addFlashes('update', 'Vos informations sont modifiées avec succès !');
+                    }
+
+                    if (!$resultUpdate) {
+                        $this->session->addFlashes('danger', 'Erreur lors de la modification !');
+                    }
                 }
             }
         }
@@ -167,10 +164,17 @@ final class UserAdminController
                     $role,
                     $user->getToken()
                 );
-                $this->userRepository->update($user);
+                $resultUpdate =  $this->userRepository->update($user);
+
+                if ($resultUpdate) {
+                    $this->session->addFlashes('update', 'Utilisateur modifié avec succès !');
+                }
+
+                if (!$resultUpdate) {
+                    $this->session->addFlashes('danger', 'Erreur lors de la modification !');
+                }
             }
 
-            $this->session->addFlashes('update', 'Utilisateur modifié avec succès !');
         }
 
         return new Response($this->view->render([
@@ -182,5 +186,21 @@ final class UserAdminController
                 'token' => $this->csrf->newToken()
             ],
         ]), 200);
+    }
+
+    public function deleteUser(int $id):Response
+    {
+        if (!$this->security->loggedAs('Dev')) {
+            $this->redirect->redirect('forbidden');
+        }
+
+        $user = $this->userRepository->findOneBy(['id_utilisateur' => $id]);
+
+        if (!is_null($user)) {
+            $this->userRepository->delete($user);
+            $this->session->addFlashes('danger', 'Utilisateur supprimé avec succès !');
+        }
+
+        return $this->usersList();
     }
 }

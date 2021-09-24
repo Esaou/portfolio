@@ -16,7 +16,7 @@ class Paginator
     public int $depart;
     public string $paginator;
 
-    public function __construct(Request $request, View $view, int $parPage = 10, int $depart = 10, $paginator = '')
+    public function __construct(Request $request, View $view, int $parPage = 10, int $depart = 0,string $paginator = '')
     {
         $this->request = $request;
         $this->view = $view;

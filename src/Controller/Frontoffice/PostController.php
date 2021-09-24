@@ -74,8 +74,16 @@ final class PostController
 
                 $user = $this->session->get('user');
                 $comment = new Comment(0, $data['comment'], $post, $user, 'Non', new \DateTime('now'));
-                $this->commentRepository->create($comment);
-                $this->session->addFlashes('success', 'Commentaire posté avec succès !');
+                $result = $this->commentRepository->create($comment);
+
+                if ($result) {
+                    $this->session->addFlashes('success', 'Commentaire posté avec succès !');
+                }
+
+                if (!$result) {
+                    $this->session->addFlashes('danger', 'Erreur lors de la création du commentaire !');
+                }
+
 
             }
         }

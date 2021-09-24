@@ -46,7 +46,10 @@
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Annuler</button>
-                                    <a href="index.php?action=users&delete&id={{ user.id_utilisateur }}" class="btn btn-sm btn-danger">Supprimer</a>
+                                    <form action="index.php?action=deleteUser" method="POST">
+                                        <input type="hidden" name="id" id="id" value="{{ user.id_utilisateur }}"/>
+                                        <button type="submit" class="btn btn-sm btn-danger">Supprimer</button>
+                                    </form>
                                 </div>
                             </div>
                         </div>

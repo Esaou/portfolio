@@ -107,7 +107,7 @@ final class CommentController
             $comment->setIsChecked('Oui');
             $resultUpdate = $this->commentRepository->update($comment);
             if ($resultUpdate) {
-                $this->session->addFlashes('danger', 'Commentaire validé avec succès !');
+                $this->session->addFlashes('success', 'Commentaire validé avec succès !');
             }
             if (!$resultUpdate) {
                 $this->session->addFlashes('danger', 'Erreur lors de la modification !');

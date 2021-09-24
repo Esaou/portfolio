@@ -197,8 +197,13 @@ final class UserAdminController
         $user = $this->userRepository->findOneBy(['id_utilisateur' => $id]);
 
         if (!is_null($user)) {
-            $this->userRepository->delete($user);
-            $this->session->addFlashes('danger', 'Utilisateur supprimé avec succès !');
+            $resultDelete = $this->userRepository->delete($user);
+            if ($resultDelete) {
+                $this->session->addFlashes('danger', 'Utilisateur supprimé avec succès !');
+            }
+            if (!$resultDelete) {
+                $this->session->addFlashes('danger', 'Erreur lors de la supression !');
+            }
         }
 
         return $this->usersList();

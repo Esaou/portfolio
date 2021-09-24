@@ -87,8 +87,13 @@ final class CommentController
         $comment = $this->commentRepository->findOneBy(['id' => $id]);
 
         if (!is_null($comment)) {
-            $this->commentRepository->delete($comment);
-            $this->session->addFlashes('danger', 'Commentaire supprimé avec succès !');
+            $resultDelete = $this->commentRepository->delete($comment);
+            if ($resultDelete) {
+                $this->session->addFlashes('danger', 'Commentaire supprimé avec succès !');
+            }
+            if (!$resultDelete) {
+                $this->session->addFlashes('danger', 'Erreur lors de la suppression !');
+            }
         }
 
         return $this->commentList();
@@ -100,8 +105,13 @@ final class CommentController
 
         if (!is_null($comment)) {
             $comment->setIsChecked('Oui');
-            $this->commentRepository->update($comment);
-            $this->session->addFlashes('success', 'Commentaire validé avec succès !');
+            $resultUpdate = $this->commentRepository->update($comment);
+            if ($resultUpdate) {
+                $this->session->addFlashes('danger', 'Commentaire validé avec succès !');
+            }
+            if (!$resultUpdate) {
+                $this->session->addFlashes('danger', 'Erreur lors de la modification !');
+            }
         }
         return $this->commentList();
     }
@@ -109,13 +119,17 @@ final class CommentController
     public function unvalidateComment(int $id):Response
     {
 
-        /** @var Comment $comment */
         $comment = $this->commentRepository->findOneBy(['id' => $id]);
 
         if (!is_null($comment)) {
             $comment->setIsChecked('Non');
-            $this->commentRepository->update($comment);
-            $this->session->addFlashes('danger', 'Commentaire invalidé avec succès !');
+            $resultUpdate = $this->commentRepository->update($comment);
+            if ($resultUpdate) {
+                $this->session->addFlashes('danger', 'Commentaire invalidé avec succès !');
+            }
+            if (!$resultUpdate) {
+                $this->session->addFlashes('danger', 'Erreur lors de la modification !');
+            }
         }
 
         return $this->commentList();

@@ -18,39 +18,15 @@ class LoginValidator extends AbstractValidator
         $this->session = $session;
     }
 
-    public function loginValidator(array $data):bool
+    public function validate(array $data):bool
     {
 
-        $error = false;
+        $isValid = true;
 
-        if (!$this->validate($data)) {
-            $error = true;
+        if (!$this->testLogin($data['user'], $data['password'])) {
+            $isValid = false;
         }
 
-        if ($data == null) {
-            $this->session->addFlashes('danger', 'Aucun identifiant renseigné !');
-            $error = true;
-        }
-
-        if ($data['user'] == null) {
-            $this->session->addFlashes('danger', 'Mauvais identifiants');
-            $error = true;
-        }
-
-        if (!is_null($data['user']) && $data['user']->getIsValid() == 'Non') {
-            $this->session->addFlashes('danger', 'Compte non valide !');
-            $error = true;
-        }
-
-        if (!is_null($data['user']) && !password_verify($data['password'], $data['user']->getPassword())) {
-            $this->session->addFlashes('danger', 'Mauvais identifiants');
-            $error = true;
-        }
-
-        if ($error == true) {
-            return false;
-        }
-
-        return true;
+        return $isValid;
     }
 }

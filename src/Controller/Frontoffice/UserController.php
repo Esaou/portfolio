@@ -77,7 +77,7 @@ final class UserController
             $data['user'] = $user;
 
 
-            if ($this->loginValidator->loginValidator($data)) {
+            if ($this->loginValidator->validate($data)) {
                 $this->session->set('user', $data['user']);
                 $user = $this->session->get('user');
                 if ($user->getRole() === 'User') {
@@ -125,7 +125,7 @@ final class UserController
 
             $datas['validEmail'] = $validEmail;
 
-            if ($this->registerValidator->registerValidator($datas)) {
+            if ($this->registerValidator->validate($datas)) {
                 // CREATE USER
 
                 $tokenUser = uniqid();
@@ -195,8 +195,7 @@ final class UserController
             /** @var array $data */
             $data = $this->request->request()->all();
 
-            if ($this->accountValidator->accountValidator($data)) {
-
+            if ($this->accountValidator->validate($data)) {
                 $user = $this->userRepository->findOneBy(['id_utilisateur' => $id]);
 
                 $password = password_hash($data['password'], PASSWORD_BCRYPT);

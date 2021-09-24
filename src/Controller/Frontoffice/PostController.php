@@ -68,7 +68,7 @@ final class PostController
             /** @var array $data */
             $data = $this->request->request()->all();
 
-            if ($this->validator->commentValidator($data)) {
+            if ($this->validator->validate($data)) {
 
                 /** @var Post $post */
 

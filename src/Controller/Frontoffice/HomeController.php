@@ -50,7 +50,7 @@ final class HomeController
             /** @var array $data */
             $data = $this->request->request()->all();
 
-            if ($this->validator->homeContactValidator($data)) {
+            if ($this->validator->validate($data)) {
                 $result = $this->mailer->mail(
                     'Message de '.$data['firstname'].' '.$data['lastname'],
                     $data['email'],

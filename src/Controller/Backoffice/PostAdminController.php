@@ -111,7 +111,7 @@ final class PostAdminController
             /** @var array $data */
             $data = $this->request->request()->all();
 
-            if ($this->validator->editPostValidator($data)) {
+            if ($this->validator->validate($data)) {
                 $user = $this->userRepository->findOneBy(['id_utilisateur'=>(int)$data['author']]);
                 if ($post) {
                     $post = new Post(
@@ -150,7 +150,7 @@ final class PostAdminController
             /** @var array $data */
             $data = $this->request->request()->all();
 
-            if ($this->validator->editPostValidator($data)) {
+            if ($this->validator->validate($data)) {
                 $user = $this->session->get('user');
 
                 $post = new Post(

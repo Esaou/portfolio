@@ -18,36 +18,36 @@ class ContactValidator extends AbstractValidator
         $this->session = $session;
     }
 
-    public function homeContactValidator(array $data): bool
+    public function validate(array $data): bool
     {
 
         $isValid = true;
 
-        if (!$this->isNotEmpty($data['firstname'],'prénom')){
+        if (!$this->isNotEmpty($data['firstname'], 'prénom')) {
             $isValid = false;
         }
-        if (!$this->isNotEmpty($data['lastname'],'nom')){
+        if (!$this->isNotEmpty($data['lastname'], 'nom')) {
             $isValid = false;
         }
-        if (!$this->isNotEmpty($data['email'],'email')){
+        if (!$this->isNotEmpty($data['email'], 'email')) {
             $isValid = false;
         }
-        if (!$this->isNotEmpty($data['content'],'message')){
+        if (!$this->isNotEmpty($data['content'], 'message')) {
             $isValid = false;
         }
-        if (!$this->testString($data['firstname'],'prénom')){
+        if (!$this->testString($data['firstname'], 'prénom')) {
             $isValid = false;
         }
-        if (!$this->testString($data['lastname'],'nom')){
+        if (!$this->testString($data['lastname'], 'nom')) {
             $isValid = false;
         }
-        if (!$this->testStringLength($data['lastname'],1,30,'nom')){
+        if (!$this->testStringLength($data['lastname'], 1, 30, 'nom')) {
             $isValid = false;
         }
-        if (!$this->testStringLength($data['firstname'],1,30,'prénom')){
+        if (!$this->testStringLength($data['firstname'], 1, 30, 'prénom')) {
             $isValid = false;
         }
-        if (!$this->testValidEmail($data['email'])){
+        if (!$this->testValidEmail($data['email'])) {
             $isValid = false;
         }
 

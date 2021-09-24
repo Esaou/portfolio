@@ -18,33 +18,48 @@ class RegisterValidator extends AbstractValidator
         $this->session = $session;
     }
 
-    public function registerValidator(array $data):bool
+    public function validate(array $data):bool
     {
 
-        $error = false;
+        $isValid = true;
 
-        if (!$this->validate($data)) {
-            $error = true;
+        if (!$this->isNotEmpty($data['firstname'], 'prénom')) {
+            $isValid = false;
+        }
+        if (!$this->isNotEmpty($data['lastname'], 'nom')) {
+            $isValid = false;
+        }
+        if (!$this->isNotEmpty($data['email'], 'email')) {
+            $isValid = false;
+        }
+        if (!$this->isNotEmpty($data['password'], 'mot de passe')) {
+            $isValid = false;
+        }
+        if (!$this->testString($data['firstname'], 'prénom')) {
+            $isValid = false;
+        }
+        if (!$this->testString($data['lastname'], 'nom')) {
+            $isValid = false;
+        }
+        if (!$this->testStringLength($data['lastname'], 1, 30, 'nom')) {
+            $isValid = false;
+        }
+        if (!$this->testStringLength($data['firstname'], 1, 30, 'prénom')) {
+            $isValid = false;
+        }
+        if (!$this->testValidEmail($data['email'])) {
+            $isValid = false;
+        }
+        if (!$this->isNotUsedEmail($data['validEmail'])) {
+            $isValid = false;
+        }
+        if (!$this->testPassword($data['password'])) {
+            $isValid = false;
+        }
+        if (!$this->testPasswordConfirm($data['passwordConfirm'], $data['password'])) {
+            $isValid = false;
         }
 
-        if (!preg_match('/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[-+!*$@%_])([-+!*$@%_\w]{8,100})$/', $data['password'])) {
-            $this->session->addFlashes(
-                'danger',
-                'Votre mot de passe doit contenir au moins 1 chiffre,
-                 une lettre minuscule, majuscule, un caractère spécial et 8 caractères minimum !'
-            );
-            $error = true;
-        }
-
-        if ($data['validEmail'] !== null) {
-            $this->session->addFlashes('danger', 'L\'email renseigné est déjà utilisé !');
-            $error = true;
-        }
-
-        if ($error === true) {
-            return false;
-        }
-
-        return true;
+        return $isValid;
     }
 }

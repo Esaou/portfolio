@@ -115,7 +115,7 @@ final class UserAdminController
             /** @var array $data */
             $data = $this->request->request()->all();
 
-            if ($this->accountValidator->accountValidator($data)) {
+            if ($this->accountValidator->validate($data)) {
                 $password = password_hash($data['password'], PASSWORD_BCRYPT);
                 if ($user) {
                     $user = new User(

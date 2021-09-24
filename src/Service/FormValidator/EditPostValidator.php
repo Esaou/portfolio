@@ -18,23 +18,21 @@ class EditPostValidator extends AbstractValidator
         $this->session = $session;
     }
 
-    public function editPostValidator(array $data):bool
+    public function validate(array $data):bool
     {
 
-        $error = false;
+        $isValid = true;
 
-        if (!$this->validate($data)) {
-            $error = true;
+        if (!$this->isNotEmpty($data['title'], 'titre')) {
+            $isValid = false;
         }
-        if ($data['title'] == '' && $data['chapo'] == '' || $data['content'] == '') {
-            $this->session->addFlashes('danger', 'Tous les champs doivent être remplis !');
-            $error = true;
+        if (!$this->isNotEmpty($data['chapo'], 'chapo')) {
+            $isValid = false;
         }
-
-        if ($error === true) {
-            return false;
+        if (!$this->isNotEmpty($data['content'], 'contenu')) {
+            $isValid = false;
         }
 
-        return true;
+        return $isValid;
     }
 }

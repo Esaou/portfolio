@@ -6,7 +6,7 @@
 
 .text-black
 {
-    color: rgb(100,100,100)!important;
+    color: rgb(100, 100, 100)!important;
 }
 
 .text-blue
@@ -17,7 +17,7 @@
 .padMain
 {
     padding-top: 40px;
-    background-color: rgb(245,245,245);
+    background-color: rgb(245, 245, 245);
 }
 
 .flashMessage
@@ -65,7 +65,7 @@
 .title
 {
     text-decoration: none;
-    color: rgb(100,100,100);
+    color: rgb(100, 100, 100);
     font-size: 17px;
     margin-right: 20px;
 }
@@ -78,10 +78,10 @@
 .subtitle
 {
     text-decoration: none;
-    color: rgb(100,100,100);
+    color: rgb(100, 100, 100);
     cursor:pointer;
     background-color: white;
-    border: 1px solid rgba(100,100,100,0.4);
+    border: 1px solid rgba(100, 100, 100, 0.4);
     font-size: 14px;
     font-family: sans-serif;
     display: inline-block;
@@ -97,14 +97,14 @@
 .subtitle:hover
 {
     color: blue;
-    border: 1px solid rgba(100,100,100,0.2);
+    border: 1px solid rgba(100, 100, 100, 0.2);
 }
 
 .subtitleRdv
 {
     text-decoration: none;
     color: white!important;
-    background-color: rgba(0, 199, 12,1);
+    background-color: rgba(0, 199, 12, 1);
     font-size: 14px;
     font-family: sans-serif;
     display: inline-block;
@@ -113,13 +113,13 @@
     padding-right: 20px;
     padding-left: 20px;
     border-radius: 4px;
-    box-shadow: 0px 0px 5px rgba(100,100,100,0.3);
+    box-shadow: 0px 0px 5px rgba(100, 100, 100, 0.3);
 }
 
 .subtitleRdv:hover
 {
     background-color: rgba(0, 179, 12,1);
-    box-shadow: 0px 0px 5px rgba(100,100,100,0.5);
+    box-shadow: 0px 0px 5px rgba(100, 100, 100, 0.5);
 }
 
 .navbar-toggler:focus
@@ -134,7 +134,7 @@
     transition: color 200ms linear;
     border-radius: 4px;
     font-family: sans-serif;
-    color: rgb(100,100,100);
+    color: rgb(100, 100, 100);
 }
 
 .responsiveNav ul li a:hover,.responsiveNav ul li label:hover
@@ -148,8 +148,8 @@
     padding-bottom: 10px;
     padding-top: 10px;
     background-color: white;
-    box-shadow: 0px 0px 10px rgba(100,100,100,0.5);
-    color: rgb(100,100,100);
+    box-shadow: 0px 0px 10px rgba(100, 100, 100, 0.5);
+    color: rgb(100, 100, 100);
 }
 
 @media screen and (max-width: 1150px)
@@ -193,7 +193,7 @@
 .id
 {
     border-radius: 5px;
-    border: 1px solid rgba(150,150,150,0.5);
+    border: 1px solid rgba(150, 150, 150, 0.5);
     height: 200px;
     margin-left: 40px;
     margin-right: 40px;
@@ -259,7 +259,7 @@
     font-size: 55px;
     margin-right: 20px;
     margin-left: 20px;
-    color: rgba(100,100,100,1);
+    color: rgba(100, 100, 100, 1);
 }
 
 .containerSocial i:hover
@@ -309,7 +309,7 @@
 /* Footer */
 .footer
 {
-    border-top: 1px solid rgba(100,100,100,0.2);
+    border-top: 1px solid rgba(100, 100, 100, 0.2);
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -431,7 +431,7 @@
     align-items: flex-start;
     justify-content: center;
     background-color: white;
-    border: 1px solid rgba(150,150,150,0.4);
+    border: 1px solid rgba(150, 150, 150, 0.4);
     border-radius: 4px;
 }
 
@@ -453,7 +453,7 @@
 
 .paginator a
 {
-    color: rgb(100,100,100);
+    color: rgb(100, 100, 100);
 }
 
 .submitComment

@@ -89,10 +89,10 @@ final class PostAdminController
         ]), 200);
     }
 
-    public function editPost(int $id):Response
+    public function editPost(int $idPost):Response
     {
 
-        $post = $this->postRepository->findOneBy(['id_post' => $id]);
+        $post = $this->postRepository->findOneBy(['id_post' => $idPost]);
         $users = $this->userRepository->findAll();
 
         if ($this->request->getMethod() === 'POST' && $this->csrf->checkToken()) {
@@ -167,12 +167,12 @@ final class PostAdminController
         ]), 200);
     }
 
-    public function deletePost(int $id):Response
+    public function deletePost(int $idPost):Response
     {
 
-        $post = $this->postRepository->findOneBy(['id_post' => $id]);
+        $post = $this->postRepository->findOneBy(['id_post' => $idPost]);
 
-        if (!is_null($post)) {
+        if ($post !== null) {
             $resultDelete = $this->postRepository->delete($post);
             if ($resultDelete) {
                 $this->session->addFlashes('danger', 'Post supprimé avec succès !');

@@ -55,11 +55,11 @@ final class PostController
         $this->redirect = $redirectResponse;
     }
 
-    public function displayOneAction(int $id): Response
+    public function displayOneAction(int $idPost): Response
     {
         // FIND A POST
 
-        $post = $this->postRepository->findOneBy(['id_post' => $id]);
+        $post = $this->postRepository->findOneBy(['id_post' => $idPost]);
 
         // COMMENT FORM
 
@@ -90,10 +90,10 @@ final class PostController
 
         // PAGINATION
 
-        $tableRows = $this->commentRepository->countAllCheckedComment($id);
-        $this->paginator->paginate($tableRows, 4, 'post&id='.$id);
+        $tableRows = $this->commentRepository->countAllCheckedComment($idPost);
+        $this->paginator->paginate($tableRows, 4, 'post&id='.$idPost);
         $comments = $this->commentRepository->findBy(
-            ['post_id' => $id,'isChecked' => 'Oui'],
+            ['post_id' => $idPost,'isChecked' => 'Oui'],
             ['createdDate' =>'desc'],
             $this->paginator->getLimit(),
             $this->paginator->getOffset()
@@ -101,7 +101,7 @@ final class PostController
 
         // RENDER
 
-        if (is_null($post)) {
+        if ($post !== null) {
             $this->redirect->redirect('postNotFound');
         }
 

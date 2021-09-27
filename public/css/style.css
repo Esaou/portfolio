@@ -73,10 +73,7 @@
   font-family: sans-serif;
   display: inline-block;
   transition: color 100ms linear, border 100ms linear;
-  padding-top: 7px;
-  padding-bottom: 7px;
-  padding-right: 20px;
-  padding-left: 20px;
+  padding: 7px 20px 7px 20px;
   border-radius: 4px;
   margin-left: 10px;
 }
@@ -176,7 +173,6 @@
 
 .nameHome {
   font-size: 45px;
-  font-family: Arial;
   margin-left: 40px;
   margin-right: 40px;
 }
@@ -260,7 +256,6 @@
 
   .nameHome {
     font-size: 45px;
-    font-family: Arial;
     margin-left: 0;
     margin-right: 0;
   }
@@ -339,14 +334,6 @@
   .blocBtnUpdate div {
     margin: 10px;
     text-align: center;
-  }
-
-  .blocBtnUpdate {
-    margin-top: 15px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
   }
 
   .blocBtnUpdate div a {

@@ -35,7 +35,7 @@ class Paginator
         $pageCourante = 1;
 
         if (!empty($page) && $page > 0 && $page <= $pagesTotales) {
-            $page = intval($page);
+            $page = (int)$page;
             $pageCourante = $page;
         }
 

@@ -21,7 +21,7 @@ class Mailer
         $this->view = $view;
     }
 
-    public function mail(string $subject, string $from, string $to, string $type, array $data, string $template):int
+    public function mail(string $subject, string $from, string $to, array $data, string $template):int
     {
 
         $transport = (new Swift_SmtpTransport('localhost', 1025));

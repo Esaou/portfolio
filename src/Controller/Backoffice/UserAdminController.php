@@ -95,10 +95,10 @@ final class UserAdminController
         ]), 200);
     }
 
-    public function userAccount(int $id) :Response
+    public function userAccount(int $idUser) :Response
     {
 
-        $user = $this->userRepository->findOneBy(['id_utilisateur' => $id]);
+        $user = $this->userRepository->findOneBy(['id_utilisateur' => $idUser]);
 
         if ($this->request->getMethod() === 'POST' && $this->csrf->checkToken()) {
 
@@ -141,14 +141,14 @@ final class UserAdminController
         ]), 200);
     }
 
-    public function editUser(int $id):Response
+    public function editUser(int $idUser):Response
     {
 
         if (!$this->security->loggedAs('Dev')) {
             $this->redirect->redirect('forbidden');
         }
 
-        $user = $this->userRepository->findOneBy(['id_utilisateur' => $id]);
+        $user = $this->userRepository->findOneBy(['id_utilisateur' => $idUser]);
 
         if ($this->request->getMethod() === 'POST' && $this->csrf->checkToken()) {
             $role = $this->request->request()->get('role');
@@ -188,15 +188,15 @@ final class UserAdminController
         ]), 200);
     }
 
-    public function deleteUser(int $id):Response
+    public function deleteUser(int $idUser):Response
     {
         if (!$this->security->loggedAs('Dev')) {
             $this->redirect->redirect('forbidden');
         }
 
-        $user = $this->userRepository->findOneBy(['id_utilisateur' => $id]);
+        $user = $this->userRepository->findOneBy(['id_utilisateur' => $idUser]);
 
-        if (!is_null($user)) {
+        if ($user !== null) {
             $resultDelete = $this->userRepository->delete($user);
             if ($resultDelete) {
                 $this->session->addFlashes('danger', 'Utilisateur supprimé avec succès !');

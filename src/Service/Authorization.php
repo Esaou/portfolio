@@ -24,7 +24,7 @@ class Authorization
     public function isLogged():bool
     {
 
-        if (is_null($this->session->get('user'))) {
+        if ($this->session->get('user') === null) {
             return false;
         }
 
@@ -37,7 +37,7 @@ class Authorization
 
         $user = $this->session->get('user');
 
-        if (is_null($user)) {
+        if ($user === null) {
             return false;
         }
 

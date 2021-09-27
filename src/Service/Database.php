@@ -117,7 +117,7 @@ class Database
     {
         $sqlParts = [];
 
-        foreach ($fields as $k => $v) {
+        foreach (array_keys($fields) as $k) {
             $sqlParts[] = "$k = :$k";
         }
 

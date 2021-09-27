@@ -151,14 +151,14 @@ final class PostRepository implements EntityRepositoryInterface
         $post = get_object_vars($post);
 
         foreach ($post as $key => $value) {
-            if ($key === 'createdAt') {
+            if ($key !== 'createdAt' && $key !== 'updatedAt' && $key !== 'user') {
+                $criteria[$key] = $value;
+            } elseif ($key === 'createdAt') {
                 $criteria[$key] = $value->format('Y-m-d H:i:s');
             } elseif ($key === 'updatedAt') {
                 $criteria[$key] = $value->format('Y-m-d H:i:s');
             } elseif ($key === 'user') {
                 $criteria['user_id'] = $value->id_utilisateur;
-            } else {
-                $criteria[$key] = $value;
             }
         }
 

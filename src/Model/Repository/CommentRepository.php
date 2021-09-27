@@ -80,7 +80,7 @@ final class CommentRepository implements EntityRepositoryInterface
         if (is_iterable($data)) {
             foreach ($data as $comment) {
                 $comment->createdAt = new \DateTime($comment->createdAt);
-                if (!is_null($comment->updatedAt)) {
+                if ($comment->updatedAt !== null) {
                     $comment->updatedAt = new \DateTime($comment->updatedAt);
                 }
                 $comment->createdDate = new \DateTime($comment->createdDate);

@@ -101,7 +101,7 @@ final class PostController
 
         // RENDER
 
-        if ($post !== null) {
+        if ($post === null) {
             $this->redirect->redirect('postNotFound');
         }
 

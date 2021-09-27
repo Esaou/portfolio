@@ -18,9 +18,9 @@ final class UserRepository implements EntityRepositoryInterface
         $this->database = $database;
     }
 
-    public function find(int $id): ?User
+    public function find(int $idUser): ?User
     {
-        $data = $this->findBy(['id'=>$id]);
+        $data = $this->findBy(['id'=>$idUser]);
 
         if (!empty($data)) {
             $data = current($data);
@@ -37,7 +37,7 @@ final class UserRepository implements EntityRepositoryInterface
     {
         $data = $this->findBy($criteria, $orderBy);
 
-        if (!is_null($data)) {
+        if ($data !== null) {
             $data = current($data);
         }
 
@@ -52,15 +52,15 @@ final class UserRepository implements EntityRepositoryInterface
             $sql .= $this->database->setCondition($criteria);
         }
 
-        if (!is_null($orderBy)) {
+        if ($orderBy !== null) {
             $sql .= ' order by '.$this->database->setOrderBy($orderBy);
         }
 
-        if (!is_null($limit)) {
+        if ($limit !== null) {
             $sql .= ' limit '.$limit;
         }
 
-        if (!is_null($offset)) {
+        if ($offset !== null) {
             $sql .= ' offset '.$offset;
         }
 

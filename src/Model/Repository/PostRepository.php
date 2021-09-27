@@ -18,9 +18,9 @@ final class PostRepository implements EntityRepositoryInterface
         $this->database = $database;
     }
 
-    public function find(int $id): ?Post
+    public function find(int $idPost): ?Post
     {
-        $data = $this->findBy(['id'=>$id]);
+        $data = $this->findBy(['id'=>$idPost]);
 
         if (!empty($data)) {
             $data = current($data);
@@ -38,7 +38,7 @@ final class PostRepository implements EntityRepositoryInterface
 
         $data = $this->findBy($criteria, $orderBy);
 
-        if (!is_null($data)) {
+        if ($data !== null) {
             $data = current($data);
         }
 
@@ -53,15 +53,15 @@ final class PostRepository implements EntityRepositoryInterface
             $sql .= $this->database->setCondition($criteria);
         }
 
-        if (!is_null($orderBy)) {
+        if ($orderBy !== null) {
             $sql .= ' order by '.$this->database->setOrderBy($orderBy);
         }
 
-        if (!is_null($limit)) {
+        if ($limit !== null) {
             $sql .= ' limit '.$limit;
         }
 
-        if (!is_null($offset)) {
+        if ($offset !== null) {
             $sql .= ' offset '.$offset;
         }
 
@@ -76,7 +76,7 @@ final class PostRepository implements EntityRepositoryInterface
         if (is_iterable($data)) {
             foreach ($data as $post) {
                 $post->createdAt = new \DateTime($post->createdAt);
-                if (!is_null($post->updatedAt)) {
+                if ($post->updatedAt !== null) {
                     $post->updatedAt = new \DateTime($post->updatedAt);
                 }
                 $user = new User(
@@ -122,13 +122,12 @@ final class PostRepository implements EntityRepositoryInterface
         $post = get_object_vars($post);
 
         foreach ($post as $key => $value) {
-            if ($key === 'createdAt') {
+            if ($key !== 'createdAt' && $key !== 'user' && $key !== 'id_post') {
+                $criteria[$key] = $value;
+            } elseif ($key === 'createdAt') {
                 $criteria[$key] = $value->format('Y-m-d H:i:s');
             } elseif ($key === 'user') {
                 $criteria[$key] = $value->id_utilisateur;
-            } elseif ($key === 'id_post') {
-            } else {
-                $criteria[$key] = $value;
             }
         }
 

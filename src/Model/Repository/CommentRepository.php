@@ -20,9 +20,9 @@ final class CommentRepository implements EntityRepositoryInterface
         $this->database = $database;
     }
 
-    public function find(int $id): ?Comment
+    public function find(int $idComment): ?Comment
     {
-        $data = $this->findBy(['id'=>$id]);
+        $data = $this->findBy(['id'=>$idComment]);
 
         if (!empty($data)) {
             $data = current($data);
@@ -57,15 +57,15 @@ final class CommentRepository implements EntityRepositoryInterface
             $sql .= $this->database->setCondition($criteria);
         }
 
-        if (!is_null($orderBy)) {
+        if ($orderBy !== null) {
             $sql .= ' order by '.$this->database->setOrderBy($orderBy);
         }
 
-        if (!is_null($limit)) {
+        if ($limit !== null) {
             $sql .= ' limit '.$limit;
         }
 
-        if (!is_null($offset)) {
+        if ($offset !== null) {
             $sql .= ' offset '.$offset;
         }
 
@@ -136,15 +136,14 @@ final class CommentRepository implements EntityRepositoryInterface
         $comment = get_object_vars($comment);
 
         foreach ($comment as $key => $value) {
-            if ($key === 'createdDate') {
+            if ($key !== 'createdDate' && $key !== 'id_user' && $key !== 'post_id' && $key !== 'id') {
+                $criteria[$key] = $value;
+            } elseif ($key === 'createdDate') {
                 $criteria[$key] = $value->format('Y-m-d H:i:s');
             } elseif ($key === 'id_user') {
                 $criteria[$key] = $value->id_utilisateur;
             } elseif ($key === 'post_id') {
                 $criteria[$key] = $value->id_post;
-            } elseif ($key === 'id') {
-            } else {
-                $criteria[$key] = $value;
             }
         }
 
@@ -210,11 +209,11 @@ final class CommentRepository implements EntityRepositoryInterface
         return false;
     }
 
-    public function countAllCheckedComment(int $id):int
+    public function countAllCheckedComment(int $idComment):int
     {
         $data = $this->database->query("SELECT COUNT(*) AS nb 
             FROM comment 
-            WHERE post_id = $id and isChecked = 'Oui' 
+            WHERE post_id = $idComment and isChecked = 'Oui' 
             ORDER BY id DESC");
 
         if (is_iterable($data)) {

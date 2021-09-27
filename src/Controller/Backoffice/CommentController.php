@@ -81,10 +81,10 @@ final class CommentController
         ]));
     }
 
-    public function deleteComment(int $id):Response
+    public function deleteComment(int $idComment):Response
     {
 
-        $comment = $this->commentRepository->findOneBy(['id' => $id]);
+        $comment = $this->commentRepository->findOneBy(['id' => $idComment]);
 
         if (!is_null($comment)) {
             $resultDelete = $this->commentRepository->delete($comment);
@@ -99,9 +99,9 @@ final class CommentController
         return $this->commentList();
     }
 
-    public function validateComment(int $id):Response
+    public function validateComment(int $idComment):Response
     {
-        $comment = $this->commentRepository->findOneBy(['id' => $id]);
+        $comment = $this->commentRepository->findOneBy(['id' => $idComment]);
 
         if (!is_null($comment)) {
             $comment->setIsChecked('Oui');
@@ -116,12 +116,12 @@ final class CommentController
         return $this->commentList();
     }
 
-    public function unvalidateComment(int $id):Response
+    public function unvalidateComment(int $idComment):Response
     {
 
-        $comment = $this->commentRepository->findOneBy(['id' => $id]);
+        $comment = $this->commentRepository->findOneBy(['id' => $idComment]);
 
-        if (!is_null($comment)) {
+        if ($comment !== null) {
             $comment->setIsChecked('Non');
             $resultUpdate = $this->commentRepository->update($comment);
             if ($resultUpdate) {

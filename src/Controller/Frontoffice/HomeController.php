@@ -55,7 +55,6 @@ final class HomeController
                     'Message de '.$data['firstname'].' '.$data['lastname'],
                     $data['email'],
                     'eric.saou3@gmail.com',
-                    'contact',
                     $data,
                     'contactMail'
                 );

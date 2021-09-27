@@ -82,7 +82,8 @@ final class UserController
                 $user = $this->session->get('user');
                 if ($user->getRole() === 'User') {
                     $this->redirect->redirect('home');
-                } else {
+                }
+                if ($user->getRole() !== 'User') {
                     $this->redirect->redirect('postsAdmin');
                 }
             }
@@ -151,7 +152,6 @@ final class UserController
                         'Confirmation de compte',
                         'eric.saou3@gmail.com',
                         $datas['email'],
-                        'register',
                         $datas,
                         'registerMail'
                     );
@@ -182,7 +182,7 @@ final class UserController
         ]), 200);
     }
 
-    public function userAccount(int $id) :Response
+    public function userAccount(int $idUser) :Response
     {
 
         if (!$this->security->loggedAs('User')) {
@@ -196,7 +196,7 @@ final class UserController
             $data = $this->request->request()->all();
 
             if ($this->accountValidator->validate($data)) {
-                $user = $this->userRepository->findOneBy(['id_utilisateur' => $id]);
+                $user = $this->userRepository->findOneBy(['id_utilisateur' => $idUser]);
 
                 $password = password_hash($data['password'], PASSWORD_BCRYPT);
 

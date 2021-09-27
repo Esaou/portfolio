@@ -71,7 +71,7 @@ class Database
     {
         $sqlParts = [];
 
-        foreach ($fields as $k => $v) {
+        foreach (array_keys($fields) as $k) {
             $sqlParts[] = "$k = :$k";
         }
 
@@ -101,7 +101,9 @@ class Database
         foreach ($fields as $k => $v) {
             if (is_string($v)) {
                 $sqlParts[] = "$k = '$v'";
-            } else {
+            }
+
+            if (!is_string($v)) {
                 $sqlParts[] = "$k = $v";
             }
         }

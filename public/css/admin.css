@@ -252,12 +252,10 @@ body {
 }
 
 .sidebar-wrapper .sidebar-menu .sidebar-dropdown > a::after {
-  font-family: "Font Awesome 5 Free";
   font-weight: 900;
   content: "\f105";
   font-style: normal;
   display: inline-block;
-  font-style: normal;
   font-variant: normal;
   text-rendering: auto;
   -webkit-font-smoothing: antialiased;
@@ -280,7 +278,6 @@ body {
 
 .sidebar-wrapper .sidebar-menu .sidebar-dropdown .sidebar-submenu li a::before {
   content: "\f111";
-  font-family: "Font Awesome 5 Free";
   font-weight: 400;
   font-style: normal;
   display: inline-block;
@@ -364,14 +361,11 @@ body {
   width: 100%;
   padding-left: 0;
   padding-top: 20px;
+  overflow-x: hidden;
 }
 
 .page-wrapper .page-content > div {
   padding: 20px 40px;
-}
-
-.page-wrapper .page-content {
-  overflow-x: hidden;
 }
 
 /* ------scroll bar--------------------- */

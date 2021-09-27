@@ -68,12 +68,12 @@ class Validator {
 
         if (this.firstname.value === "" || this.lastname.value === "" || this.email.value === "" || this.content.value === "") {
             event.preventDefault();
-            this.error.style.display = 'flex';
-            this.error.innerHTML = 'Tous les champs doivent être remplis !';
+            this.error.style.display = "flex";
+            this.error.innerHTML = "Tous les champs doivent être remplis !";
         } else if (this.firstname.value.length < 2 || this.firstname.value.length > 30 || this.lastname.value.length < 2 || this.lastname.value.length > 30) {
             event.preventDefault();
-            this.error.style.display = 'flex';
-            this.error.innerHTML = 'Le prénom et le nom doivent contenir de 2 à 30 caractères !';
+            this.error.style.display = "flex";
+            this.error.innerHTML = "Le prénom et le nom doivent contenir de 2 à 30 caractères !";
         }
 
         return true;

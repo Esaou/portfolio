@@ -166,14 +166,14 @@ final class CommentRepository implements EntityRepositoryInterface
         $comment = get_object_vars($comment);
 
         foreach ($comment as $key => $value) {
-            if ($key === 'createdDate') {
+            if ($key !== 'createdDate' && $key !== 'id_user' && $key !== 'post_id') {
+                $criteria[$key] = $value;
+            } elseif ($key === 'createdDate') {
                 $criteria[$key] = $value->format('Y-m-d H:i:s');
             } elseif ($key === 'id_user') {
                 $criteria['id_user'] = $value->id_utilisateur;
             } elseif ($key === 'post_id') {
                 $criteria['post_id'] = $value->id_post;
-            } else {
-                $criteria[$key] = $value;
             }
         }
 

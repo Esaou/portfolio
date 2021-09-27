@@ -26,5 +26,5 @@ $(".sidebar-dropdown > a").click(function () {
             .parent()
             .addClass("active");
     }
-})
+});
 

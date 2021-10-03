@@ -131,7 +131,7 @@ abstract class AbstractValidator
 
         $isValid = true;
 
-        if ($user == null) {
+        if ($user === null) {
             $this->session->addFlashes('danger', 'Mauvais identifiants');
             $isValid = false;
         }

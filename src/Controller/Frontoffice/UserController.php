@@ -80,16 +80,12 @@ final class UserController
             if ($this->loginValidator->validate($data)) {
                 $this->session->set('user', $data['user']);
                 $user = $this->session->get('user');
-                if ($user->getRole() === 'User') {
-                    $this->redirect->redirect('home');
-                }
-                if ($user->getRole() !== 'User') {
-                    $this->redirect->redirect('postsAdmin');
-                }
+                $this->redirect->redirect('home');
+
             }
         }
 
-        return new Response($this->view->render(['template' => 'login', 'data' => [
+        return new Response($this->view->render(['template' => 'login', 'type' => 'frontoffice', 'data' => [
             'token' => $this->csrf->newToken(),
             'formData' => (isset($data)) ? $data : []
         ]]), 200);
@@ -99,6 +95,7 @@ final class UserController
     {
         $this->session->remove('user');
         return new Response($this->view->render([
+            'type' => 'frontoffice',
             'template' => 'home',
             'data' => [
 
@@ -162,9 +159,6 @@ final class UserController
                             'Inscription réalisée, consultez vos mails pour valider votre compte !'
                         );
                     }
-                    if (!$resultMail) {
-                        $this->session->addFlashes('danger', 'Erreur lors de l\'envoi du mail !');
-                    }
                 }
                 if (!$resultCreate) {
                     $this->session->addFlashes('danger', 'Erreur lors de la création de l\'utilisateur !');
@@ -175,6 +169,7 @@ final class UserController
 
         return new Response($this->view->render([
             'template' => 'register',
+            'type' => 'frontoffice',
             'data' => [
                 'token' => $this->csrf->newToken(),
                 'formData' => $datas
@@ -228,6 +223,7 @@ final class UserController
 
         return new Response($this->view->render([
             'template' => 'userAccount',
+            'type' => 'frontoffice',
             'data' => [
                 'token' => $this->csrf->newToken()
             ]
@@ -252,6 +248,7 @@ final class UserController
 
         return new Response($this->view->render([
             'template' => 'login',
+            'type' => 'frontoffice',
         ]), 200);
     }
 }

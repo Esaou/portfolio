@@ -10,9 +10,7 @@ use App\Controller\Backoffice\UserAdminController;
 use App\Controller\Frontoffice\ErrorController;
 use App\Controller\Frontoffice\HomeController;
 use App\Controller\Frontoffice\PostController;
-use App\Controller\Frontoffice\SecurityController;
 use App\Controller\Frontoffice\UserController;
-use App\Model\Entity\User;
 use App\Model\Repository\PostRepository;
 use App\Model\Repository\CommentRepository;
 use App\Model\Repository\UserRepository;
@@ -55,7 +53,7 @@ final class Router
         $this->view = new View($this->session);
         $this->paginator = new Paginator($this->request, $this->view);
         $this->redirect = new RedirectResponse();
-        $this->mailer = new Mailer($this->view);
+        $this->mailer = new Mailer($this->view,$this->session);
         $this->csrf = new CsrfToken($this->session, $this->request);
         $this->security = new Authorization($this->session, $this->request);
         $this->userRepo = new UserRepository($this->database);
@@ -179,7 +177,7 @@ final class Router
             );
             return $controller->confirmUser();
         } elseif ($action === 'forbidden') {
-            $controller = new SecurityController($this->view);
+            $controller = new ErrorController($this->view);
             return $controller->forbidden();
         } elseif ($action === 'postsAdmin') {
             $editPostValidator = new EditPostValidator($this->session);
@@ -381,14 +379,15 @@ final class Router
             );
             return $controller->userAccount((int) $this->request->query()->get('id'));
         } elseif ($action === 'postNotFound') {
-            $controller = new SecurityController($this->view);
+            $controller = new ErrorController($this->view);
             return $controller->postNotFound();
         } elseif ($action === 'notFound') {
-            $controller = new SecurityController($this->view);
+            $controller = new ErrorController($this->view);
             return $controller->notFound();
         }
 
         return new Response($this->view->render([
+            'type' => 'frontoffice',
             'template' => 'notFound'
         ]), 404);
     }

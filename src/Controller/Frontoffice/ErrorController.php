@@ -7,7 +7,7 @@ namespace  App\Controller\Frontoffice;
 use App\View\View;
 use App\Service\Http\Response;
 
-final class SecurityController
+final class ErrorController
 {
     private View $view;
 
@@ -19,6 +19,7 @@ final class SecurityController
     public function forbidden() :Response
     {
         return new Response($this->view->render([
+            'type' => 'frontoffice',
             'template' => 'forbidden'
         ]), 403);
     }
@@ -26,6 +27,7 @@ final class SecurityController
     public function postNotFound() :Response
     {
         return new Response($this->view->render([
+            'type' => 'frontoffice',
             'template' => 'postNotFound'
         ]), 404);
     }
@@ -33,6 +35,7 @@ final class SecurityController
     public function notFound() :Response
     {
         return new Response($this->view->render([
+            'type' => 'frontoffice',
             'template' => 'notFound'
         ]), 404);
     }

@@ -42,6 +42,7 @@ class Paginator
         $this->depart = ($pageCourante - 1)*$parPage;
 
         $this->paginator = $this->view->render([
+            'type' => 'frontoffice',
             'template' => 'paginator',
             'paginator' => true,
             'data' => [

@@ -62,14 +62,12 @@ final class HomeController
                 if ($result) {
                     $this->session->addFlashes('success', 'Message posté avec succès !');
                 }
-                if (!$result) {
-                    $this->session->addFlashes('danger', 'Erreur lors de l\'envoi du message !');
-                }
             }
         }
 
         return new Response($this->view->render([
             'template' => 'home',
+            'type' => 'frontoffice',
             'data' => [
                 'token' => $this->csrf->newToken(),
                 'formData' => (isset($data)) ? $data : []

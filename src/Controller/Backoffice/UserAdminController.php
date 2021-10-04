@@ -168,6 +168,7 @@ final class UserAdminController
 
                 if ($resultUpdate) {
                     $this->session->addFlashes('update', 'Utilisateur modifié avec succès !');
+                    $this->redirect->redirect('users');
                 }
 
                 if (!$resultUpdate) {

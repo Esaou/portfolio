@@ -116,6 +116,8 @@ final class PostAdminController
                     $this->postRepository->update($post);
 
                     $this->session->addFlashes('update', 'Post modifié avec succès !');
+
+                    $this->redirect->redirect('postsAdmin');
                 }
             }
         }
@@ -126,7 +128,7 @@ final class PostAdminController
             'data' => [
                 'users' => $users,
                 'post' => $post,
-                'token' => $this->csrf->newToken()
+                'token' => $this->csrf->newToken(),
             ],
         ]), 200);
     }
@@ -155,6 +157,8 @@ final class PostAdminController
                 $this->postRepository->create($post);
 
                 $this->session->addFlashes('success', 'Post ajouté avec succès !');
+
+                $this->redirect->redirect('postsAdmin');
             }
         }
 
@@ -162,7 +166,8 @@ final class PostAdminController
             'template' => 'addPost',
             'type' => 'backoffice',
             'data' => [
-                'token' => $this->csrf->newToken()
+                'token' => $this->csrf->newToken(),
+                'formData' => (isset($data)) ? $data : []
             ]
         ]), 200);
     }

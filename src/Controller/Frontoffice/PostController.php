@@ -115,6 +115,7 @@ final class PostController
 
         return  new Response($this->view->render(
             [
+                'type' => 'frontoffice',
             'template' => 'post',
             'data' => [
                 'token' => $this->csrf->newToken(),
@@ -144,6 +145,7 @@ final class PostController
 
         return new Response($this->view->render([
             'template' => 'posts',
+            'type' => 'frontoffice',
             'data' => [
                 'posts' => $posts,
                 'paginator' => $this->paginator->getPaginator()

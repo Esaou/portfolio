@@ -28,10 +28,6 @@ final class View
             $data['data']['flashes'] = $this->session->getFlashes();
         }
 
-        if (isset($data['type']) && $data['type'] == 'backoffice') {
-            return $this->twig->render("backoffice/${data['template']}.html.twig", $data['data']);
-        }
-
-        return $this->twig->render("frontoffice/${data['template']}.html.twig", $data['data']);
+        return $this->twig->render("${data['type']}/${data['template']}.html.twig", $data['data']);
     }
 }

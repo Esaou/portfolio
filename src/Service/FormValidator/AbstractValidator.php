@@ -49,6 +49,7 @@ abstract class AbstractValidator
 
         $isValid = true;
 
+
         if (preg_match('#[0-9]#', $string)) {
             $isValid = false;
             $this->session->addFlashes(
@@ -57,7 +58,7 @@ abstract class AbstractValidator
             );
         }
 
-        if (preg_match('~[^\\pL\d]+~u', $string)) {
+        if (preg_match('~[^\\pL\d\s-]+~u', $string)) {
             $isValid = false;
             $this->session->addFlashes(
                 'danger',

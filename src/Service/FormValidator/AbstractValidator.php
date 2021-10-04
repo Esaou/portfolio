@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Service;
+namespace App\Service\FormValidator;
 
 use App\Model\Entity\User;
 use App\Service\Http\Session\Session;
@@ -126,23 +126,26 @@ abstract class AbstractValidator
         return $isValid;
     }
 
-    public function testLogin(User|null $user, string $password):bool
+    public function isUserPasswordValid(User|null $user, string $password):bool
     {
 
         $isValid = true;
 
-        if ($user === null) {
-            $this->session->addFlashes('danger', 'Mauvais identifiants');
-            $isValid = false;
-        }
-
-        if ($user !== null && $user->getIsValid() == 'Non') {
-            $this->session->addFlashes('danger', 'Compte non valide !');
-            $isValid = false;
-        }
 
         if ($user !== null && !password_verify($password, $user->getPassword())) {
             $this->session->addFlashes('danger', 'Mauvais identifiants');
+            $isValid = false;
+        }
+
+        return $isValid;
+    }
+
+    public function isUserValid(User|null $user):bool
+    {
+        $isValid = true;
+
+        if ($user !== null && $user->getIsValid() == 'Non') {
+            $this->session->addFlashes('danger', 'Compte non valide !');
             $isValid = false;
         }
 

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Service\FormValidator;
 
-use App\Service\AbstractValidator;
 use App\Service\Http\Session\Session;
 
 class LoginValidator extends AbstractValidator
@@ -23,7 +22,10 @@ class LoginValidator extends AbstractValidator
 
         $isValid = true;
 
-        if (!$this->testLogin($data['user'], $data['password'])) {
+        if (!$this->isUserValid($data['user'])) {
+            $isValid = false;
+        }
+        if (!$this->isUserPasswordValid($data['user'], $data['password'])) {
             $isValid = false;
         }
 

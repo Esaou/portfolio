@@ -136,7 +136,8 @@ final class UserAdminController
             'template' => 'userAccount',
             'type' => 'backoffice',
             'data' => [
-                'token' => $this->csrf->newToken()
+                'token' => $this->csrf->newToken(),
+                'formData' => (isset($data)) ? $data : []
             ]
         ]), 200);
     }

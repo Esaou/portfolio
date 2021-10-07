@@ -86,7 +86,7 @@ final class CommentController
 
         $comment = $this->commentRepository->findOneBy(['id' => $idComment]);
 
-        if (!is_null($comment)) {
+        if ($comment !== null) {
             $resultDelete = $this->commentRepository->delete($comment);
             if ($resultDelete) {
                 $this->session->addFlashes('danger', 'Commentaire supprimé avec succès !');
@@ -103,7 +103,7 @@ final class CommentController
     {
         $comment = $this->commentRepository->findOneBy(['id' => $idComment]);
 
-        if (!is_null($comment)) {
+        if ($comment !== null) {
             $comment->setIsChecked('Oui');
             $resultUpdate = $this->commentRepository->update($comment);
             if ($resultUpdate) {

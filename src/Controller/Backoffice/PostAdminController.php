@@ -129,6 +129,7 @@ final class PostAdminController
                 'users' => $users,
                 'post' => $post,
                 'token' => $this->csrf->newToken(),
+                'formData' => (isset($data)) ? $data : []
             ],
         ]), 200);
     }

@@ -15,12 +15,17 @@ class Database
     private PDO $pdo;
 
 
-    public function __construct(string $dbName = 'projet5', string $dbUser = 'root', string $dbPass = '', string $dbHost = 'localhost')
-    {
+    public function __construct(
+        string $dbName = 'projet5',
+        string $dbUser = 'root',
+        string $dbPass = '',
+        string $dbHost = 'localhost'
+    ) {
         $this->dbName = $dbName;
         $this->dbUser = $dbUser;
         $this->dbPass = $dbPass;
         $this->dbHost = $dbHost;
+        $this->pdo = new PDO("mysql:dbname=$this->dbName;host=$this->dbHost", "$this->dbUser", "$this->dbPass");
     }
 
     public function getPDO(): object
@@ -35,16 +40,19 @@ class Database
 
     public function query(string $statement): array|bool
     {
-        $req = $this->getPDO()->query($statement);
+        $req = $this->pdo->query($statement);
         if (mb_strpos($statement, 'UPDATE') === 0 ||
             mb_strpos($statement, 'INSERT') === 0 ||
             mb_strpos($statement, 'DELETE') === 0) {
             return true;
         }
 
-        $req->setFetchMode(PDO::FETCH_OBJ);
+        $datas = [];
 
-        $datas = $req->fetchAll();
+        if ($req !== false) {
+            $req->setFetchMode(PDO::FETCH_OBJ);
+            $datas = $req->fetchAll();
+        }
 
 
         return $datas;
@@ -52,7 +60,7 @@ class Database
 
     public function prepare(string $statement, array $attributes): array|bool
     {
-        $req = $this->getPDO()->prepare($statement);
+        $req = $this->pdo->prepare($statement);
         $res = $req->execute($attributes);
 
         if (mb_strpos($statement, 'UPDATE') === 0 ||

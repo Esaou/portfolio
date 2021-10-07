@@ -66,6 +66,14 @@ abstract class AbstractValidator
             );
         }
 
+        if (substr_count($string, '-') > 2 || substr_count($string, ' ') > 2) {
+            $isValid = false;
+            $this->session->addFlashes(
+                'danger',
+                'Le champ '. $fieldName .' ne peut pas contenir que deux tirets ou espaces !'
+            );
+        }
+
         return $isValid;
     }
 
@@ -152,5 +160,4 @@ abstract class AbstractValidator
 
         return $isValid;
     }
-
 }

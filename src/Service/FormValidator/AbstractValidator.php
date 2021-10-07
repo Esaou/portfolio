@@ -153,7 +153,7 @@ abstract class AbstractValidator
     {
         $isValid = true;
 
-        if ($user !== null && $user->getIsValid() == 'Non') {
+        if ($user !== null && $user->getIsValid() === 'Non') {
             $this->session->addFlashes('danger', 'Compte non valide !');
             $isValid = false;
         }

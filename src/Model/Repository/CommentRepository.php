@@ -39,7 +39,7 @@ final class CommentRepository implements EntityRepositoryInterface
     {
         $data = $this->findBy($criteria, $orderBy);
 
-        if (!is_null($data)) {
+        if ($data !== null) {
             $data = current($data);
         }
 

@@ -225,7 +225,8 @@ final class UserController
             'template' => 'userAccount',
             'type' => 'frontoffice',
             'data' => [
-                'token' => $this->csrf->newToken()
+                'token' => $this->csrf->newToken(),
+                'formData' => (isset($data)) ? $data : []
             ]
         ]), 200);
     }

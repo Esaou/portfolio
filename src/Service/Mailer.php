@@ -48,7 +48,7 @@ class Mailer
             $result = $mailer->send($message);
         } catch (\Exception $exception) {
             $result = 0;
-            $this->session->addFlashes('danger', $exception->getMessage());
+            $this->session->addFlashes('danger', 'Erreur lors de l\'envoi du mail');
         }
 
         return $result;

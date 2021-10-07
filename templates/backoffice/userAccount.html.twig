@@ -15,15 +15,15 @@
                 <input type="hidden" name="token" id="token" value="{{ token }}"/>
                 <div class="form-group col-6">
                     <label for="firstname">Prénom</label>
-                    <input type="text" class="form-control" value="{{ session.user.firstname }}" name="firstname" id="firstname">
+                    <input type="text" class="form-control" value="{% if formData is not empty %}{{ formData.firstname }}{% else %}{{ session.user.firstname }}{% endif %}" name="firstname" id="firstname">
                 </div>
                 <div class="form-group col-6">
                     <label for="lastname">Nom</label>
-                    <input type="text" class="form-control" value="{{ session.user.lastname }}" name="lastname" id="lastname">
+                    <input type="text" class="form-control" value="{% if formData is not empty %}{{ formData.lastname }}{% else %}{{ session.user.lastname }}{% endif %}" name="lastname" id="lastname">
                 </div>
                 <div class="form-group col-12">
                     <label for="email">Email</label>
-                    <input type="email" class="form-control" value="{{ session.user.email }}" name="email" id="email">
+                    <input type="email" class="form-control" value="{% if formData is not empty %}{{ formData.email }}{% else %}{{ session.user.email }}{% endif %}" name="email" id="email">
                 </div>
                 <div class="form-group col-12">
                     <label for="password">Mot de passe

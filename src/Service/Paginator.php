@@ -9,14 +9,13 @@ use App\View\View;
 
 class Paginator
 {
-
     private View $view;
     private Request $request;
     public int $parPage;
     public int $depart;
     public string $paginator;
 
-    public function __construct(Request $request, View $view, int $parPage = 10, int $depart = 0,string $paginator = '')
+    public function __construct(Request $request, View $view, int $parPage = 10, int $depart = 0, string $paginator = '')
     {
         $this->request = $request;
         $this->view = $view;
@@ -27,7 +26,6 @@ class Paginator
 
     public function paginate(int $tableRows, int $parPage, string $route): void
     {
-
         $page = (int)$this->request->query()->get('page');
         $this->parPage = $parPage;
 
@@ -55,17 +53,17 @@ class Paginator
         ]);
     }
 
-    public function getLimit():int
+    public function getLimit(): int
     {
         return $this->parPage;
     }
 
-    public function getOffset():int
+    public function getOffset(): int
     {
         return $this->depart;
     }
 
-    public function getPaginator():string
+    public function getPaginator(): string
     {
         return  $this->paginator;
     }

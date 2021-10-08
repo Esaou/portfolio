@@ -60,7 +60,6 @@ final class UserController
 
     public function loginAction(Request $request): Response
     {
-
         if ($this->security->isLogged()) {
             $this->redirect->redirect('home');
         }
@@ -81,7 +80,6 @@ final class UserController
                 $this->session->set('user', $data['user']);
                 $user = $this->session->get('user');
                 $this->redirect->redirect('home');
-
             }
         }
 
@@ -103,9 +101,8 @@ final class UserController
         ]), 200);
     }
 
-    public function register() :Response
+    public function register(): Response
     {
-
         if ($this->security->isLogged()) {
             $this->redirect->redirect('home');
         }
@@ -177,9 +174,8 @@ final class UserController
         ]), 200);
     }
 
-    public function userAccount(int $idUser) :Response
+    public function userAccount(int $idUser): Response
     {
-
         if (!$this->security->loggedAs('User')) {
             $this->redirect->redirect('home');
         }
@@ -217,7 +213,6 @@ final class UserController
                         $this->session->addFlashes('danger', 'Erreur lors de la modification !');
                     }
                 }
-
             }
         }
 
@@ -231,9 +226,8 @@ final class UserController
         ]), 200);
     }
 
-    public function confirmUser():Response
+    public function confirmUser(): Response
     {
-
         $token = $this->request->query()->get('token');
         $user = $this->userRepository->findOneBy(['token'=>$token]);
 
@@ -253,4 +247,3 @@ final class UserController
         ]), 200);
     }
 }
-

@@ -83,8 +83,6 @@ final class PostController
                 if (!$result) {
                     $this->session->addFlashes('danger', 'Erreur lors de la création du commentaire !');
                 }
-
-
             }
         }
 

@@ -9,7 +9,6 @@ use App\Service\Http\Session\Session;
 
 abstract class AbstractValidator
 {
-
     private Session $session;
 
     public function __construct(Session $session)
@@ -17,7 +16,7 @@ abstract class AbstractValidator
         $this->session = $session;
     }
 
-    public function testValidEmail(string $email):bool
+    public function testValidEmail(string $email): bool
     {
         $isValid = true;
 
@@ -29,7 +28,7 @@ abstract class AbstractValidator
         return $isValid;
     }
 
-    public function isNotEmpty(string $string, string $fieldName):bool
+    public function isNotEmpty(string $string, string $fieldName): bool
     {
         $isValid = true;
 
@@ -44,9 +43,8 @@ abstract class AbstractValidator
         return $isValid;
     }
 
-    public function testString(string $string, string $fieldName):bool
+    public function testString(string $string, string $fieldName): bool
     {
-
         $isValid = true;
 
 
@@ -77,9 +75,8 @@ abstract class AbstractValidator
         return $isValid;
     }
 
-    public function testStringLength(string $string, int $min, int $max, string $fieldName):bool
+    public function testStringLength(string $string, int $min, int $max, string $fieldName): bool
     {
-
         $isValid = true;
 
         if (strlen($string) < $min || strlen($string) > $max) {
@@ -93,9 +90,8 @@ abstract class AbstractValidator
         return $isValid;
     }
 
-    public function testPassword(string $password):bool
+    public function testPassword(string $password): bool
     {
-
         $isValid = true;
 
         if (!preg_match('/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[-+!*$@%_])([-+!*$@%_\w]{8,100})$/', $password)) {
@@ -110,7 +106,7 @@ abstract class AbstractValidator
         return $isValid;
     }
 
-    public function isNotUsedEmail(User|null $email):bool
+    public function isNotUsedEmail(User|null $email): bool
     {
         $isValid = true;
 
@@ -122,9 +118,8 @@ abstract class AbstractValidator
         return $isValid;
     }
 
-    public function testPasswordConfirm(string $password, string $passConfirm):bool
+    public function testPasswordConfirm(string $password, string $passConfirm): bool
     {
-
         $isValid = true;
 
         if ($passConfirm !== $password) {
@@ -135,9 +130,8 @@ abstract class AbstractValidator
         return $isValid;
     }
 
-    public function isUserPasswordValid(User|null $user, string $password):bool
+    public function isUserPasswordValid(User|null $user, string $password): bool
     {
-
         $isValid = true;
 
 
@@ -149,7 +143,7 @@ abstract class AbstractValidator
         return $isValid;
     }
 
-    public function isUserValid(User|null $user):bool
+    public function isUserValid(User|null $user): bool
     {
         $isValid = true;
 

@@ -8,13 +8,12 @@ use App\Service\Http\ParametersBag;
 
 final class SessionParametersBag extends ParametersBag
 {
-
-    function __construct(array &$parameters)
+    public function __construct(array &$parameters)
     {
         parent::__construct($parameters);
     }
 
-    function unset(string $key): void
+    public function unset(string $key): void
     {
         unset($this->parameters[$key]);
     }

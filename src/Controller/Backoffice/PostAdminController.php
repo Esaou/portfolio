@@ -45,7 +45,6 @@ final class PostAdminController
         Authorization $security,
         RedirectResponse $redirect
     ) {
-
         $this->postRepository = $postRepository;
         $this->commentRepository = $commentRepository;
         $this->userRepository = $userRepository;
@@ -64,7 +63,7 @@ final class PostAdminController
         }
     }
 
-    public function postsList():Response
+    public function postsList(): Response
     {
         // PAGINATION
 
@@ -89,9 +88,8 @@ final class PostAdminController
         ]), 200);
     }
 
-    public function editPost(int $idPost):Response
+    public function editPost(int $idPost): Response
     {
-
         $post = $this->postRepository->findOneBy(['id_post' => $idPost]);
         $users = $this->userRepository->findAll();
 
@@ -134,9 +132,8 @@ final class PostAdminController
         ]), 200);
     }
 
-    public function addPost():Response
+    public function addPost(): Response
     {
-
         if ($this->request->getMethod() === 'POST' && $this->csrf->checkToken()) {
 
             /** @var array $data */
@@ -173,9 +170,8 @@ final class PostAdminController
         ]), 200);
     }
 
-    public function deletePost(int $idPost):Response
+    public function deletePost(int $idPost): Response
     {
-
         $post = $this->postRepository->findOneBy(['id_post' => $idPost]);
 
         if ($post !== null) {
@@ -186,7 +182,6 @@ final class PostAdminController
             if (!$resultDelete) {
                 $this->session->addFlashes('danger', 'Erreur lors de la supression !');
             }
-
         }
 
         return $this->postsList();

@@ -39,7 +39,6 @@ final class CommentController
         Authorization $security,
         RedirectResponse $redirectResponse
     ) {
-
         $this->postRepository = $postRepository;
         $this->commentRepository = $commentRepository;
         $this->userRepository = $userRepository;
@@ -55,7 +54,7 @@ final class CommentController
         }
     }
 
-    public function commentList():Response
+    public function commentList(): Response
     {
 
         // PAGINATION
@@ -81,9 +80,8 @@ final class CommentController
         ]));
     }
 
-    public function deleteComment(int $idComment):Response
+    public function deleteComment(int $idComment): Response
     {
-
         $comment = $this->commentRepository->findOneBy(['id' => $idComment]);
 
         if ($comment !== null) {
@@ -99,7 +97,7 @@ final class CommentController
         return $this->commentList();
     }
 
-    public function validateComment(int $idComment):Response
+    public function validateComment(int $idComment): Response
     {
         $comment = $this->commentRepository->findOneBy(['id' => $idComment]);
 
@@ -116,9 +114,8 @@ final class CommentController
         return $this->commentList();
     }
 
-    public function unvalidateComment(int $idComment):Response
+    public function unvalidateComment(int $idComment): Response
     {
-
         $comment = $this->commentRepository->findOneBy(['id' => $idComment]);
 
         if ($comment !== null) {

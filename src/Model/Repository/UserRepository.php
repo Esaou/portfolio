@@ -129,7 +129,6 @@ final class UserRepository implements EntityRepositoryInterface
 
     public function update(object $user): bool
     {
-
         $criteria = [];
 
         $user = get_object_vars($user);
@@ -171,7 +170,7 @@ final class UserRepository implements EntityRepositoryInterface
         return false;
     }
 
-    public function countAllUsers():int
+    public function countAllUsers(): int
     {
         $data = $this->database->query("SELECT COUNT(*) AS nb FROM user ORDER BY id_utilisateur DESC");
 

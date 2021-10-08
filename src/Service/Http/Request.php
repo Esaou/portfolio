@@ -12,7 +12,7 @@ final class Request
     private ParametersBag $server; // $_SERVER
 
 
-    function __construct(array $query, array $request, array $files, array $server)
+    public function __construct(array $query, array $request, array $files, array $server)
     {
         $this->query = new ParametersBag($query);
         $this->request = new ParametersBag($request);

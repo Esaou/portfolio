@@ -53,7 +53,7 @@ final class Router
         $this->view = new View($this->session);
         $this->paginator = new Paginator($this->request, $this->view);
         $this->redirect = new RedirectResponse();
-        $this->mailer = new Mailer($this->view,$this->session);
+        $this->mailer = new Mailer($this->view, $this->session);
         $this->csrf = new CsrfToken($this->session, $this->request);
         $this->security = new Authorization($this->session, $this->request);
         $this->userRepo = new UserRepository($this->database);
@@ -66,7 +66,6 @@ final class Router
 
     public function run(): Response
     {
-
         $action = $this->request->query()->has('action') ? $this->request->query()->get('action') : 'home';
 
         if ($action === 'posts') {

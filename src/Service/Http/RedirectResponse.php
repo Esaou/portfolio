@@ -6,7 +6,6 @@ namespace App\Service\Http;
 
 class RedirectResponse extends Response
 {
-
     private int $status;
     private array $headers;
 
@@ -16,10 +15,9 @@ class RedirectResponse extends Response
 
         $this->status = $status;
         $this->headers = $headers;
-
     }
 
-    public function redirect(string $action):void
+    public function redirect(string $action): void
     {
         $this->setStatus($this->status);
         header('Location: index.php?action=' . $action);

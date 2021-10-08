@@ -6,7 +6,6 @@ namespace App\Model\Entity;
 
 final class User
 {
-
     public int $id_utilisateur;
     public string $email;
     public string $firstname;
@@ -120,7 +119,6 @@ final class User
 
     public function __toString(): string
     {
-
         return $this->email;
     }
 }

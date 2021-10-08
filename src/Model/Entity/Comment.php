@@ -91,7 +91,6 @@ final class Comment
 
     public function __toString(): string
     {
-
         return $this->comment;
     }
 }

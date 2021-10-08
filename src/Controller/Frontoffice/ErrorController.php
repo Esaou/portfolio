@@ -16,7 +16,7 @@ final class ErrorController
         $this->view = $view;
     }
 
-    public function forbidden() :Response
+    public function forbidden(): Response
     {
         return new Response($this->view->render([
             'type' => 'frontoffice',
@@ -24,7 +24,7 @@ final class ErrorController
         ]), 403);
     }
 
-    public function postNotFound() :Response
+    public function postNotFound(): Response
     {
         return new Response($this->view->render([
             'type' => 'frontoffice',
@@ -32,7 +32,7 @@ final class ErrorController
         ]), 404);
     }
 
-    public function notFound() :Response
+    public function notFound(): Response
     {
         return new Response($this->view->render([
             'type' => 'frontoffice',

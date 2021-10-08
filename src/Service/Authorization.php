@@ -10,20 +10,17 @@ use App\Service\Http\Session\Session;
 
 class Authorization
 {
-
     private Session $session;
     private Request $request;
 
     public function __construct(Session $session, Request $request)
     {
-
         $this->session = $session;
         $this->request = $request;
     }
 
-    public function isLogged():bool
+    public function isLogged(): bool
     {
-
         if ($this->session->get('user') === null) {
             return false;
         }
@@ -32,9 +29,8 @@ class Authorization
     }
 
 
-    public function loggedAs(string $role):bool
+    public function loggedAs(string $role): bool
     {
-
         $user = $this->session->get('user');
 
         if ($user === null) {

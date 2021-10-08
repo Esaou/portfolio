@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use \PDO;
+use PDO;
 
 class Database
 {
@@ -75,7 +75,7 @@ class Database
         return $datas;
     }
 
-    public function setCondition(array $fields):string
+    public function setCondition(array $fields): string
     {
         $sqlParts = [];
 
@@ -89,7 +89,7 @@ class Database
         return $sqlParts;
     }
 
-    public function setOrderBy(array $fields):string
+    public function setOrderBy(array $fields): string
     {
         $sqlParts = [];
 
@@ -102,7 +102,7 @@ class Database
         return $sqlParts;
     }
 
-    public function setConditionUpdate(array $fields):string
+    public function setConditionUpdate(array $fields): string
     {
         $sqlParts = [];
 
@@ -121,7 +121,7 @@ class Database
         return $sqlParts;
     }
 
-    public function setConditionUpdatePost(array $fields):string
+    public function setConditionUpdatePost(array $fields): string
     {
         $sqlParts = [];
 

@@ -30,12 +30,12 @@
                         <td class="align-middle">{{ comment.isChecked }}</td>
                         <td class="d-flex justify-content-end text-nowrap align-middle">
                             {% if comment.isChecked == 'Non' %}
-                                <form action="validateComment" method="POST" style="margin-right: 5px">
+                                <form action="index.php?action=validateComment" method="POST" style="margin-right: 5px">
                                     <input type="hidden" name="id" id="id" value="{{ comment.id }}"/>
                                     <button type="submit" class="btn btn-sm btn-success updateBtn"><i class="fas fa-check-circle" style="margin-right: 5px"></i> Valider</button>
                                 </form>
                             {% else %}
-                                <form action="unvalidateComment" method="POST" style="margin-right: 5px">
+                                <form action="index.php?action=unvalidateComment" method="POST" style="margin-right: 5px">
                                     <input type="hidden" name="id" id="id" value="{{ comment.id }}"/>
                                     <button type="submit" class="btn btn-sm btn-secondary updateBtn"><i class="far fa-times-circle" style="margin-right: 5px"></i> Invalider</button>
                                 </form>
@@ -57,7 +57,7 @@
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Annuler</button>
-                                    <form action="deleteComment" method="POST">
+                                    <form action="index.php?action=deleteComment" method="POST">
                                         <input type="hidden" name="id" id="id" value="{{ comment.id }}"/>
                                         <button type="submit" class="btn btn-sm btn-danger">Supprimer</button>
                                     </form>

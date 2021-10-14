@@ -26,6 +26,7 @@ class LoginValidator extends AbstractValidator
         if (!$this->isUserPasswordValid($data['user'], $data['password'])) {
             $isValid = false;
         }
+        
 
         return $isValid;
     }

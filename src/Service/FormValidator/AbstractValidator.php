@@ -134,8 +134,7 @@ abstract class AbstractValidator
     {
         $isValid = true;
 
-
-        if ($user !== null && !password_verify($password, $user->getPassword())) {
+        if ($user === null || !password_verify($password, $user->getPassword())) {
             $this->session->addFlashes('danger', 'Mauvais identifiants');
             $isValid = false;
         }

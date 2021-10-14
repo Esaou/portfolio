@@ -6,7 +6,7 @@
 
         <div class="w-100 blocBtnAdmin">
             <h5 class="text-black">Liste des posts</h5>
-            <a href="addPost" class="btn btn-sm btn-success"><i class="fas fa-plus-square" style="margin-right: 5px"></i> Ajouter un post</a>
+            <a href="index.php?action=addPost" class="btn btn-sm btn-success"><i class="fas fa-plus-square" style="margin-right: 5px"></i> Ajouter un post</a>
         </div>
 
         <hr>
@@ -32,7 +32,7 @@
                         <td class="align-middle">{{ post.updatedAt|date('d/m/Y') }}</td>
                         <td class="align-middle">{{ post.user.firstname }} {{ post.user.lastname }}</td>
                         <td class="text-end text-nowrap align-middle">
-                            <a href="editPost/{{ post.id_post }}" class="btn btn-sm btn-primary updateBtn"><i class="fas fa-pen-square" style="margin-right: 5px;"></i> Modifier</a>
+                            <a href="index.php?action=editPost&id={{ post.id_post }}" class="btn btn-sm btn-primary updateBtn"><i class="fas fa-pen-square" style="margin-right: 5px;"></i> Modifier</a>
                             <button type="button" data-toggle="modal" data-target="#deleteModal{{ post.id_post }}" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
                         </td>
                     </tr>
@@ -50,7 +50,7 @@
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Annuler</button>
-                                    <form action="deletePost" method="POST">
+                                    <form action="index.php?action=deletePost" method="POST">
                                         <input type="hidden" name="id" id="id" value="{{ post.id_post }}"/>
                                         <button type="submit" class="btn btn-sm btn-danger">Supprimer</button>
                                     </form>

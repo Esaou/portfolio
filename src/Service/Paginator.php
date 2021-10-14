@@ -15,8 +15,13 @@ class Paginator
     public int $depart;
     public string $paginator;
 
-    public function __construct(Request $request, View $view, int $parPage = 10, int $depart = 0, string $paginator = '')
-    {
+    public function __construct(
+        Request $request,
+        View $view,
+        int $parPage = 10,
+        int $depart = 0,
+        string $paginator = ''
+    ) {
         $this->request = $request;
         $this->view = $view;
         $this->parPage = $parPage;
@@ -29,7 +34,7 @@ class Paginator
         $page = (int)$this->request->query()->get('page');
         $this->parPage = $parPage;
 
-        $pagesTotales = ceil($tableRows/$parPage);
+        $pagesTotales = ceil($tableRows / $parPage);
         $pageCourante = 1;
 
         if (!empty($page) && $page > 0 && $page <= $pagesTotales) {
@@ -37,7 +42,7 @@ class Paginator
             $pageCourante = $page;
         }
 
-        $this->depart = ($pageCourante - 1)*$parPage;
+        $this->depart = ($pageCourante - 1) * $parPage;
 
         $this->paginator = $this->view->render([
             'type' => 'frontoffice',

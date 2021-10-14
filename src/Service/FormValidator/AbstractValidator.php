@@ -36,7 +36,7 @@ abstract class AbstractValidator
             $isValid = false;
             $this->session->addFlashes(
                 'danger',
-                'Le champ '. $fieldName .' doit être rempli !'
+                'Le champ ' . $fieldName . ' doit être rempli !'
             );
         }
 
@@ -52,7 +52,7 @@ abstract class AbstractValidator
             $isValid = false;
             $this->session->addFlashes(
                 'danger',
-                'Le champ '. $fieldName .' ne peut pas contenir de chiffres !'
+                'Le champ ' . $fieldName . ' ne peut pas contenir de chiffres !'
             );
         }
 
@@ -60,7 +60,7 @@ abstract class AbstractValidator
             $isValid = false;
             $this->session->addFlashes(
                 'danger',
-                'Le champ '. $fieldName .' ne peut pas contenir de caractères spéciaux !'
+                'Le champ ' . $fieldName . ' ne peut pas contenir de caractères spéciaux !'
             );
         }
 
@@ -68,7 +68,7 @@ abstract class AbstractValidator
             $isValid = false;
             $this->session->addFlashes(
                 'danger',
-                'Le champ '. $fieldName .' ne peut pas contenir que deux tirets ou espaces !'
+                'Le champ ' . $fieldName . ' ne peut pas contenir que deux tirets ou espaces !'
             );
         }
 
@@ -83,7 +83,7 @@ abstract class AbstractValidator
             $isValid = false;
             $this->session->addFlashes(
                 'danger',
-                'Le champ '. $fieldName .' doit contenir entre '.$min.' et '.$max.' caractères !'
+                'Le champ ' . $fieldName . ' doit contenir entre ' . $min . ' et ' . $max . ' caractères !'
             );
         }
 

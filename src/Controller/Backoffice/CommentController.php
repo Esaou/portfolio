@@ -65,7 +65,7 @@ final class CommentController
 
         $comments = $this->commentRepository->findBy(
             [],
-            ['createdDate' =>'desc'],
+            ['createdDate' => 'desc'],
             $this->paginator->getLimit(),
             $this->paginator->getOffset()
         );

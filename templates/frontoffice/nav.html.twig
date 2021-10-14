@@ -3,7 +3,7 @@
     <nav class="navbar navbar-expand-lg navbar-dark nav" style="box-shadow: 0px 0px 10px rgba(100,100,100,0.3);height: 70px;">
         <div class="container-fluid d-flex align-items-center">
 
-            <a class="title" style="font-size: 20px;margin-left: 15px;" href="index.php?action=home">Blog Eric Saou</a>
+            <a class="title" style="font-size: 20px;margin-left: 15px;" href="home">Blog Eric Saou</a>
 
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
@@ -12,17 +12,17 @@
 
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
 
-                        <li class="centrageMenu"><a href="index.php?action=posts" class="subtitle"><i class="far fa-clone" style="margin-right: 7px"></i> Tous les posts</a></li>
+                        <li class="centrageMenu"><a href="posts" class="subtitle"><i class="far fa-clone" style="margin-right: 7px"></i> Tous les posts</a></li>
                         {% if session.user %}
                             {% if session.user.role == 'User' %}
-                                <li class="centrageMenu"><a href="index.php?action=userAccountFrontOffice" class="subtitle"><i class="fas fa-user-cog" style="margin-right: 7px"></i></i> Mon profil</a></li>
+                                <li class="centrageMenu"><a href="userAccountFrontOffice" class="subtitle"><i class="fas fa-user-cog" style="margin-right: 7px"></i></i> Mon profil</a></li>
                             {% else %}
-                                <li class="centrageMenu"><a href="index.php?action=postsAdmin" class="subtitle"><i class="fas fa-user-cog" style="margin-right: 7px"></i></i> Espace administrateur</a></li>
+                                <li class="centrageMenu"><a href="postsAdmin" class="subtitle"><i class="fas fa-user-cog" style="margin-right: 7px"></i></i> Espace administrateur</a></li>
                             {% endif %}
-                            <li class="centrageMenu"><a href="index.php?action=logout" class="subtitle">Déconnexion</a></li>
+                            <li class="centrageMenu"><a href="logout" class="subtitle">Déconnexion</a></li>
                         {% else %}
-                            <li class="centrageMenu"><a href="index.php?action=login" class="subtitle">Connexion</a></li>
-                            <li class="centrageMenu"><a href="index.php?action=register" class="subtitle">Inscription</a></li>
+                            <li class="centrageMenu"><a href="login" class="subtitle">Connexion</a></li>
+                            <li class="centrageMenu"><a href="register" class="subtitle">Inscription</a></li>
                         {% endif %}
                     </ul>
 
@@ -36,7 +36,7 @@
         <nav class="navbar navbar-light" style="background-color: white;box-shadow: none;">
             <div class="container-fluid">
                 <div class="titleNav">
-                    <div><a class="title" style="font-size: 20px;" href="index.php?action=home">Blog Eric Saou</a></div>
+                    <div><a class="title" style="font-size: 20px;" href="home">Blog Eric Saou</a></div>
                 </div>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggleExternalContent" aria-controls="navbarToggleExternalContent" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -47,17 +47,17 @@
             <div class="p-4" style="background-color: white;border-bottom: 1px solid rgb(200,200,200)">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
 
-                    <li class="nav-item"><a href="index.php?action=posts" class="nav-link">Tous les posts</a></li>
+                    <li class="nav-item"><a href="posts" class="nav-link">Tous les posts</a></li>
                     {% if session.user %}
                         {% if session.user.role == 'User' %}
-                            <li class="nav-item"><a href="index.php?action=userAccountFrontOffice" class="nav-link">Mon profil</a></li>
+                            <li class="nav-item"><a href="userAccountFrontOffice" class="nav-link">Mon profil</a></li>
                         {% else %}
-                            <li class="nav-item"><a href="index.php?action=postsAdmin" class="nav-link">Espace administrateur</a></li>
+                            <li class="nav-item"><a href="postsAdmin" class="nav-link">Espace administrateur</a></li>
                         {% endif %}
-                        <li class="nav-item"><a href="index.php?action=logout" class="nav-link">Déconnexion</a></li>
+                        <li class="nav-item"><a href="logout" class="nav-link">Déconnexion</a></li>
                     {% else %}
-                        <li class="nav-item"><a href="index.php?action=login" class="nav-link">Connexion</a></li>
-                        <li class="nav-item"><a href="index.php?action=register" class="nav-link">Inscription</a></li>
+                        <li class="nav-item"><a href="login" class="nav-link">Connexion</a></li>
+                        <li class="nav-item"><a href="register" class="nav-link">Inscription</a></li>
                     {% endif %}
 
                 </ul>

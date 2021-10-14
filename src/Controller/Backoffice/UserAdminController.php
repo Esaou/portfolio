@@ -78,7 +78,7 @@ final class UserAdminController
         $this->paginator->paginate($tableRows, 10, 'users');
         $users = $this->userRepository->findBy(
             [],
-            ['lastname' =>'asc'],
+            ['lastname' => 'asc'],
             $this->paginator->getLimit(),
             $this->paginator->getOffset()
         );

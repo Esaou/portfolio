@@ -73,7 +73,7 @@ final class PostAdminController
 
         $posts = $this->postRepository->findBy(
             [],
-            ['createdAt' =>'desc'],
+            ['createdAt' => 'desc'],
             $this->paginator->getLimit(),
             $this->paginator->getOffset()
         );
@@ -99,7 +99,7 @@ final class PostAdminController
             $data = $this->request->request()->all();
 
             if ($this->validator->validate($data)) {
-                $user = $this->userRepository->findOneBy(['id_utilisateur'=>(int)$data['author']]);
+                $user = $this->userRepository->findOneBy(['id_utilisateur' => (int)$data['author']]);
                 if ($post) {
                     $post = new Post(
                         $post->getIdPost(),

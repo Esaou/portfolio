@@ -20,7 +20,7 @@ class RedirectResponse extends Response
     public function redirect(string $action): void
     {
         $this->setStatus($this->status);
-        header('Location: index.php?action=' . $action);
+        header('Location: /' . $action);
         exit();
     }
 }

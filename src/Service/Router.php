@@ -43,12 +43,14 @@ final class Router
     private AccountValidator $accountValidator;
     private PostRepository $postRepo;
     private CommentRepository $commentRepo;
+    private Environment $environment;
 
-    public function __construct(Request $request)
+    public function __construct(Request $request, Environment $environment)
     {
         // dépendance
         $this->request = $request;
-        $this->database = new Database();
+        $this->environment = $environment;
+        $this->database = new Database($this->environment);
         $this->session = new Session();
         $this->view = new View($this->session);
         $this->paginator = new Paginator($this->request, $this->view);
@@ -312,7 +314,7 @@ final class Router
                 $this->paginator,
                 $this->redirect
             );
-            return $controller->userAccount((int) $this->request->query()->get('id'));
+            return $controller->userAccount((int) $this->request->request()->get('id'));
         } elseif ($action === 'editPost') {
             $editPostValidator = new EditPostValidator($this->session);
             $controller = new PostAdminController(
@@ -376,7 +378,7 @@ final class Router
                 $this->csrf,
                 $this->redirect
             );
-            return $controller->userAccount((int) $this->request->query()->get('id'));
+            return $controller->userAccount((int) $this->request->request()->get('id_utilisateur'));
         } elseif ($action === 'postNotFound') {
             $controller = new ErrorController($this->view);
             return $controller->postNotFound();

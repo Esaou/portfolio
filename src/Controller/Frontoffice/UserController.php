@@ -115,7 +115,7 @@ final class UserController
             $validEmail = '';
 
             if (isset($datas['email'])) {
-                $validEmail = $this->userRepository->findOneBy(['email'=>$datas['email']]);
+                $validEmail = $this->userRepository->findOneBy(['email' => $datas['email']]);
             }
 
             $datas['validEmail'] = $validEmail;
@@ -229,7 +229,7 @@ final class UserController
     public function confirmUser(): Response
     {
         $token = $this->request->query()->get('token');
-        $user = $this->userRepository->findOneBy(['token'=>$token]);
+        $user = $this->userRepository->findOneBy(['token' => $token]);
 
         if ($user) {
             $user->setIsValid('Oui');

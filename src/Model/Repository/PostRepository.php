@@ -20,7 +20,7 @@ final class PostRepository implements EntityRepositoryInterface
 
     public function find(int $idPost): ?Post
     {
-        $data = $this->findBy(['id'=>$idPost]);
+        $data = $this->findBy(['id' => $idPost]);
 
         if (!empty($data)) {
             $data = current($data);
@@ -53,15 +53,15 @@ final class PostRepository implements EntityRepositoryInterface
         }
 
         if ($orderBy !== null) {
-            $sql .= ' order by '.$this->database->setOrderBy($orderBy);
+            $sql .= ' order by ' . $this->database->setOrderBy($orderBy);
         }
 
         if ($limit !== null) {
-            $sql .= ' limit '.$limit;
+            $sql .= ' limit ' . $limit;
         }
 
         if ($offset !== null) {
-            $sql .= ' offset '.$offset;
+            $sql .= ' offset ' . $offset;
         }
 
         $data = $this->database->prepare($sql, $criteria);
@@ -168,7 +168,7 @@ final class PostRepository implements EntityRepositoryInterface
 
         $sql .= $set;
 
-        $sql.= " where id_post = ".$post['id_post'];
+        $sql .= " where id_post = " . $post['id_post'];
 
         $result = $this->database->prepare($sql, $criteria);
 

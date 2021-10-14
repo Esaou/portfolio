@@ -9,6 +9,7 @@ use App\Model\Entity\User;
 use App\Service\Database;
 use App\Model\Entity\Comment;
 use App\Model\Repository\Interfaces\EntityRepositoryInterface;
+
 use function Couchbase\defaultDecoder;
 
 final class CommentRepository implements EntityRepositoryInterface
@@ -22,7 +23,7 @@ final class CommentRepository implements EntityRepositoryInterface
 
     public function find(int $idComment): ?Comment
     {
-        $data = $this->findBy(['id'=>$idComment]);
+        $data = $this->findBy(['id' => $idComment]);
 
         if (!empty($data)) {
             $data = current($data);
@@ -58,15 +59,15 @@ final class CommentRepository implements EntityRepositoryInterface
         }
 
         if ($orderBy !== null) {
-            $sql .= ' order by '.$this->database->setOrderBy($orderBy);
+            $sql .= ' order by ' . $this->database->setOrderBy($orderBy);
         }
 
         if ($limit !== null) {
-            $sql .= ' limit '.$limit;
+            $sql .= ' limit ' . $limit;
         }
 
         if ($offset !== null) {
-            $sql .= ' offset '.$offset;
+            $sql .= ' offset ' . $offset;
         }
 
         $data = $this->database->prepare($sql, $criteria);
@@ -130,7 +131,6 @@ final class CommentRepository implements EntityRepositoryInterface
 
     public function create(object $comment): bool
     {
-
         $criteria = [];
 
         $comment = get_object_vars($comment);
@@ -183,7 +183,7 @@ final class CommentRepository implements EntityRepositoryInterface
 
         $sql .= $set;
 
-        $sql.= " where id = ".$comment['id'];
+        $sql .= " where id = " . $comment['id'];
 
         $result = $this->database->prepare($sql, $criteria);
 
@@ -209,7 +209,7 @@ final class CommentRepository implements EntityRepositoryInterface
         return false;
     }
 
-    public function countAllCheckedComment(int $idComment):int
+    public function countAllCheckedComment(int $idComment): int
     {
         $data = $this->database->query("SELECT COUNT(*) AS nb 
             FROM comment 
@@ -223,7 +223,7 @@ final class CommentRepository implements EntityRepositoryInterface
         return (int)$data->nb;
     }
 
-    public function countAllComment():int
+    public function countAllComment(): int
     {
         $data = $this->database->query("SELECT COUNT(*) AS nb FROM comment ORDER BY id DESC");
 

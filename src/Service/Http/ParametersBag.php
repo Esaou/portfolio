@@ -8,7 +8,7 @@ class ParametersBag
 {
     protected array $parameters;
 
-    function __construct(array &$parameters)
+    public function __construct(array &$parameters)
     {
         $this->parameters = &$parameters;
     }
@@ -22,7 +22,7 @@ class ParametersBag
      * @param string $key
      * @return mixed
      */
-    public function get(string $key) : mixed
+    public function get(string $key): mixed
     {
         return $this->has($key) ? $this->parameters[$key] : null;
     }

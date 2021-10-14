@@ -12,14 +12,12 @@ class AccountValidator extends AbstractValidator
 
     public function __construct(Session $session)
     {
-
         parent::__construct($session);
         $this->session = $session;
     }
 
-    public function validate(array $data):bool
+    public function validate(array $data): bool
     {
-
         $isValid = true;
 
         if (!$this->isNotEmpty($data['firstname'], 'prénom')) {
@@ -57,6 +55,5 @@ class AccountValidator extends AbstractValidator
         }
 
         return $isValid;
-
     }
 }

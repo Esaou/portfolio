@@ -29,7 +29,7 @@
                         <td class="align-middle">{{ user.role}}</td>
                         <td class="align-middle">{{ user.isValid }}</td>
                         <td class="text-end">
-                            <a href="index.php?action=editUser&id={{ user.id_utilisateur }}" class="btn btn-sm btn-primary updateBtn"><i class="fas fa-pen-square" style="margin-right: 5px;"></i> Modifier</a>
+                            <a href="editUser/{{ user.id_utilisateur }}" class="btn btn-sm btn-primary updateBtn"><i class="fas fa-pen-square" style="margin-right: 5px;"></i> Modifier</a>
                             <button type="button" data-toggle="modal" data-target="#deleteModal{{ user.id_utilisateur }}" class="btn btn-sm btn-danger updateBtn"><i class="fas fa-trash"></i></button>
                         </td>
                     </tr>
@@ -46,7 +46,7 @@
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Annuler</button>
-                                    <form action="index.php?action=deleteUser" method="POST">
+                                    <form action="deleteUser" method="POST">
                                         <input type="hidden" name="id" id="id" value="{{ user.id_utilisateur }}"/>
                                         <button type="submit" class="btn btn-sm btn-danger">Supprimer</button>
                                     </form>

@@ -107,7 +107,6 @@ final class Post
 
     public function __toString(): string
     {
-
         return $this->title;
     }
 }

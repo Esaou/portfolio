@@ -20,7 +20,7 @@ final class UserRepository implements EntityRepositoryInterface
 
     public function find(int $idUser): ?User
     {
-        $data = $this->findBy(['id'=>$idUser]);
+        $data = $this->findBy(['id' => $idUser]);
 
         if (!empty($data)) {
             $data = current($data);
@@ -53,15 +53,15 @@ final class UserRepository implements EntityRepositoryInterface
         }
 
         if ($orderBy !== null) {
-            $sql .= ' order by '.$this->database->setOrderBy($orderBy);
+            $sql .= ' order by ' . $this->database->setOrderBy($orderBy);
         }
 
         if ($limit !== null) {
-            $sql .= ' limit '.$limit;
+            $sql .= ' limit ' . $limit;
         }
 
         if ($offset !== null) {
-            $sql .= ' offset '.$offset;
+            $sql .= ' offset ' . $offset;
         }
 
         $data = $this->database->prepare($sql, $criteria);
@@ -129,7 +129,6 @@ final class UserRepository implements EntityRepositoryInterface
 
     public function update(object $user): bool
     {
-
         $criteria = [];
 
         $user = get_object_vars($user);
@@ -144,7 +143,7 @@ final class UserRepository implements EntityRepositoryInterface
 
         $sql .= $criteria;
 
-        $sql.= " where id_utilisateur = ".$user['id_utilisateur'];
+        $sql .= " where id_utilisateur = " . $user['id_utilisateur'];
 
 
         $result = $this->database->query($sql);
@@ -171,7 +170,7 @@ final class UserRepository implements EntityRepositoryInterface
         return false;
     }
 
-    public function countAllUsers():int
+    public function countAllUsers(): int
     {
         $data = $this->database->query("SELECT COUNT(*) AS nb FROM user ORDER BY id_utilisateur DESC");
 

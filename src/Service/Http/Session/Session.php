@@ -8,9 +8,8 @@ final class Session
 {
     private SessionParametersBag $sessionParamBag; // $_SESSION
 
-    function __construct()
+    public function __construct()
     {
-
         session_start();
         $this->sessionParamBag = new SessionParametersBag($_SESSION);
     }
@@ -45,7 +44,6 @@ final class Session
 
     public function addFlashes(string $type, string $message): void
     {
-
         $flashes = $this->getFlashes();
 
         if (!isset($flashes[$type])) {

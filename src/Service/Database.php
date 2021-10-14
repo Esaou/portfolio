@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use \PDO;
+use PDO;
 
 class Database
 {
@@ -16,34 +16,25 @@ class Database
 
 
     public function __construct(
-        string $dbName = 'projet5',
-        string $dbUser = 'root',
-        string $dbPass = '',
-        string $dbHost = 'localhost'
+        Environment $environment
     ) {
-        $this->dbName = $dbName;
-        $this->dbUser = $dbUser;
-        $this->dbPass = $dbPass;
-        $this->dbHost = $dbHost;
-        $this->pdo = new PDO("mysql:dbname=$this->dbName;host=$this->dbHost", "$this->dbUser", "$this->dbPass");
-    }
 
-    public function getPDO(): object
-    {
-        if (!isset($this->pdo)) {
-            $pdo = new PDO("mysql:dbname=$this->dbName;host=$this->dbHost", "$this->dbUser", "$this->dbPass");
-            $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            $this->pdo = $pdo;
-        }
-        return $this->pdo;
+        $this->dbName = $environment->getDbName();
+        $this->dbHost = $environment->getDbHost();
+        $this->dbUser = $environment->getDbUser();
+        $this->dbPass = $environment->getDbPass();
+
+        $this->pdo = new PDO("mysql:dbname=$this->dbName;host=$this->dbHost", "$this->dbUser", "$this->dbPass");
     }
 
     public function query(string $statement): array|bool
     {
         $req = $this->pdo->query($statement);
-        if (mb_strpos($statement, 'UPDATE') === 0 ||
+        if (
+            mb_strpos($statement, 'UPDATE') === 0 ||
             mb_strpos($statement, 'INSERT') === 0 ||
-            mb_strpos($statement, 'DELETE') === 0) {
+            mb_strpos($statement, 'DELETE') === 0
+        ) {
             return true;
         }
 
@@ -63,9 +54,11 @@ class Database
         $req = $this->pdo->prepare($statement);
         $res = $req->execute($attributes);
 
-        if (mb_strpos($statement, 'UPDATE') === 0 ||
+        if (
+            mb_strpos($statement, 'UPDATE') === 0 ||
             mb_strpos($statement, 'INSERT') === 0 ||
-            mb_strpos($statement, 'DELETE') === 0) {
+            mb_strpos($statement, 'DELETE') === 0
+        ) {
             return $res;
         }
 
@@ -75,7 +68,7 @@ class Database
         return $datas;
     }
 
-    public function setCondition(array $fields):string
+    public function setCondition(array $fields): string
     {
         $sqlParts = [];
 
@@ -89,7 +82,7 @@ class Database
         return $sqlParts;
     }
 
-    public function setOrderBy(array $fields):string
+    public function setOrderBy(array $fields): string
     {
         $sqlParts = [];
 
@@ -102,7 +95,7 @@ class Database
         return $sqlParts;
     }
 
-    public function setConditionUpdate(array $fields):string
+    public function setConditionUpdate(array $fields): string
     {
         $sqlParts = [];
 
@@ -121,7 +114,7 @@ class Database
         return $sqlParts;
     }
 
-    public function setConditionUpdatePost(array $fields):string
+    public function setConditionUpdatePost(array $fields): string
     {
         $sqlParts = [];
 

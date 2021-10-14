@@ -83,18 +83,16 @@ final class PostController
                 if (!$result) {
                     $this->session->addFlashes('danger', 'Erreur lors de la création du commentaire !');
                 }
-
-
             }
         }
 
         // PAGINATION
 
         $tableRows = $this->commentRepository->countAllCheckedComment($idPost);
-        $this->paginator->paginate($tableRows, 4, 'post&id='.$idPost);
+        $this->paginator->paginate($tableRows, 4, 'post/' . $idPost);
         $comments = $this->commentRepository->findBy(
             ['post_id' => $idPost,'isChecked' => 'Oui'],
-            ['createdDate' =>'desc'],
+            ['createdDate' => 'desc'],
             $this->paginator->getLimit(),
             $this->paginator->getOffset()
         );
@@ -138,7 +136,7 @@ final class PostController
         $this->paginator->paginate($tableRows, 4, 'posts');
         $posts = $this->postRepository->findBy(
             [],
-            ['createdAt' =>'desc'],
+            ['createdAt' => 'desc'],
             $this->paginator->getLimit(),
             $this->paginator->getOffset()
         );

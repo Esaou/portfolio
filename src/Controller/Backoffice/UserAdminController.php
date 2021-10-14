@@ -48,7 +48,6 @@ final class UserAdminController
         Paginator $paginator,
         RedirectResponse $redirect
     ) {
-
         $this->postRepository = $postRepository;
         $this->commentRepository = $commentRepository;
         $this->userRepository = $userRepository;
@@ -67,9 +66,8 @@ final class UserAdminController
         }
     }
 
-    public function usersList():Response
+    public function usersList(): Response
     {
-
         if (!$this->security->loggedAs('Dev')) {
             $this->redirect->redirect('forbidden');
         }
@@ -80,7 +78,7 @@ final class UserAdminController
         $this->paginator->paginate($tableRows, 10, 'users');
         $users = $this->userRepository->findBy(
             [],
-            ['lastname' =>'asc'],
+            ['lastname' => 'asc'],
             $this->paginator->getLimit(),
             $this->paginator->getOffset()
         );
@@ -95,9 +93,8 @@ final class UserAdminController
         ]), 200);
     }
 
-    public function userAccount(int $idUser) :Response
+    public function userAccount(int $idUser): Response
     {
-
         $user = $this->userRepository->findOneBy(['id_utilisateur' => $idUser]);
 
         if ($this->request->getMethod() === 'POST' && $this->csrf->checkToken()) {
@@ -142,9 +139,8 @@ final class UserAdminController
         ]), 200);
     }
 
-    public function editUser(int $idUser):Response
+    public function editUser(int $idUser): Response
     {
-
         if (!$this->security->loggedAs('Dev')) {
             $this->redirect->redirect('forbidden');
         }
@@ -176,7 +172,6 @@ final class UserAdminController
                     $this->session->addFlashes('danger', 'Erreur lors de la modification !');
                 }
             }
-
         }
 
         return new Response($this->view->render([
@@ -190,7 +185,7 @@ final class UserAdminController
         ]), 200);
     }
 
-    public function deleteUser(int $idUser):Response
+    public function deleteUser(int $idUser): Response
     {
         if (!$this->security->loggedAs('Dev')) {
             $this->redirect->redirect('forbidden');

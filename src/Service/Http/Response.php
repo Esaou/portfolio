@@ -10,7 +10,7 @@ class Response
     private int $status;
     private array $headers;
 
-    function __construct(string $content = '', int $status = 200, array $headers = [])
+    public function __construct(string $content = '', int $status = 200, array $headers = [])
     {
         $this->content = $content;
         $this->status = $status;
@@ -23,7 +23,7 @@ class Response
         echo $this->content;
     }
 
-    public function setStatus(int $status):void
+    public function setStatus(int $status): void
     {
         http_response_code($status);
     }

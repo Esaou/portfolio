@@ -11,8 +11,9 @@
         <hr>
 
         {% if session.user %}
-            <form action="index.php?action=userAccountFrontOffice&id={{ session.user.id_utilisateur }}" class="formAccount" method="POST">
+            <form action="userAccountFrontOffice" class="formAccount" method="POST">
                 <input type="hidden" name="token" id="token" value="{{ token }}"/>
+                <input type="hidden" name="id_utilisateur" value="{{ session.user.id_utilisateur }}">
                 <div class="form-group col-6">
                     <label for="firstname">Prénom</label>
                     <input type="text" class="form-control" value="{% if formData is not empty %}{{ formData.firstname }}{% else %}{{ session.user.firstname }}{% endif %}" name="firstname" id="firstname">

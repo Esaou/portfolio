@@ -18,5 +18,6 @@ if ($environment->getAppEnv() === 'dev') {
 
 $request = new Request($_GET, $_POST, $_FILES, $_SERVER);
 $router = new Router($request,$environment);
+
 $response = $router->run();
 $response->send();

@@ -23,6 +23,9 @@ class Environment
     public function getDbName()
     {
 
+        if (!isset($this->environment['DB_NAME'])) {
+            return null;
+        }
         return $this->environment['DB_NAME'];
 
     }
@@ -30,6 +33,9 @@ class Environment
     public function getDbHost()
     {
 
+        if (!isset($this->environment['DB_HOST'])) {
+            return null;
+        }
         return $this->environment['DB_HOST'];
 
     }
@@ -37,6 +43,9 @@ class Environment
     public function getDbUser()
     {
 
+        if (!isset($this->environment['DB_USER'])) {
+            return null;
+        }
         return $this->environment['DB_USER'];
 
     }
@@ -44,6 +53,9 @@ class Environment
     public function getDbPass()
     {
 
+        if (!isset($this->environment['DB_PASS'])) {
+            return null;
+        }
         return $this->environment['DB_PASS'];
 
     }
@@ -51,6 +63,9 @@ class Environment
     public function getAppEnv()
     {
 
+        if (!isset($this->environment['APP_ENV'])) {
+            return null;
+        }
         return $this->environment['APP_ENV'];
 
     }

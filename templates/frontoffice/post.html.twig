@@ -38,11 +38,11 @@
         </div>
     </article>
 
-    <section class="container p-4" id="containerComments">
+    <section class="container p-4" id="comments">
         <h4 class="text-left text-black mb-4">Commentaires {% if session.user is not defined %}<small style="font-size: 17px;font-weight: normal;">(connectez-vous pour laisser un commentaire)</small>{% endif %}</h4>
         <hr>
         {% if session.user %}
-        <form class="formComment mb-3" action="post/{{ post.id_post }}#containerComments" method="POST">
+        <form class="formComment mb-3" action="index.php?action=post&id={{ post.id_post }}#comments" method="POST">
             <input type="hidden" name="token" id="token" value="{{ token }}"/>
             <div class="form-group col-12">
                 <label for="comment">Mon commentaire</label>

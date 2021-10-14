@@ -10,7 +10,7 @@
 
         <hr>
 
-        <form action="editPost/{{ post.id_post }}" class="formEditPost" method="POST">
+        <form action="index.php?action=editPost&id={{ post.id_post }}" class="formEditPost" method="POST">
             <input type="hidden" name="token" id="token" value="{{ token }}"/>
             <div class="form-group col-6">
                 <label for="title">Titre</label>

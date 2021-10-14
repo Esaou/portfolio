@@ -13,12 +13,12 @@
         <div class="blocBtnUpdate" style="margin-top: 10px;">
             <div>
                 {% if previousPost is not null %}
-                    <a href="post/{{ previousPost }}" class="subtitle" style="margin: 0px;margin-right: 7px;">Post précédent</a>
+                    <a href="index.php?action=post&id={{ previousPost }}" class="subtitle" style="margin: 0px;margin-right: 7px;">Post précédent</a>
                     {% else %}
                     <button type="button" disabled class="subtitle" style="margin: 0px;margin-right: 7px;color: rgb(120,120,120);">Post précédent</button>
                 {% endif%}
                 {% if nextPost is not null %}
-                    <a href="post/{{ nextPost }}" class="subtitle" style="margin: 0px;margin-right: 7px;">Post suivant</a>
+                    <a href="index.php?action=post&id={{ nextPost }}" class="subtitle" style="margin: 0px;margin-right: 7px;">Post suivant</a>
                 {% else %}
                     <button type="button" disabled class="subtitle" style="margin: 0px;margin-right: 7px;color: rgb(120,120,120);">Post suivant</button>
                 {% endif%}

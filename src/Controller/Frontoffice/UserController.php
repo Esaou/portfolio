@@ -83,22 +83,30 @@ final class UserController
             }
         }
 
-        return new Response($this->view->render(['template' => 'login', 'type' => 'frontoffice', 'data' => [
-            'token' => $this->csrf->newToken(),
-            'formData' => (isset($data)) ? $data : []
-        ]]), 200);
+        return new Response(
+            $this->view->render(
+                ['template' => 'login', 'type' => 'frontoffice', 'data' => [
+                'token' => $this->csrf->newToken(),
+                'formData' => (isset($data)) ? $data : []
+                ]]
+            ), 200
+        );
     }
 
     public function logoutAction(): Response
     {
         $this->session->remove('user');
-        return new Response($this->view->render([
-            'type' => 'frontoffice',
-            'template' => 'home',
-            'data' => [
+        return new Response(
+            $this->view->render(
+                [
+                'type' => 'frontoffice',
+                'template' => 'home',
+                'data' => [
 
-            ],
-        ]), 200);
+                ],
+                ]
+            ), 200
+        );
     }
 
     public function register(): Response
@@ -164,14 +172,18 @@ final class UserController
         }
 
 
-        return new Response($this->view->render([
-            'template' => 'register',
-            'type' => 'frontoffice',
-            'data' => [
+        return new Response(
+            $this->view->render(
+                [
+                'template' => 'register',
+                'type' => 'frontoffice',
+                'data' => [
                 'token' => $this->csrf->newToken(),
                 'formData' => $datas
-            ],
-        ]), 200);
+                ],
+                ]
+            ), 200
+        );
     }
 
     public function userAccount(int $idUser): Response
@@ -183,7 +195,11 @@ final class UserController
         if ($this->request->getMethod() === 'POST' && $this->csrf->checkToken()) {
 
 
-            /** @var array $data */
+            /**
+* 
+             *
+ * @var array $data 
+*/
             $data = $this->request->request()->all();
 
             if ($this->accountValidator->validate($data)) {
@@ -216,14 +232,18 @@ final class UserController
             }
         }
 
-        return new Response($this->view->render([
-            'template' => 'userAccount',
-            'type' => 'frontoffice',
-            'data' => [
+        return new Response(
+            $this->view->render(
+                [
+                'template' => 'userAccount',
+                'type' => 'frontoffice',
+                'data' => [
                 'token' => $this->csrf->newToken(),
                 'formData' => (isset($data)) ? $data : []
-            ]
-        ]), 200);
+                ]
+                ]
+            ), 200
+        );
     }
 
     public function confirmUser(): Response
@@ -241,9 +261,13 @@ final class UserController
             $this->session->addFlashes('danger', 'Erreur lors de la validation du compte !');
         }
 
-        return new Response($this->view->render([
-            'template' => 'login',
-            'type' => 'frontoffice',
-        ]), 200);
+        return new Response(
+            $this->view->render(
+                [
+                'template' => 'login',
+                'type' => 'frontoffice',
+                ]
+            ), 200
+        );
     }
 }

@@ -27,13 +27,15 @@ class Mailer
 
         $mailer = new Swift_Mailer($transport);
 
-        $content = $this->view->render([
+        $content = $this->view->render(
+            [
             'template' => $template,
             'type' => 'frontoffice',
             'data' => [
                 'data' => $data
             ]
-        ]);
+            ]
+        );
 
         $message = (new Swift_Message($subject))
             ->setFrom($from)

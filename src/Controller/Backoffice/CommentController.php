@@ -70,14 +70,18 @@ final class CommentController
             $this->paginator->getOffset()
         );
 
-        return new Response($this->view->render([
-            'template' => 'comments',
-            'type' => 'backoffice',
-            'data' => [
+        return new Response(
+            $this->view->render(
+                [
+                'template' => 'comments',
+                'type' => 'backoffice',
+                'data' => [
                 'comments' => $comments,
                 'paginator' => $this->paginator->getPaginator()
-            ],
-        ]));
+                ],
+                ]
+            )
+        );
     }
 
     public function deleteComment(int $idComment): Response

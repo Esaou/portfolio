@@ -18,25 +18,37 @@ final class ErrorController
 
     public function forbidden(): Response
     {
-        return new Response($this->view->render([
-            'type' => 'frontoffice',
-            'template' => 'forbidden'
-        ]), 403);
+        return new Response(
+            $this->view->render(
+                [
+                'type' => 'frontoffice',
+                'template' => 'forbidden'
+                ]
+            ), 403
+        );
     }
 
     public function postNotFound(): Response
     {
-        return new Response($this->view->render([
-            'type' => 'frontoffice',
-            'template' => 'postNotFound'
-        ]), 404);
+        return new Response(
+            $this->view->render(
+                [
+                'type' => 'frontoffice',
+                'template' => 'postNotFound'
+                ]
+            ), 404
+        );
     }
 
     public function notFound(): Response
     {
-        return new Response($this->view->render([
-            'type' => 'frontoffice',
-            'template' => 'notFound'
-        ]), 404);
+        return new Response(
+            $this->view->render(
+                [
+                'type' => 'frontoffice',
+                'template' => 'notFound'
+                ]
+            ), 404
+        );
     }
 }

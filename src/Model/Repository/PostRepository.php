@@ -199,10 +199,12 @@ final class PostRepository implements EntityRepositoryInterface
         $createdAt = $createdAt->format('Y-m-d H:i:s');
 
         $last = $this->database->query("SELECT * FROM post ORDER BY createdAt DESC LIMIT 0 ");
-        $nextPost = $this->database->query("SELECT * 
+        $nextPost = $this->database->query(
+            "SELECT * 
         FROM post 
         WHERE createdAt < '$createdAt' 
-        ORDER BY createdAt DESC LIMIT 0,1 ");
+        ORDER BY createdAt DESC LIMIT 0,1 "
+        );
 
         if ($nextPost !== $last && is_iterable($nextPost)) {
             $nextPost = current($nextPost)->id_post;

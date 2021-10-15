@@ -11,63 +11,57 @@ class Environment
 
     private array $environment;
 
-    public function __construct(){
+    public function __construct()
+    {
 
         $dotenv = Dotenv::createImmutable(__DIR__ . '/../../');
         $dotenv->load();
 
         $this->environment = $_ENV;
-
     }
 
-    public function getDbName()
+    public function getDbName(): string|null
     {
 
         if (!isset($this->environment['DB_NAME'])) {
             return null;
         }
         return $this->environment['DB_NAME'];
-
     }
 
-    public function getDbHost()
+    public function getDbHost(): string|null
     {
 
         if (!isset($this->environment['DB_HOST'])) {
             return null;
         }
         return $this->environment['DB_HOST'];
-
     }
 
-    public function getDbUser()
+    public function getDbUser(): string|null
     {
 
         if (!isset($this->environment['DB_USER'])) {
             return null;
         }
         return $this->environment['DB_USER'];
-
     }
 
-    public function getDbPass()
+    public function getDbPass(): string|null
     {
 
         if (!isset($this->environment['DB_PASS'])) {
             return null;
         }
         return $this->environment['DB_PASS'];
-
     }
 
-    public function getAppEnv()
+    public function getAppEnv(): string|null
     {
 
         if (!isset($this->environment['APP_ENV'])) {
             return null;
         }
         return $this->environment['APP_ENV'];
-
     }
-
 }

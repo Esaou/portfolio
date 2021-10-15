@@ -47,7 +47,11 @@ final class HomeController
     {
         if ($this->request->getMethod() === 'POST' && $this->csrf->checkToken()) {
 
-            /** @var array $data */
+            /**
+* 
+             *
+ * @var array $data 
+*/
             $data = $this->request->request()->all();
 
             if ($this->validator->validate($data)) {
@@ -65,13 +69,17 @@ final class HomeController
             }
         }
 
-        return new Response($this->view->render([
-            'template' => 'home',
-            'type' => 'frontoffice',
-            'data' => [
+        return new Response(
+            $this->view->render(
+                [
+                'template' => 'home',
+                'type' => 'frontoffice',
+                'data' => [
                 'token' => $this->csrf->newToken(),
                 'formData' => (isset($data)) ? $data : []
-            ]
-        ]), 200);
+                ]
+                ]
+            ), 200
+        );
     }
 }

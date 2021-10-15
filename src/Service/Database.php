@@ -8,10 +8,10 @@ use PDO;
 
 class Database
 {
-    private string $dbName;
-    private string $dbUser;
-    private string $dbPass;
-    private string $dbHost;
+    private string|null $dbName;
+    private string|null $dbUser;
+    private string|null $dbPass;
+    private string|null $dbHost;
     private PDO $pdo;
 
 
@@ -30,10 +30,9 @@ class Database
     public function query(string $statement): array|bool
     {
         $req = $this->pdo->query($statement);
-        if (
-            mb_strpos($statement, 'UPDATE') === 0 ||
-            mb_strpos($statement, 'INSERT') === 0 ||
-            mb_strpos($statement, 'DELETE') === 0
+        if (mb_strpos($statement, 'UPDATE') === 0 
+            || mb_strpos($statement, 'INSERT') === 0 
+            || mb_strpos($statement, 'DELETE') === 0
         ) {
             return true;
         }
@@ -54,10 +53,9 @@ class Database
         $req = $this->pdo->prepare($statement);
         $res = $req->execute($attributes);
 
-        if (
-            mb_strpos($statement, 'UPDATE') === 0 ||
-            mb_strpos($statement, 'INSERT') === 0 ||
-            mb_strpos($statement, 'DELETE') === 0
+        if (mb_strpos($statement, 'UPDATE') === 0 
+            || mb_strpos($statement, 'INSERT') === 0 
+            || mb_strpos($statement, 'DELETE') === 0
         ) {
             return $res;
         }

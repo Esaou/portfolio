@@ -65,12 +65,20 @@ final class PostController
 
         if ($this->request->getMethod() === 'POST' && $this->csrf->checkToken()) {
 
-            /** @var array $data */
+            /**
+* 
+             *
+ * @var array $data 
+*/
             $data = $this->request->request()->all();
 
             if ($this->validator->validate($data)) {
 
-                /** @var Post $post */
+                /**
+* 
+                 *
+ * @var Post $post 
+*/
 
                 $user = $this->session->get('user');
                 $comment = new Comment(0, $data['comment'], $post, $user, 'Non', new \DateTime('now'));
@@ -111,11 +119,12 @@ final class PostController
             $previousPost = $this->postRepository->previousPost($post->getCreatedAt());
         }
 
-        return  new Response($this->view->render(
-            [
+        return  new Response(
+            $this->view->render(
+                [
                 'type' => 'frontoffice',
-            'template' => 'post',
-            'data' => [
+                'template' => 'post',
+                'data' => [
                 'token' => $this->csrf->newToken(),
                 'post' => $post,
                 'comments' => $comments,
@@ -123,8 +132,9 @@ final class PostController
                 'previousPost' => $previousPost,
                 'paginator' => $this->paginator->getPaginator()
                 ],
-            ],
-        ), 200);
+                ],
+            ), 200
+        );
     }
 
     public function displayAllAction(): Response
@@ -141,13 +151,17 @@ final class PostController
             $this->paginator->getOffset()
         );
 
-        return new Response($this->view->render([
-            'template' => 'posts',
-            'type' => 'frontoffice',
-            'data' => [
+        return new Response(
+            $this->view->render(
+                [
+                'template' => 'posts',
+                'type' => 'frontoffice',
+                'data' => [
                 'posts' => $posts,
                 'paginator' => $this->paginator->getPaginator()
-            ],
-        ]), 200);
+                ],
+                ]
+            ), 200
+        );
     }
 }

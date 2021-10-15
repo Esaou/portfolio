@@ -78,14 +78,18 @@ final class PostAdminController
             $this->paginator->getOffset()
         );
 
-        return new Response($this->view->render([
-            'template' => 'posts',
-            'type' => 'backoffice',
-            'data' => [
+        return new Response(
+            $this->view->render(
+                [
+                'template' => 'posts',
+                'type' => 'backoffice',
+                'data' => [
                 'posts' => $posts,
                 'paginator' => $this->paginator->getPaginator()
-            ],
-        ]), 200);
+                ],
+                ]
+            ), 200
+        );
     }
 
     public function editPost(int $idPost): Response
@@ -95,7 +99,11 @@ final class PostAdminController
 
         if ($this->request->getMethod() === 'POST' && $this->csrf->checkToken()) {
 
-            /** @var array $data */
+            /**
+* 
+             *
+ * @var array $data 
+*/
             $data = $this->request->request()->all();
 
             if ($this->validator->validate($data)) {
@@ -120,23 +128,31 @@ final class PostAdminController
             }
         }
 
-        return new Response($this->view->render([
-            'template' => 'editPost',
-            'type' => 'backoffice',
-            'data' => [
+        return new Response(
+            $this->view->render(
+                [
+                'template' => 'editPost',
+                'type' => 'backoffice',
+                'data' => [
                 'users' => $users,
                 'post' => $post,
                 'token' => $this->csrf->newToken(),
                 'formData' => (isset($data)) ? $data : []
-            ],
-        ]), 200);
+                ],
+                ]
+            ), 200
+        );
     }
 
     public function addPost(): Response
     {
         if ($this->request->getMethod() === 'POST' && $this->csrf->checkToken()) {
 
-            /** @var array $data */
+            /**
+* 
+             *
+ * @var array $data 
+*/
             $data = $this->request->request()->all();
 
             if ($this->validator->validate($data)) {
@@ -160,14 +176,18 @@ final class PostAdminController
             }
         }
 
-        return new Response($this->view->render([
-            'template' => 'addPost',
-            'type' => 'backoffice',
-            'data' => [
+        return new Response(
+            $this->view->render(
+                [
+                'template' => 'addPost',
+                'type' => 'backoffice',
+                'data' => [
                 'token' => $this->csrf->newToken(),
                 'formData' => (isset($data)) ? $data : []
-            ]
-        ]), 200);
+                ]
+                ]
+            ), 200
+        );
     }
 
     public function deletePost(int $idPost): Response

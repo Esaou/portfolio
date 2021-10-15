@@ -211,10 +211,12 @@ final class CommentRepository implements EntityRepositoryInterface
 
     public function countAllCheckedComment(int $idComment): int
     {
-        $data = $this->database->query("SELECT COUNT(*) AS nb 
+        $data = $this->database->query(
+            "SELECT COUNT(*) AS nb 
             FROM comment 
             WHERE post_id = $idComment and isChecked = 'Oui' 
-            ORDER BY id DESC");
+            ORDER BY id DESC"
+        );
 
         if (is_iterable($data)) {
             $data = current($data);

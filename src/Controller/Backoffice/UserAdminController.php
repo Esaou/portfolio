@@ -83,14 +83,18 @@ final class UserAdminController
             $this->paginator->getOffset()
         );
 
-        return new Response($this->view->render([
-            'template' => 'users',
-            'type' => 'backoffice',
-            'data' => [
+        return new Response(
+            $this->view->render(
+                [
+                'template' => 'users',
+                'type' => 'backoffice',
+                'data' => [
                 'users' => $users,
                 'paginator' => $this->paginator->getPaginator()
-            ],
-        ]), 200);
+                ],
+                ]
+            ), 200
+        );
     }
 
     public function userAccount(int $idUser): Response
@@ -99,7 +103,11 @@ final class UserAdminController
 
         if ($this->request->getMethod() === 'POST' && $this->csrf->checkToken()) {
 
-            /** @var array $data */
+            /**
+* 
+             *
+ * @var array $data 
+*/
             $data = $this->request->request()->all();
 
             if ($this->accountValidator->validate($data)) {
@@ -129,14 +137,18 @@ final class UserAdminController
             }
         }
 
-        return new Response($this->view->render([
-            'template' => 'userAccount',
-            'type' => 'backoffice',
-            'data' => [
+        return new Response(
+            $this->view->render(
+                [
+                'template' => 'userAccount',
+                'type' => 'backoffice',
+                'data' => [
                 'token' => $this->csrf->newToken(),
                 'formData' => (isset($data)) ? $data : []
-            ]
-        ]), 200);
+                ]
+                ]
+            ), 200
+        );
     }
 
     public function editUser(int $idUser): Response
@@ -174,15 +186,19 @@ final class UserAdminController
             }
         }
 
-        return new Response($this->view->render([
+        return new Response(
+            $this->view->render(
+                [
 
-            'template' => 'editUser',
-            'type' => 'backoffice',
-            'data' => [
+                'template' => 'editUser',
+                'type' => 'backoffice',
+                'data' => [
                 'user' => $user,
                 'token' => $this->csrf->newToken()
-            ],
-        ]), 200);
+                ],
+                ]
+            ), 200
+        );
     }
 
     public function deleteUser(int $idUser): Response

@@ -387,9 +387,13 @@ final class Router
             return $controller->notFound();
         }
 
-        return new Response($this->view->render([
-            'type' => 'frontoffice',
-            'template' => 'notFound'
-        ]), 404);
+        return new Response(
+            $this->view->render(
+                [
+                'type' => 'frontoffice',
+                'template' => 'notFound'
+                ]
+            ), 404
+        );
     }
 }

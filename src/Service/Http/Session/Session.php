@@ -16,7 +16,7 @@ final class Session
 
     /**
      * @param string $name
-     * @param mixed $value
+     * @param mixed  $value
      */
     public function set(string $name, mixed $value): void
     {
@@ -24,7 +24,7 @@ final class Session
     }
 
     /**
-     * @param string $name
+     * @param  string $name
      * @return mixed
      */
     public function get(string $name): mixed

@@ -44,7 +44,8 @@ class Paginator
 
         $this->depart = ($pageCourante - 1) * $parPage;
 
-        $this->paginator = $this->view->render([
+        $this->paginator = $this->view->render(
+            [
             'type' => 'frontoffice',
             'template' => 'paginator',
             'paginator' => true,
@@ -55,7 +56,8 @@ class Paginator
                 "pageCourante" => $pageCourante,
                 "action" => $route
             ]
-        ]);
+            ]
+        );
     }
 
     public function getLimit(): int

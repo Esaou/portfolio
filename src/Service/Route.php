@@ -40,6 +40,7 @@ class Route
     private PostRepository $postRepo;
     private CommentRepository $commentRepo;
     private Environment $environment;
+    private Container $container;
 
     public function __construct($path, $action,$request,$environment)
     {
@@ -47,6 +48,8 @@ class Route
         $this->action = $action;
 
         // dépendances
+
+        $this->container = new Container();
 
         $this->request = $request;
         $this->environment = $environment;
@@ -84,6 +87,9 @@ class Route
     {
         $validator = new ContactValidator($this->session);
         $params = explode('@',$this->action);
+
+        // Récupère la class SESSION et pas HomeController !!! à résoudre !
+        var_dump($this->container->get($params[0]));exit();
         $controller = new $params[0](
             $this->view,
             $this->request,

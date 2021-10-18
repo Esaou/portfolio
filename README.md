@@ -12,8 +12,9 @@
 
 - Cloner le repository
 - Lancer la commande " composer install " à la racine du projet.
-- Créez une nouvelle base de donnée " projet5 " dans votre gestionnaire de base de données.
+- Créez une nouvelle base de donnée dans votre gestionnaire de base de données.
 - Importez le fichier .dump qui se situe à la racine du projet.
+- Renseignez les informations de connexion à la base de donnée dans le fichier .env situé à la racine du projet.
 
 ### **Compte Administration**
 

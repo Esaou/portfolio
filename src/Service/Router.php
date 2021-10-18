@@ -4,7 +4,43 @@ declare(strict_types=1);
 
 namespace  App\Service;
 
-use App\Controller\Backoffice\CommentController;
+use App\Service\Http\Request;
+
+class Router
+{
+
+    public $url;
+    public $routes = [];
+
+    private Request $request;
+    private Environment $environment;
+
+    public function __construct($url,$request,$environment)
+    {
+        $this->url = trim($url, '/');
+
+        $this->request = $request;
+        $this->environment = $environment;
+
+    }
+
+    public function set(string $path, string $action,string $method)
+    {
+        $this->routes[$method][] = new Route($path, $action,$this->request,$this->environment);
+    }
+
+    public function run()
+    {
+        foreach ($this->routes[$_SERVER['REQUEST_METHOD']] as $route) {
+            if ($route->matches($this->url)) {
+                return $route->execute();
+            }
+        }
+
+    }
+}
+
+/*use App\Controller\Backoffice\CommentController;
 use App\Controller\Backoffice\PostAdminController;
 use App\Controller\Backoffice\UserAdminController;
 use App\Controller\Frontoffice\ErrorController;
@@ -396,4 +432,4 @@ final class Router
             ), 404
         );
     }
-}
+}*/

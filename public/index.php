@@ -17,7 +17,20 @@ if ($environment->getAppEnv() === 'dev') {
 }
 
 $request = new Request($_GET, $_POST, $_FILES, $_SERVER);
-$router = new Router($request,$environment);
+
+$router = new Router($request->server()->get('REQUEST_URI'), $request, $environment);
+
+$router->set(
+    '/posts',
+    'App\Controller\Frontoffice\PostController@displayAllAction',
+    $request->server()->get('REQUEST_METHOD')
+);
+
+$router->set(
+    '/',
+    'App\Controller\Frontoffice\HomeController@home',
+    $request->server()->get('REQUEST_METHOD')
+);
 
 $response = $router->run();
 $response->send();

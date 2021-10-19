@@ -17,12 +17,12 @@
                             {% if session.user.role == 'User' %}
                                 <li class="centrageMenu"><a href="index.php?action=userAccountFrontOffice" class="subtitle"><i class="fas fa-user-cog" style="margin-right: 7px"></i></i> Mon profil</a></li>
                             {% else %}
-                                <li class="centrageMenu"><a href="index.php?action=postsAdmin" class="subtitle"><i class="fas fa-user-cog" style="margin-right: 7px"></i></i> Espace administrateur</a></li>
+                                <li class="centrageMenu"><a href="/admin/posts" class="subtitle"><i class="fas fa-user-cog" style="margin-right: 7px"></i></i> Espace administrateur</a></li>
                             {% endif %}
                             <li class="centrageMenu"><a href="index.php?action=logout" class="subtitle">Déconnexion</a></li>
                         {% else %}
-                            <li class="centrageMenu"><a href="index.php?action=login" class="subtitle">Connexion</a></li>
-                            <li class="centrageMenu"><a href="index.php?action=register" class="subtitle">Inscription</a></li>
+                            <li class="centrageMenu"><a href="/login" class="subtitle">Connexion</a></li>
+                            <li class="centrageMenu"><a href="/register" class="subtitle">Inscription</a></li>
                         {% endif %}
                     </ul>
 
@@ -52,12 +52,12 @@
                         {% if session.user.role == 'User' %}
                             <li class="nav-item"><a href="index.php?action=userAccountFrontOffice" class="nav-link">Mon profil</a></li>
                         {% else %}
-                            <li class="nav-item"><a href="index.php?action=postsAdmin" class="nav-link">Espace administrateur</a></li>
+                            <li class="nav-item"><a href="/admin/posts" class="nav-link">Espace administrateur</a></li>
                         {% endif %}
                         <li class="nav-item"><a href="index.php?action=logout" class="nav-link">Déconnexion</a></li>
                     {% else %}
-                        <li class="nav-item"><a href="index.php?action=login" class="nav-link">Connexion</a></li>
-                        <li class="nav-item"><a href="index.php?action=register" class="nav-link">Inscription</a></li>
+                        <li class="nav-item"><a href="/login" class="nav-link">Connexion</a></li>
+                        <li class="nav-item"><a href="/register" class="nav-link">Inscription</a></li>
                     {% endif %}
 
                 </ul>

@@ -29,9 +29,8 @@ class Paginator
         $this->paginator = $paginator;
     }
 
-    public function paginate(int $tableRows, int $parPage, string $route): void
+    public function paginate(int $tableRows, int $parPage, string $route,int $page): void
     {
-        $page = (int)$this->request->query()->get('page');
         $this->parPage = $parPage;
 
         $pagesTotales = ceil($tableRows / $parPage);

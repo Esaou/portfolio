@@ -58,14 +58,14 @@ final class UserController
         $this->redirect = $redirect;
     }
 
-    public function loginAction(Request $request): Response
+    public function loginAction(): Response
     {
         if ($this->security->isLogged()) {
             $this->redirect->redirect('home');
         }
 
-        if ($request->getMethod() === 'POST' && $this->csrf->checkToken()) {
-            $data = $request->request()->all();
+        if ($this->request->getMethod() === 'POST' && $this->csrf->checkToken()) {
+            $data = $this->request->request()->all();
 
             $user = '';
 

@@ -85,22 +85,29 @@ class Route
 
     public function execute()
     {
-        $validator = new ContactValidator($this->session);
+
         $params = explode('@',$this->action);
 
-        // Récupère la class SESSION et pas HomeController !!! à résoudre !
-        var_dump($this->container->get($params[0]));exit();
-        $controller = new $params[0](
-            $this->view,
-            $this->request,
-            $this->session,
-            $validator,
-            $this->csrf,
-            $this->mailer
-        );
+        $controllerDependancies = $this->container->get($params[0]);
+
+        $controller = $controllerDependancies;
         $method = $params[1];
 
-        return isset($this->matches[1]) ? $controller->$method($this->matches[1]) : $controller->$method();
+        $result = false;
+
+        if (!array_key_exists(1,$this->matches)){
+            $result = $controller->$method();
+        }
+
+        if (isset($this->matches[1])){
+            $result = $controller->$method($this->matches[1]);
+        }
+
+        if (isset($this->matches[2])){
+            $result = $controller->$method($this->matches[1],$this->matches[2]);
+        }
+
+        return $result;
 
     }
 }

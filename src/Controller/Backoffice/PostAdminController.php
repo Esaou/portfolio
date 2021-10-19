@@ -63,13 +63,13 @@ final class PostAdminController
         }
     }
 
-    public function postsList(): Response
+    public function postsList(int $page = 0): Response
     {
         // PAGINATION
 
         $tableRows = $this->postRepository->countAllPosts();
 
-        $this->paginator->paginate($tableRows, 10, 'postsAdmin');
+        $this->paginator->paginate($tableRows, 10, 'admin/posts',$page);
 
         $posts = $this->postRepository->findBy(
             [],

@@ -55,7 +55,7 @@ final class PostController
         $this->redirect = $redirectResponse;
     }
 
-    public function displayOneAction(int $idPost): Response
+    public function displayOneAction(int $idPost,int $page = 0): Response
     {
         // FIND A POST
 
@@ -97,7 +97,7 @@ final class PostController
         // PAGINATION
 
         $tableRows = $this->commentRepository->countAllCheckedComment($idPost);
-        $this->paginator->paginate($tableRows, 4, 'post/' . $idPost);
+        $this->paginator->paginate($tableRows, 4, 'post/' . $idPost, $page);
         $comments = $this->commentRepository->findBy(
             ['post_id' => $idPost,'isChecked' => 'Oui'],
             ['createdDate' => 'desc'],
@@ -137,13 +137,13 @@ final class PostController
         );
     }
 
-    public function displayAllAction(): Response
+    public function displayAllAction(int $page = 0): Response
     {
 
         // PAGINATION
 
         $tableRows = $this->postRepository->countAllPosts();
-        $this->paginator->paginate($tableRows, 4, 'posts');
+        $this->paginator->paginate($tableRows, 4, 'posts',$page);
         $posts = $this->postRepository->findBy(
             [],
             ['createdAt' => 'desc'],

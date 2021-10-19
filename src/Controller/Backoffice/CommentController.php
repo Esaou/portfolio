@@ -54,14 +54,14 @@ final class CommentController
         }
     }
 
-    public function commentList(): Response
+    public function commentList(int $page = 0): Response
     {
 
         // PAGINATION
 
         $tableRows = $this->commentRepository->countAllComment();
 
-        $this->paginator->paginate($tableRows, 10, 'comments');
+        $this->paginator->paginate($tableRows, 10, 'comments',$page);
 
         $comments = $this->commentRepository->findBy(
             [],

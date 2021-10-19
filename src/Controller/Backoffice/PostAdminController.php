@@ -59,7 +59,7 @@ final class PostAdminController
 
 
         if (!$this->security->isLogged() || $this->security->loggedAs('User')) {
-            $this->redirect->redirect('forbidden');
+            $this->redirect->redirect('/forbidden');
         }
     }
 
@@ -123,7 +123,7 @@ final class PostAdminController
 
                     $this->session->addFlashes('update', 'Post modifié avec succès !');
 
-                    $this->redirect->redirect('postsAdmin');
+                    return $this->postsList();
                 }
             }
         }
@@ -172,7 +172,7 @@ final class PostAdminController
 
                 $this->session->addFlashes('success', 'Post ajouté avec succès !');
 
-                $this->redirect->redirect('postsAdmin');
+                return $this->postsList();
             }
         }
 
@@ -192,6 +192,7 @@ final class PostAdminController
 
     public function deletePost(int $idPost): Response
     {
+
         $post = $this->postRepository->findOneBy(['id_post' => $idPost]);
 
         if ($post !== null) {

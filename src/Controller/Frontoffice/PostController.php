@@ -55,11 +55,16 @@ final class PostController
         $this->redirect = $redirectResponse;
     }
 
-    public function displayOneAction(int $idPost,int $page = 0): Response
+    public function displayOneAction(int $idPost, int $page = 0): Response
     {
+
         // FIND A POST
 
         $post = $this->postRepository->findOneBy(['id_post' => $idPost]);
+
+        if ($post === null) {
+            $this->redirect->redirect('/postNotFound');
+        }
 
         // COMMENT FORM
 
@@ -106,10 +111,6 @@ final class PostController
         );
 
         // RENDER
-
-        if ($post === null) {
-            $this->redirect->redirect('postNotFound');
-        }
 
         $nextPost = false;
         $previousPost = false;

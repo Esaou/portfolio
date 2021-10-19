@@ -65,10 +65,49 @@ $router->set(
 );
 
 $router->set(
+    '/logout',
+    'App\Controller\Frontoffice\UserController@logoutAction',
+    $request->server()->get('REQUEST_METHOD')
+);
+
+$router->set(
     '/register',
     'App\Controller\Frontoffice\UserController@register',
     $request->server()->get('REQUEST_METHOD')
 );
+
+$router->set(
+    '/confirm/user/:token',
+    'App\Controller\Frontoffice\UserController@confirmUser',
+    $request->server()->get('REQUEST_METHOD')
+);
+
+$router->set(
+    '/account/:id',
+    'App\Controller\Frontoffice\UserController@userAccount',
+    $request->server()->get('REQUEST_METHOD')
+);
+
+// ERRORS
+
+$router->set(
+    '/postNotFound',
+    'App\Controller\Frontoffice\ErrorController@postNotFound',
+    $request->server()->get('REQUEST_METHOD')
+);
+
+$router->set(
+    '/notFound',
+    'App\Controller\Frontoffice\ErrorController@notFound',
+    $request->server()->get('REQUEST_METHOD')
+);
+
+$router->set(
+    '/forbidden',
+    'App\Controller\Frontoffice\ErrorController@forbidden',
+    $request->server()->get('REQUEST_METHOD')
+);
+
 
 // ADMIN
 
@@ -97,16 +136,62 @@ $router->set(
 );
 
 $router->set(
+    '/admin/delete/post/:id',
+    'App\Controller\Backoffice\PostAdminController@deletePost',
+    $request->server()->get('REQUEST_METHOD')
+);
+
+$router->set(
     '/admin/comments',
     'App\Controller\Backoffice\CommentController@commentList',
     $request->server()->get('REQUEST_METHOD')
 );
 
-// Route pour PAGINATION COMMENTAIRE -> erreur : reprendre ici
-
 $router->set(
     '/admin/comments/page/:page',
     'App\Controller\Backoffice\CommentController@commentList',
+    $request->server()->get('REQUEST_METHOD')
+);
+
+$router->set(
+    '/admin/comment/validate/:id',
+    'App\Controller\Backoffice\CommentController@validateComment',
+    $request->server()->get('REQUEST_METHOD')
+);
+
+$router->set(
+    '/admin/delete/comment/:id',
+    'App\Controller\Backoffice\CommentController@deleteComment',
+    $request->server()->get('REQUEST_METHOD')
+);
+
+$router->set(
+    '/admin/comment/unvalidate/:id',
+    'App\Controller\Backoffice\CommentController@unvalidateComment',
+    $request->server()->get('REQUEST_METHOD')
+);
+
+$router->set(
+    '/admin/users',
+    'App\Controller\Backoffice\UserAdminController@usersList',
+    $request->server()->get('REQUEST_METHOD')
+);
+
+$router->set(
+    '/admin/edit/user/:id',
+    'App\Controller\Backoffice\UserAdminController@editUser',
+    $request->server()->get('REQUEST_METHOD')
+);
+
+$router->set(
+    '/admin/delete/user/:id',
+    'App\Controller\Backoffice\UserAdminController@deleteUser',
+    $request->server()->get('REQUEST_METHOD')
+);
+
+$router->set(
+    '/admin/account/:id',
+    'App\Controller\Backoffice\UserAdminController@userAccount',
     $request->server()->get('REQUEST_METHOD')
 );
 

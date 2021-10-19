@@ -50,8 +50,7 @@
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Annuler</button>
-                                    <form action="index.php?action=deletePost" method="POST">
-                                        <input type="hidden" name="id" id="id" value="{{ post.id_post }}"/>
+                                    <form action="/admin/delete/post/{{ post.id_post }}" method="POST">
                                         <button type="submit" class="btn btn-sm btn-danger">Supprimer</button>
                                     </form>
                                 </div>

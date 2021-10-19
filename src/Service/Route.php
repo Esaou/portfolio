@@ -24,25 +24,10 @@ class Route
 
     //dépendances
 
-    private Database $database;
-    private View $view;
-    private Request $request;
-    private Session $session;
     private RedirectResponse $redirect;
-    private Mailer $mailer;
-    private CsrfToken $csrf;
-    private Paginator $paginator;
-    private Authorization $security;
-    private UserRepository $userRepo;
-    private LoginValidator $loginValidator;
-    private RegisterValidator $registerValidator;
-    private AccountValidator $accountValidator;
-    private PostRepository $postRepo;
-    private CommentRepository $commentRepo;
-    private Environment $environment;
     private Container $container;
 
-    public function __construct($path, $action,$request,$environment)
+    public function __construct($path, $action, $request, $environment)
     {
         $this->path = trim($path, '/');
         $this->action = $action;
@@ -50,24 +35,7 @@ class Route
         // dépendances
 
         $this->container = new Container();
-
-        $this->request = $request;
-        $this->environment = $environment;
-        $this->database = new Database($this->environment);
-        $this->session = new Session();
-        $this->view = new View($this->session);
-        $this->paginator = new Paginator($this->request, $this->view);
         $this->redirect = new RedirectResponse();
-        $this->mailer = new Mailer($this->view, $this->session);
-        $this->csrf = new CsrfToken($this->session, $this->request);
-        $this->security = new Authorization($this->session, $this->request);
-        $this->userRepo = new UserRepository($this->database);
-        $this->postRepo = new PostRepository($this->database);
-        $this->commentRepo = new CommentRepository($this->database);
-        $this->loginValidator = new LoginValidator($this->session);
-        $this->registerValidator = new RegisterValidator($this->session);
-        $this->accountValidator = new AccountValidator($this->session);
-
     }
 
     public function matches(string $url)
@@ -75,7 +43,7 @@ class Route
         $path = preg_replace('#:([\w]+)#', '([^/]+)', $this->path);
         $pathToMatch = "#^$path$#";
 
-        if (preg_match($pathToMatch,$url,$matches)) {
+        if (preg_match($pathToMatch, $url, $matches)) {
             $this->matches = $matches;
             return true;
         } else {
@@ -86,7 +54,7 @@ class Route
     public function execute()
     {
 
-        $params = explode('@',$this->action);
+        $params = explode('@', $this->action);
 
         $controllerDependancies = $this->container->get($params[0]);
 
@@ -95,19 +63,25 @@ class Route
 
         $result = false;
 
-        if (!array_key_exists(1,$this->matches)){
+        if (!array_key_exists(1, $this->matches)) {
             $result = $controller->$method();
         }
 
-        if (isset($this->matches[1])){
+        if (isset($this->matches[1])) {
+            if (preg_match("#([0-9]+)#", $this->matches[1])) {
+                $this->matches[1] = (int)$this->matches[1];
+            }
+
             $result = $controller->$method($this->matches[1]);
         }
 
-        if (isset($this->matches[2])){
-            $result = $controller->$method($this->matches[1],$this->matches[2]);
+        if (isset($this->matches[2])) {
+            if (preg_match("#([0-9]+)#", $this->matches[2])) {
+                $this->matches[2] = (int)$this->matches[2];
+            }
+            $result = $controller->$method($this->matches[1], $this->matches[2]);
         }
 
         return $result;
-
     }
 }

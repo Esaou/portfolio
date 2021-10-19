@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace  App\Service;
 
+use App\Service\Http\RedirectResponse;
 use App\Service\Http\Request;
 
 class Router
@@ -14,6 +15,7 @@ class Router
 
     private Request $request;
     private Environment $environment;
+    private RedirectResponse $redirect;
 
     public function __construct($url,$request,$environment)
     {
@@ -21,6 +23,7 @@ class Router
 
         $this->request = $request;
         $this->environment = $environment;
+        $this->redirect = new RedirectResponse();
 
     }
 
@@ -36,6 +39,8 @@ class Router
                 return $route->execute();
             }
         }
+
+        $this->redirect->redirect('notFound');
 
     }
 }

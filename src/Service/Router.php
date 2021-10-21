@@ -29,7 +29,7 @@ class Router
 
     public function set(string $path, string $action,string $method)
     {
-        $this->routes[$method][] = new Route($path, $action,$this->request,$this->environment);
+        $this->routes[$method][] = new Route($path, $action);
     }
 
     public function run()

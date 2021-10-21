@@ -27,7 +27,7 @@ class Route
     private RedirectResponse $redirect;
     private Container $container;
 
-    public function __construct($path, $action, $request, $environment)
+    public function __construct($path, $action)
     {
         $this->path = trim($path, '/');
         $this->action = $action;

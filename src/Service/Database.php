@@ -19,10 +19,10 @@ class Database
         Environment $environment
     ) {
 
-        $this->dbName = $environment->getDbName();
-        $this->dbHost = $environment->getDbHost();
-        $this->dbUser = $environment->getDbUser();
-        $this->dbPass = $environment->getDbPass();
+        $this->dbName = $environment->get("DB_NAME");
+        $this->dbHost = $environment->get("DB_HOST");
+        $this->dbUser = $environment->get("DB_USER");
+        $this->dbPass = $environment->get("DB_PASS");
 
         $this->pdo = new PDO("mysql:dbname=$this->dbName;host=$this->dbHost", "$this->dbUser", "$this->dbPass");
     }

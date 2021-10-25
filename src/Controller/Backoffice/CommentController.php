@@ -50,18 +50,18 @@ final class CommentController
         $this->redirect = $redirectResponse;
 
         if (!$this->security->isLogged() || $this->security->loggedAs('User')) {
-            $this->redirect->redirect('forbidden');
+            $this->redirect->redirect('/forbidden');
         }
     }
 
-    public function commentList(): Response
+    public function commentList(int $page = 0): Response
     {
 
         // PAGINATION
 
         $tableRows = $this->commentRepository->countAllComment();
 
-        $this->paginator->paginate($tableRows, 10, 'comments');
+        $this->paginator->paginate($tableRows, 10, 'admin/comments',$page);
 
         $comments = $this->commentRepository->findBy(
             [],

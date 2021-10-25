@@ -62,20 +62,20 @@ final class UserAdminController
         $this->redirect = $redirect;
 
         if (!$this->security->isLogged() || $this->security->loggedAs('User')) {
-            $this->redirect->redirect('forbidden');
+            $this->redirect->redirect('/forbidden');
         }
     }
 
-    public function usersList(): Response
+    public function usersList(int $page = 0): Response
     {
         if (!$this->security->loggedAs('Dev')) {
-            $this->redirect->redirect('forbidden');
+            $this->redirect->redirect('/forbidden');
         }
 
         // PAGINATION
 
         $tableRows = $this->userRepository->countAllUsers();
-        $this->paginator->paginate($tableRows, 10, 'users');
+        $this->paginator->paginate($tableRows, 10, 'users',$page);
         $users = $this->userRepository->findBy(
             [],
             ['lastname' => 'asc'],
@@ -154,7 +154,7 @@ final class UserAdminController
     public function editUser(int $idUser): Response
     {
         if (!$this->security->loggedAs('Dev')) {
-            $this->redirect->redirect('forbidden');
+            $this->redirect->redirect('/forbidden');
         }
 
         $user = $this->userRepository->findOneBy(['id_utilisateur' => $idUser]);
@@ -177,7 +177,7 @@ final class UserAdminController
 
                 if ($resultUpdate) {
                     $this->session->addFlashes('update', 'Utilisateur modifié avec succès !');
-                    $this->redirect->redirect('users');
+                    return $this->usersList();
                 }
 
                 if (!$resultUpdate) {
@@ -204,7 +204,7 @@ final class UserAdminController
     public function deleteUser(int $idUser): Response
     {
         if (!$this->security->loggedAs('Dev')) {
-            $this->redirect->redirect('forbidden');
+            $this->redirect->redirect('/forbidden');
         }
 
         $user = $this->userRepository->findOneBy(['id_utilisateur' => $idUser]);

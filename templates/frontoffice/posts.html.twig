@@ -16,7 +16,7 @@
                         <p class="card-text">{{ post.chapo|raw }}</p>
                         <div class="blocBtnUpdate">
                             <div>
-                                <a class="subtitle" style="margin: 0px;" href="index.php?action=post&id={{ post.id_post}}">Lire le post</a>
+                                <a class="subtitle" style="margin: 0px;" href="/post/{{ post.id_post}}">Lire le post</a>
                             </div>
                             <div>
                                 {% if post.updatedAt is not null %}

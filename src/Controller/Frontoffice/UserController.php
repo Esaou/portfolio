@@ -58,14 +58,14 @@ final class UserController
         $this->redirect = $redirect;
     }
 
-    public function loginAction(Request $request): Response
+    public function loginAction(): Response
     {
         if ($this->security->isLogged()) {
             $this->redirect->redirect('home');
         }
 
-        if ($request->getMethod() === 'POST' && $this->csrf->checkToken()) {
-            $data = $request->request()->all();
+        if ($this->request->getMethod() === 'POST' && $this->csrf->checkToken()) {
+            $data = $this->request->request()->all();
 
             $user = '';
 
@@ -79,7 +79,7 @@ final class UserController
             if ($this->loginValidator->validate($data)) {
                 $this->session->set('user', $data['user']);
                 $user = $this->session->get('user');
-                $this->redirect->redirect('home');
+                $this->redirect->redirect('/');
             }
         }
 
@@ -246,9 +246,8 @@ final class UserController
         );
     }
 
-    public function confirmUser(): Response
+    public function confirmUser(string $token)
     {
-        $token = $this->request->query()->get('token');
         $user = $this->userRepository->findOneBy(['token' => $token]);
 
         if ($user) {
@@ -261,13 +260,6 @@ final class UserController
             $this->session->addFlashes('danger', 'Erreur lors de la validation du compte !');
         }
 
-        return new Response(
-            $this->view->render(
-                [
-                'template' => 'login',
-                'type' => 'frontoffice',
-                ]
-            ), 200
-        );
+        $this->redirect->redirect('/');
     }
 }

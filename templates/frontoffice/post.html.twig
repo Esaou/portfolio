@@ -13,12 +13,12 @@
         <div class="blocBtnUpdate" style="margin-top: 10px;">
             <div>
                 {% if previousPost is not null %}
-                    <a href="index.php?action=post&id={{ previousPost }}" class="subtitle" style="margin: 0px;margin-right: 7px;">Post précédent</a>
+                    <a href="/post/{{ previousPost }}" class="subtitle" style="margin: 0px;margin-right: 7px;">Post précédent</a>
                     {% else %}
                     <button type="button" disabled class="subtitle" style="margin: 0px;margin-right: 7px;color: rgb(120,120,120);">Post précédent</button>
                 {% endif%}
                 {% if nextPost is not null %}
-                    <a href="index.php?action=post&id={{ nextPost }}" class="subtitle" style="margin: 0px;margin-right: 7px;">Post suivant</a>
+                    <a href="/post/{{ nextPost }}" class="subtitle" style="margin: 0px;margin-right: 7px;">Post suivant</a>
                 {% else %}
                     <button type="button" disabled class="subtitle" style="margin: 0px;margin-right: 7px;color: rgb(120,120,120);">Post suivant</button>
                 {% endif%}
@@ -42,7 +42,7 @@
         <h4 class="text-left text-black mb-4">Commentaires {% if session.user is not defined %}<small style="font-size: 17px;font-weight: normal;">(connectez-vous pour laisser un commentaire)</small>{% endif %}</h4>
         <hr>
         {% if session.user %}
-        <form class="formComment mb-3" action="index.php?action=post&id={{ post.id_post }}#comments" method="POST">
+        <form class="formComment mb-3" action="/post/{{ post.id_post }}#comments" method="POST">
             <input type="hidden" name="token" id="token" value="{{ token }}"/>
             <div class="form-group col-12">
                 <label for="comment">Mon commentaire</label>

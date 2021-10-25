@@ -54,34 +54,13 @@ class Route
     public function execute()
     {
 
-        $params = explode('@', $this->action);
+        $params = explode('@',$this->action);
 
-        $controllerDependancies = $this->container->get($params[0]);
+        $controllerDependancies = $this->container->getController($params[0]);
 
-        $controller = $controllerDependancies;
-        $method = $params[1];
-
-        $result = false;
-
-        if (!array_key_exists(1, $this->matches)) {
-            $result = $controller->$method();
-        }
-
-        if (isset($this->matches[1])) {
-            if (preg_match("#([0-9]+)#", $this->matches[1])) {
-                $this->matches[1] = (int)$this->matches[1];
-            }
-
-            $result = $controller->$method($this->matches[1]);
-        }
-
-        if (isset($this->matches[2])) {
-            if (preg_match("#([0-9]+)#", $this->matches[2])) {
-                $this->matches[2] = (int)$this->matches[2];
-            }
-            $result = $controller->$method($this->matches[1], $this->matches[2]);
-        }
+        $result = $this->container->getMethod($params[0],$params[1],$controllerDependancies,$this->matches);
 
         return $result;
+
     }
 }

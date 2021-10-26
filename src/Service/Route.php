@@ -46,9 +46,9 @@ class Route
         if (preg_match($pathToMatch, $url, $matches)) {
             $this->matches = $matches;
             return true;
-        } else {
-            return false;
         }
+
+        return false;
     }
 
     public function execute():object
@@ -56,8 +56,8 @@ class Route
 
         $params = explode('@', $this->action);
 
-        $controllerDependancies = $this->container->getController($params[0]);
+        $classDependancies = $this->container->getController($params[0]);
 
-        return $this->container->getMethod($params[0], $params[1], $controllerDependancies, $this->matches);
+        return $this->container->getMethod($params[0], $params[1], $classDependancies, $this->matches);
     }
 }

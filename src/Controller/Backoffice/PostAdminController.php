@@ -69,7 +69,7 @@ final class PostAdminController
 
         $tableRows = $this->postRepository->countAllPosts();
 
-        $this->paginator->paginate($tableRows, 10, 'admin/posts',$page);
+        $this->paginator->paginate($tableRows, 10, 'admin/posts', $page);
 
         $posts = $this->postRepository->findBy(
             [],

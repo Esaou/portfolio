@@ -18,16 +18,16 @@ use App\View\View;
 class Route
 {
 
-    public $path;
-    public $action;
-    public $matches;
+    public string $path;
+    public string $action;
+    public array $matches;
 
     //dépendances
 
     private RedirectResponse $redirect;
     private Container $container;
 
-    public function __construct($path, $action)
+    public function __construct(string $path, string $action)
     {
         $this->path = trim($path, '/');
         $this->action = $action;
@@ -38,7 +38,7 @@ class Route
         $this->redirect = new RedirectResponse();
     }
 
-    public function matches(string $url)
+    public function matches(string $url):bool
     {
         $path = preg_replace('#:([\w]+)#', '([^/]+)', $this->path);
         $pathToMatch = "#^$path$#";
@@ -51,16 +51,13 @@ class Route
         }
     }
 
-    public function execute()
+    public function execute():object
     {
 
-        $params = explode('@',$this->action);
+        $params = explode('@', $this->action);
 
         $controllerDependancies = $this->container->getController($params[0]);
 
-        $result = $this->container->getMethod($params[0],$params[1],$controllerDependancies,$this->matches);
-
-        return $result;
-
+        return $this->container->getMethod($params[0], $params[1], $controllerDependancies, $this->matches);
     }
 }

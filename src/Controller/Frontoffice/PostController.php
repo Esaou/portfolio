@@ -144,7 +144,7 @@ final class PostController
         // PAGINATION
 
         $tableRows = $this->postRepository->countAllPosts();
-        $this->paginator->paginate($tableRows, 4, 'posts',$page);
+        $this->paginator->paginate($tableRows, 4, 'posts', $page);
         $posts = $this->postRepository->findBy(
             [],
             ['createdAt' => 'desc'],

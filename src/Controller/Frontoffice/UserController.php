@@ -89,7 +89,8 @@ final class UserController
                 'token' => $this->csrf->newToken(),
                 'formData' => (isset($data)) ? $data : []
                 ]]
-            ), 200
+            ),
+            200
         );
     }
 
@@ -105,7 +106,8 @@ final class UserController
 
                 ],
                 ]
-            ), 200
+            ),
+            200
         );
     }
 
@@ -182,7 +184,8 @@ final class UserController
                 'formData' => $datas
                 ],
                 ]
-            ), 200
+            ),
+            200
         );
     }
 
@@ -196,9 +199,9 @@ final class UserController
 
 
             /**
-* 
+*
              *
- * @var array $data 
+ * @var array $data
 */
             $data = $this->request->request()->all();
 
@@ -242,11 +245,12 @@ final class UserController
                 'formData' => (isset($data)) ? $data : []
                 ]
                 ]
-            ), 200
+            ),
+            200
         );
     }
 
-    public function confirmUser(string $token)
+    public function confirmUser(string $token): void
     {
         $user = $this->userRepository->findOneBy(['token' => $token]);
 

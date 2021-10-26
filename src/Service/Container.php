@@ -18,15 +18,15 @@ class Container
                 $constructor = $reflected_class->getConstructor();
                 if ($constructor) {
                     $parameters = $constructor->getParameters();
-                    $constructor_parameters = [];
+                    $const_parameters = [];
                     foreach ($parameters as $parameter) {
                         if ($parameter->getType() && $parameter->getType()->getName() !== 'int' && $parameter->getType()->getName() !== 'string' && $parameter->getType()->getName() !== 'array') {
-                            $constructor_parameters[] = $this->getController($parameter->getType()->getName());
+                            $const_parameters[] = $this->getController($parameter->getType()->getName());
                         } else {
-                            $constructor_parameters[] = $parameter->getDefaultValue();
+                            $const_parameters[] = $parameter->getDefaultValue();
                         }
                     }
-                    $this->instances[$key] = $reflected_class->newInstanceArgs($constructor_parameters);
+                    $this->instances[$key] = $reflected_class->newInstanceArgs($const_parameters);
                 } else {
                     $this->instances[$key] = $reflected_class->newInstance();
                 }
@@ -44,25 +44,24 @@ class Container
 
         $parameters = $reflected_method->getParameters();
 
-        $method_parameters = [];
-
+        $method_param = [];
 
         foreach ($parameters as $parameter) {
             if ($parameter->getType() && $parameter->getType()->getName() !== 'int' && $parameter->getType()->getName() !== 'string' && $parameter->getType()->getName() !== 'array') {
-                $method_parameters[] = $this->getController($parameter->getType()->getName());
+                $method_param[] = $this->getController($parameter->getType()->getName());
             } elseif ($parameter->isOptional()) {
                 if (isset($matches[1]) && !isset($matches[2])) {
-                    $method_parameters[] = $matches[1];
+                    $method_param[] = $matches[1];
                 } elseif (isset($matches[1]) && isset($matches[2])) {
-                    $method_parameters[] = $matches[2];
+                    $method_param[] = $matches[2];
                 } else {
-                    $method_parameters[] = $parameter->getDefaultValue();
+                    $method_param[] = $parameter->getDefaultValue();
                 }
             } elseif (isset($matches[1])) {
-                $method_parameters[] = $matches[1];
+                $method_param[] = $matches[1];
             }
         }
 
-        return $reflected_method->invokeArgs($controllerDependancies, $method_parameters);
+        return $reflected_method->invokeArgs($controllerDependancies, $method_param);
     }
 }

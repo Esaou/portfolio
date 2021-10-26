@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use Dotenv\Dotenv;
-
 class Environment
 {
 
@@ -14,54 +12,36 @@ class Environment
     public function __construct()
     {
 
-        $dotenv = Dotenv::createImmutable(__DIR__ . '/../../');
-        $dotenv->load();
+        $this->load();
 
-        $this->environment = $_ENV;
     }
 
-    public function getDbName(): string|null
+    public function load():void
     {
 
-        if (!isset($this->environment['DB_NAME'])) {
-            return null;
+        $variables = [];
+
+        if (file_exists(__DIR__. '/../../.env')) {
+            $variables = file(__DIR__. '/../../.env', FILE_SKIP_EMPTY_LINES|FILE_IGNORE_NEW_LINES);
         }
-        return $this->environment['DB_NAME'];
+
+        if (is_iterable($variables)) {
+            foreach ($variables as $variable) {
+                putenv($variable);
+            }
+            $this->environment = getenv();
+        }
+
     }
 
-    public function getDbHost(): string|null
+    public function get(string $key): string|null
     {
 
-        if (!isset($this->environment['DB_HOST'])) {
+        if (!isset($this->environment[$key])) {
             return null;
         }
-        return $this->environment['DB_HOST'];
+        return $this->environment[$key];
+
     }
 
-    public function getDbUser(): string|null
-    {
-
-        if (!isset($this->environment['DB_USER'])) {
-            return null;
-        }
-        return $this->environment['DB_USER'];
-    }
-
-    public function getDbPass(): string|null
-    {
-
-        if (!isset($this->environment['DB_PASS'])) {
-            return null;
-        }
-        return $this->environment['DB_PASS'];
-    }
-
-    public function getAppEnv(): string|null
-    {
-
-        if (!isset($this->environment['APP_ENV'])) {
-            return null;
-        }
-        return $this->environment['APP_ENV'];
-    }
 }

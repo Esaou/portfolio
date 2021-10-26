@@ -6,17 +6,17 @@ namespace App\Service;
 class Container
 {
 
-    private $instances = [];
+    private array $instances = [];
 
-    public function getController($key)
+    public function getController(string $key): object
     {
 
         if (!isset($this->instances[$key])) {
-
             $reflected_class = new \ReflectionClass($key);
+
             if ($reflected_class->isInstantiable()) {
                 $constructor = $reflected_class->getConstructor();
-                if ($constructor){
+                if ($constructor) {
                     $parameters = $constructor->getParameters();
                     $constructor_parameters = [];
                     foreach ($parameters as $parameter) {
@@ -33,14 +33,14 @@ class Container
             } else {
                 throw new \Exception($key .' is not intanciable');
             }
-
         }
 
         return $this->instances[$key];
     }
 
-    public function getMethod($class,$method,$controllerDependancies,$matches) {
-        $reflected_method = new \ReflectionMethod($class,$method);
+    public function getMethod(string $class, string $method, object $controllerDependancies, array $matches): object
+    {
+        $reflected_method = new \ReflectionMethod($class, $method);
 
         $parameters = $reflected_method->getParameters();
 
@@ -50,22 +50,19 @@ class Container
         foreach ($parameters as $parameter) {
             if ($parameter->getType() && $parameter->getType()->getName() !== 'int' && $parameter->getType()->getName() !== 'string' && $parameter->getType()->getName() !== 'array') {
                 $method_parameters[] = $this->getController($parameter->getType()->getName());
-            } elseif($parameter->isOptional()){
-
+            } elseif ($parameter->isOptional()) {
                 if (isset($matches[1]) && !isset($matches[2])) {
                     $method_parameters[] = $matches[1];
-                } elseif(isset($matches[1]) && isset($matches[2])) {
+                } elseif (isset($matches[1]) && isset($matches[2])) {
                     $method_parameters[] = $matches[2];
                 } else {
                     $method_parameters[] = $parameter->getDefaultValue();
                 }
-
-            } elseif(isset($matches[1])) {
+            } elseif (isset($matches[1])) {
                 $method_parameters[] = $matches[1];
             }
         }
 
-        return $reflected_method->invokeArgs($controllerDependancies,$method_parameters);
-
+        return $reflected_method->invokeArgs($controllerDependancies, $method_parameters);
     }
 }

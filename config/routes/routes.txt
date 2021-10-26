@@ -1,0 +1,80 @@
+route= /
+action= App\Controller\Frontoffice\HomeController@home
+
+route= /posts
+action= App\Controller\Frontoffice\PostController@displayAllAction
+
+route= /posts/page/:page
+action= App\Controller\Frontoffice\PostController@displayAllAction
+
+route= /post/:id
+action= App\Controller\Frontoffice\PostController@displayOneAction
+
+route= /post/:id/page/:page
+action= App\Controller\Frontoffice\PostController@displayOneAction
+
+route= /register
+action= App\Controller\Frontoffice\UserController@register
+
+route= /login
+action= App\Controller\Frontoffice\UserController@loginAction
+
+route= /logout
+action= App\Controller\Frontoffice\UserController@logoutAction
+
+route= /confirm/user/:token
+action= App\Controller\Frontoffice\UserController@confirmUser
+
+route= /account/:id
+action= App\Controller\Frontoffice\UserController@userAccount
+
+route= /postNotFound
+action= App\Controller\Frontoffice\ErrorController@postNotFound
+
+route= /notFound
+action= App\Controller\Frontoffice\ErrorController@notFound
+
+route= /forbidden
+action= App\Controller\Frontoffice\ErrorController@forbidden
+
+route= /admin/posts
+action= App\Controller\Backoffice\PostAdminController@postsList
+
+route= /admin/posts/page/:page
+action= App\Controller\Backoffice\PostAdminController@postsList
+
+route= /admin/add/post
+action= App\Controller\Backoffice\PostAdminController@addPost
+
+route= /admin/edit/post/:id
+action= App\Controller\Backoffice\PostAdminController@editPost
+
+route= /admin/delete/post/:id
+action= App\Controller\Backoffice\PostAdminController@deletePost
+
+route= /admin/comments
+action= App\Controller\Backoffice\CommentController@commentList
+
+route= /admin/comments/page/:page
+action= App\Controller\Backoffice\CommentController@commentList
+
+route= /admin/comment/validate/:id
+action= App\Controller\Backoffice\CommentController@validateComment
+
+route= /admin/delete/comment/:id
+action= App\Controller\Backoffice\CommentController@deleteComment
+
+route= /admin/comment/unvalidate/:id
+action= App\Controller\Backoffice\CommentController@unvalidateComment
+
+route= /admin/users
+action= App\Controller\Backoffice\UserAdminController@usersList
+
+route= /admin/edit/user/:id
+action= App\Controller\Backoffice\UserAdminController@editUser
+
+route= /admin/delete/user/:id
+action= App\Controller\Backoffice\UserAdminController@deleteUser
+
+route= /admin/account/:id
+action= App\Controller\Backoffice\UserAdminController@userAccount

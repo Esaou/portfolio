@@ -61,7 +61,7 @@ final class CommentController
 
         $tableRows = $this->commentRepository->countAllComment();
 
-        $this->paginator->paginate($tableRows, 10, 'admin/comments',$page);
+        $this->paginator->paginate($tableRows, 10, 'admin/comments', $page);
 
         $comments = $this->commentRepository->findBy(
             [],

@@ -14,8 +14,7 @@
     "require": {
         "filp/whoops": "^2.14",
         "twig/twig": "^2.0",
-        "swiftmailer/swiftmailer": "^6.0",
-        "vlucas/phpdotenv": "^5.3"
+        "swiftmailer/swiftmailer": "^6.0"
     },
     "require-dev": {
         "phpstan/phpstan": "^0.12.96",

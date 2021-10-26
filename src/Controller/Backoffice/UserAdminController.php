@@ -75,7 +75,7 @@ final class UserAdminController
         // PAGINATION
 
         $tableRows = $this->userRepository->countAllUsers();
-        $this->paginator->paginate($tableRows, 10, 'users',$page);
+        $this->paginator->paginate($tableRows, 10, 'users', $page);
         $users = $this->userRepository->findBy(
             [],
             ['lastname' => 'asc'],
@@ -180,7 +180,7 @@ final class UserAdminController
                     return $this->usersList();
                 }
 
-                if (!$resultUpdate) {
+                if ($resultUpdate === false) {
                     $this->session->addFlashes('danger', 'Erreur lors de la modification !');
                 }
             }

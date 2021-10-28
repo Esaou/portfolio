@@ -540,8 +540,8 @@ body {
   background-color: rgb(90, 139, 227) !important;
 }
 
-table thead th {
-  color: rgb(120, 120, 120) !important;
+table tbody th {
+  color: rgb(75, 75, 75) !important;
   font-family: sans-serif;
   font-weight: normal;
 }

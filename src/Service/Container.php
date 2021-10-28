@@ -3,13 +3,16 @@
 
 namespace App\Service;
 
+use PhpParser\Node\Expr\Cast\Object_;
+
 class Container
 {
 
     private array $instances = [];
     private bool $verif;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->verif = false;
     }
 
@@ -17,26 +20,37 @@ class Container
     {
 
         if (!isset($this->instances[$key])) {
-            $reflected_class = new \ReflectionClass($key);
 
-            if ($reflected_class->isInstantiable()) {
-                $constructor = $reflected_class->getConstructor();
-                if ($constructor) {
-                    $parameters = $constructor->getParameters();
-                    $const_parameters = [];
-                    foreach ($parameters as $parameter) {
-                        if ($parameter->getType() && $parameter->getType()->getName() !== 'int' && $parameter->getType()->getName() !== 'string' && $parameter->getType()->getName() !== 'array') {
-                            $const_parameters[] = $this->getController($parameter->getType()->getName());
-                        } else {
-                            $const_parameters[] = $parameter->getDefaultValue();
+            /**
+ * @var string $key 
+*/
+            if (class_exists($key)) {
+                $reflected_class = new \ReflectionClass($key);
+                if ($reflected_class->isInstantiable()) {
+                    $constructor = $reflected_class->getConstructor();
+                    if ($constructor) {
+                        $parameters = $constructor->getParameters();
+                        $const_parameters = [];
+                        foreach ($parameters as $parameter) {
+
+                            /**
+ * @var \ReflectionNamedType $typeParameter 
+*/
+                            $typeParameter = $parameter->getType();
+
+                            if ($typeParameter->getName() !== 'int' && $typeParameter->getName() !== 'string' && $typeParameter->getName() !== 'array') {
+                                $const_parameters[] = $this->getController($typeParameter->getName());
+                            } else {
+                                $const_parameters[] = $parameter->getDefaultValue();
+                            }
                         }
+                        $this->instances[$key] = $reflected_class->newInstanceArgs($const_parameters);
+                    } else {
+                        $this->instances[$key] = $reflected_class->newInstance();
                     }
-                    $this->instances[$key] = $reflected_class->newInstanceArgs($const_parameters);
                 } else {
-                    $this->instances[$key] = $reflected_class->newInstance();
+                    throw new \Exception($key .' is not intanciable');
                 }
-            } else {
-                throw new \Exception($key .' is not intanciable');
             }
         }
 
@@ -53,10 +67,14 @@ class Container
 
         foreach ($parameters as $parameter) {
 
-            if ($parameter->getType() && $parameter->getType()->getName() !== 'int' && $parameter->getType()->getName() !== 'string' && $parameter->getType()->getName() !== 'array') {
-                $method_param[] = $this->getController($parameter->getType()->getName());
-            } elseif ($parameter->isOptional()) {
+            /**
+ * @var \ReflectionNamedType $typeParameter 
+*/
+            $typeParameter = $parameter->getType();
 
+            if ($typeParameter->getName() !== 'int' && $typeParameter->getName() !== 'string' && $typeParameter->getName() !== 'array') {
+                $method_param[] = $this->getController($typeParameter->getName());
+            } elseif ($parameter->isOptional()) {
                 if (isset($matches[1]) && isset($matches[2])) {
                     $method_param[] = $matches[2];
                 } elseif (isset($matches[1]) && !isset($matches[2]) && !$this->verif) {
@@ -70,7 +88,6 @@ class Container
                 $method_param[] = $matches[1];
                 $this->verif = true;
             }
-
         }
 
         return $reflected_method->invokeArgs($controllerDependancies, $method_param);

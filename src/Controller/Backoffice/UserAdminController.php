@@ -98,7 +98,7 @@ final class UserAdminController
         );
     }
 
-    public function userAccount(Slug $slug,string $slugUser): Response
+    public function userAccount(string $slugUser): Response
     {
         $user = $this->userRepository->findOneBy(['slugUser' => $slugUser]);
 

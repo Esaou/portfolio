@@ -16,10 +16,9 @@ if ($environment->get("APP_ENV") === 'dev') {
     $whoops->register();
 }
 
-
 $request = new Request();
 
-$router = new Router($request->server()->get('REQUEST_URI'));
+$router = new Router();;
 
-$response = $router->run();
+$response = $router->run($request->server()->get('REQUEST_URI'),$request->server()->get('REQUEST_METHOD'));
 $response->send();

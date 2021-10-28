@@ -6,24 +6,26 @@ namespace App\Model\Entity;
 
 final class User
 {
-    public int $id_utilisateur;
-    public string $email;
-    public string $firstname;
-    public string $lastname;
-    public string $password;
-    public string $isValid;
-    public string $role;
-    public string $token;
+    public int|null $id_utilisateur;
+    public string|null $email;
+    public string|null $firstname;
+    public string|null $lastname;
+    public string|null $password;
+    public string|null $isValid;
+    public string|null $role;
+    public string|null $token;
+    public string|null $slugUser;
 
     public function __construct(
-        int $id_utilisateur,
-        string $firstname,
-        string $lastname,
-        string $email,
-        string $password,
-        string $isValid,
-        string $role,
-        string $token
+        int|null $id_utilisateur,
+        string|null $firstname,
+        string|null $lastname,
+        string|null $email,
+        string|null $password,
+        string|null $isValid,
+        string|null $role,
+        string|null $token,
+        string|null $slugUser
     ) {
         $this->id_utilisateur = $id_utilisateur;
         $this->firstname = $firstname;
@@ -33,63 +35,64 @@ final class User
         $this->role = $role;
         $this->isValid = $isValid;
         $this->token = $token;
+        $this->slugUser = $slugUser;
     }
 
-    public function getIdUtilisateur(): int
+    public function getIdUtilisateur(): int|null
     {
         return $this->id_utilisateur;
     }
 
-    public function getFirstname(): string
+    public function getFirstname(): string|null
     {
         return $this->firstname;
     }
 
-    public function setFirstname(string $firstname): self
+    public function setFirstname(string|null $firstname): self
     {
         $this->firstname = $firstname;
         return $this;
     }
 
-    public function getLastname(): string
+    public function getLastname(): string|null
     {
         return $this->lastname;
     }
 
-    public function setLastname(string $lastname): self
+    public function setLastname(string|null $lastname): self
     {
         $this->lastname = $lastname;
         return $this;
     }
 
-    public function getEmail(): string
+    public function getEmail(): string|null
     {
         return $this->email;
     }
 
-    public function setEmail(string $email): self
+    public function setEmail(string|null $email): self
     {
         $this->email = $email;
         return $this;
     }
 
-    public function getPassword(): string
+    public function getPassword(): string|null
     {
         return $this->password;
     }
 
-    public function setPassword(string $password): self
+    public function setPassword(string|null $password): self
     {
         $this->password = $password;
         return $this;
     }
 
-    public function getRole(): string
+    public function getRole(): string|null
     {
         return $this->role;
     }
 
-    public function setRole(string $role): self
+    public function setRole(string|null $role): self
     {
         $this->role = $role;
         return $this;
@@ -100,20 +103,31 @@ final class User
         return $this->isValid;
     }
 
-    public function setIsValid(string $isValid): self
+    public function setIsValid(string|null $isValid): self
     {
         $this->isValid = $isValid;
         return $this;
     }
 
-    public function getToken(): string
+    public function getToken(): string|null
     {
         return $this->token;
     }
 
-    public function setToken(string $token): self
+    public function setToken(string|null $token): self
     {
         $this->token = $token;
+        return $this;
+    }
+
+    public function getSlugUser(): string|null
+    {
+        return $this->slugUser;
+    }
+
+    public function setSlugUser(string|null $slugUser): self
+    {
+        $this->slugUser = $slugUser;
         return $this;
     }
 

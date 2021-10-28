@@ -6,6 +6,7 @@ namespace  App\Controller\Frontoffice;
 
 use App\Model\Entity\Comment;
 use App\Model\Entity\Post;
+use App\Model\Entity\User;
 use App\Model\Repository\UserRepository;
 use App\Service\CsrfToken;
 use App\Service\FormValidator\CommentValidator;
@@ -13,6 +14,7 @@ use App\Service\Http\RedirectResponse;
 use App\Service\Http\Request;
 use App\Service\Http\Session\Session;
 use App\Service\Paginator;
+use App\Service\Slug;
 use App\View\View;
 use App\Service\Http\Response;
 use App\Model\Repository\PostRepository;
@@ -55,12 +57,12 @@ final class PostController
         $this->redirect = $redirectResponse;
     }
 
-    public function displayOneAction(int $idPost, int $page = 0): Response
+    public function displayOneAction(string $slugPost, int $page = 0): Response
     {
 
         // FIND A POST
 
-        $post = $this->postRepository->findOneBy(['id_post' => $idPost]);
+        $post = $this->postRepository->findOneBy(['slugPost' => $slugPost]);
 
         if ($post === null) {
             $this->redirect->redirect('/postNotFound');
@@ -71,22 +73,18 @@ final class PostController
         if ($this->request->getMethod() === 'POST' && $this->csrf->checkToken()) {
 
             /**
-* 
-             *
- * @var array $data 
-*/
+             * @var array $data
+            */
             $data = $this->request->request()->all();
 
             if ($this->validator->validate($data)) {
 
                 /**
-* 
-                 *
- * @var Post $post 
-*/
+                 * @var User $user
+                */
 
                 $user = $this->session->get('user');
-                $comment = new Comment(0, $data['comment'], $post, $user, 'Non', new \DateTime('now'));
+                $comment = new Comment(0, $data['comment'], $post, $user, 'Non', new \DateTime('now'),null);
                 $result = $this->commentRepository->create($comment);
 
                 if ($result) {
@@ -101,10 +99,10 @@ final class PostController
 
         // PAGINATION
 
-        $tableRows = $this->commentRepository->countAllCheckedComment($idPost);
-        $this->paginator->paginate($tableRows, 4, 'post/' . $idPost, $page);
+        $tableRows = $this->commentRepository->countAllCheckedComment($post->id_post);
+        $this->paginator->paginate($tableRows, 4, 'post/' . $post->slugPost, $page);
         $comments = $this->commentRepository->findBy(
-            ['post_id' => $idPost,'isChecked' => 'Oui'],
+            ['post_id' => $post->id_post,'isChecked' => 'Oui'],
             ['createdDate' => 'desc'],
             $this->paginator->getLimit(),
             $this->paginator->getOffset()
@@ -134,7 +132,8 @@ final class PostController
                 'paginator' => $this->paginator->getPaginator()
                 ],
                 ],
-            ), 200
+            ),
+            200
         );
     }
 
@@ -162,7 +161,8 @@ final class PostController
                 'paginator' => $this->paginator->getPaginator()
                 ],
                 ]
-            ), 200
+            ),
+            200
         );
     }
 }

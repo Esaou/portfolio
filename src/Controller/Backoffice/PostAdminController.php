@@ -14,6 +14,7 @@ use App\Service\Http\Request;
 use App\Service\Http\Response;
 use App\Service\Http\Session\Session;
 use App\Service\Paginator;
+use App\Service\Slug;
 use App\View\View;
 use App\Model\Repository\PostRepository;
 use App\Model\Repository\CommentRepository;
@@ -92,9 +93,9 @@ final class PostAdminController
         );
     }
 
-    public function editPost(int $idPost): Response
+    public function editPost(Slug $slug,string $slugPost): Response
     {
-        $post = $this->postRepository->findOneBy(['id_post' => $idPost]);
+        $post = $this->postRepository->findOneBy(['slugPost' => $slugPost]);
         $users = $this->userRepository->findAll();
 
         if ($this->request->getMethod() === 'POST' && $this->csrf->checkToken()) {
@@ -109,6 +110,9 @@ final class PostAdminController
             if ($this->validator->validate($data)) {
                 $user = $this->userRepository->findOneBy(['id_utilisateur' => (int)$data['author']]);
                 if ($post) {
+
+                    $slugPost = $slug->slugify($data['title']);
+
                     $post = new Post(
                         $post->getIdPost(),
                         $data['chapo'],
@@ -116,7 +120,8 @@ final class PostAdminController
                         $data['content'],
                         $post->getCreatedAt(),
                         new \DateTime(),
-                        $user
+                        $user,
+                        $slugPost
                     );
 
                     $this->postRepository->update($post);
@@ -144,7 +149,7 @@ final class PostAdminController
         );
     }
 
-    public function addPost(): Response
+    public function addPost(Slug $slug): Response
     {
         if ($this->request->getMethod() === 'POST' && $this->csrf->checkToken()) {
 
@@ -158,6 +163,7 @@ final class PostAdminController
             if ($this->validator->validate($data)) {
                 $user = $this->session->get('user');
 
+                $slugPost = $slug->slugify($data['title']);
                 $post = new Post(
                     0,
                     $data['chapo'],
@@ -165,7 +171,8 @@ final class PostAdminController
                     $data['content'],
                     new \DateTime('now'),
                     null,
-                    $user
+                    $user,
+                    $slugPost
                 );
 
                 $this->postRepository->create($post);

@@ -7,6 +7,11 @@ class Container
 {
 
     private array $instances = [];
+    private bool $verif;
+
+    public function __construct() {
+        $this->verif = false;
+    }
 
     public function getController(string $key): object
     {
@@ -47,19 +52,25 @@ class Container
         $method_param = [];
 
         foreach ($parameters as $parameter) {
+
             if ($parameter->getType() && $parameter->getType()->getName() !== 'int' && $parameter->getType()->getName() !== 'string' && $parameter->getType()->getName() !== 'array') {
                 $method_param[] = $this->getController($parameter->getType()->getName());
             } elseif ($parameter->isOptional()) {
-                if (isset($matches[1]) && !isset($matches[2])) {
-                    $method_param[] = $matches[1];
-                } elseif (isset($matches[1]) && isset($matches[2])) {
+
+                if (isset($matches[1]) && isset($matches[2])) {
                     $method_param[] = $matches[2];
+                } elseif (isset($matches[1]) && !isset($matches[2]) && !$this->verif) {
+                    $method_param[] = $matches[1];
                 } else {
                     $method_param[] = $parameter->getDefaultValue();
                 }
-            } elseif (isset($matches[1])) {
+            } elseif (isset($matches[1]) && isset($matches[2]) && !$parameter->isOptional()) {
                 $method_param[] = $matches[1];
+            } elseif (isset($matches[1]) && !isset($matches[2]) && !$parameter->isOptional()) {
+                $method_param[] = $matches[1];
+                $this->verif = true;
             }
+
         }
 
         return $reflected_method->invokeArgs($controllerDependancies, $method_param);

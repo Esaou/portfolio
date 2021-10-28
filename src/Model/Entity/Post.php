@@ -15,6 +15,7 @@ final class Post
     public \DateTime $createdAt;
     public \DateTime|null $updatedAt;
     public User|null $user;
+    public string $slugPost;
 
     public function __construct(
         int $id_post,
@@ -23,7 +24,8 @@ final class Post
         string $content,
         Datetime $createdAt,
         Datetime|null $updatedAt,
-        User|null $user
+        User|null $user,
+        string $slugPost
     ) {
         $this->id_post = $id_post;
         $this->title = $title;
@@ -32,6 +34,7 @@ final class Post
         $this->createdAt = $createdAt;
         $this->updatedAt = $updatedAt;
         $this->user = $user;
+        $this->slugPost = $slugPost;
     }
 
     public function getIdPost(): int
@@ -105,8 +108,21 @@ final class Post
         return $this;
     }
 
+    public function getSlugPost(): string
+    {
+        return $this->slugPost;
+    }
+
+    public function setSlugPost(string $slugPost): self
+    {
+        $this->slugPost = $slugPost;
+        return $this;
+    }
+
     public function __toString(): string
     {
         return $this->title;
     }
+
+
 }

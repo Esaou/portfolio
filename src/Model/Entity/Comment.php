@@ -12,6 +12,7 @@ final class Comment
     public Post $post_id;
     public string $isChecked;
     public \DateTime $createdDate;
+    public string|null $slugComment;
 
     public function __construct(
         int $id,
@@ -19,7 +20,8 @@ final class Comment
         Post $post_id,
         User|null $id_user,
         string $isChecked,
-        \DateTime $createdDate
+        \DateTime $createdDate,
+        string|null $slugComment
     ) {
         $this->id = $id;
         $this->id_user = $id_user;
@@ -27,6 +29,7 @@ final class Comment
         $this->post_id = $post_id;
         $this->isChecked = $isChecked;
         $this->createdDate = $createdDate;
+        $this->slugComment = $slugComment;
     }
 
     public function getId(): int
@@ -87,6 +90,17 @@ final class Comment
     {
         $this->post_id = $post_id;
         return $this->post_id;
+    }
+
+    public function getSlugComment(): string|null
+    {
+        return $this->slugComment;
+    }
+
+    public function setSlugComment(string|null $slugComment): self
+    {
+        $this->slugComment = $slugComment;
+        return $this;
     }
 
     public function __toString(): string

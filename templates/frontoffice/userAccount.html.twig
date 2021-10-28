@@ -11,7 +11,7 @@
         <hr>
 
         {% if session.user %}
-            <form action="/account/{{ session.user.id_utilisateur }}" class="formAccount" method="POST">
+            <form action="/account/{{ session.user.slugUser }}" class="formAccount" method="POST">
                 <input type="hidden" name="token" id="token" value="{{ token }}"/>
                 <input type="hidden" name="id_utilisateur" value="{{ session.user.id_utilisateur }}">
                 <div class="form-group col-6">

@@ -30,9 +30,9 @@
                         <td class="align-middle text-nowrap">{{ post.content|striptags|slice(0, 20) }} {% if post.content|length > 20 %}...{% endif %}</td>
                         <td class="align-middle">{{ post.createdAt|date('d/m/Y') }}</td>
                         <td class="align-middle">{{ post.updatedAt|date('d/m/Y') }}</td>
-                        <td class="align-middle">{{ post.user.firstname }} {{ post.user.lastname }}</td>
+                        <td class="align-middle">{% if post.user.email is null %}Utilisateur anonyme{% else %}{{ post.user.firstname }} {{ post.user.lastname }}{% endif %}</td>
                         <td class="text-end text-nowrap align-middle">
-                            <a href="/admin/edit/post/{{ post.id_post }}" class="btn btn-sm btn-primary updateBtn"><i class="fas fa-pen-square" style="margin-right: 5px;"></i> Modifier</a>
+                            <a href="/admin/edit/post/{{ post.slugPost }}" class="btn btn-sm btn-primary updateBtn"><i class="fas fa-pen-square" style="margin-right: 5px;"></i> Modifier</a>
                             <button type="button" data-toggle="modal" data-target="#deleteModal{{ post.id_post }}" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
                         </td>
                     </tr>

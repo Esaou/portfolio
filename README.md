@@ -23,14 +23,14 @@ Informations de connexion pour la partie administration :
 Rôle développeur :
 
 - Email : dev@dev.com
-- Password : Motdepassergpb1!
+- Password : Motdepassergpd1!
 
 Rôle administrateur : 
 
 - Email : admin@admin.com
-- Password : Motdepassergpb1!
+- Password : Motdepassergpd1!
 
 Rôle utilisateur : 
 
 - Email : user@user.com
-- Password : Motdepassergpb1!
+- Password : Motdepassergpd1!

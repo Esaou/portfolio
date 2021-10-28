@@ -112,7 +112,7 @@ final class UserController
         );
     }
 
-    public function register(Slug $slug): Response
+    public function register(): Response
     {
         if ($this->security->isLogged()) {
             $this->redirect->redirect('home');
@@ -191,7 +191,7 @@ final class UserController
         );
     }
 
-    public function userAccount(string $slugUser, Slug $slug): Response
+    public function userAccount(string $slugUser): Response
     {
         if (!$this->security->loggedAs('User')) {
             $this->redirect->redirect('home');

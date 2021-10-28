@@ -81,10 +81,11 @@ final class PostController
 
                 /**
                  * @var User $user
+                 * @var Post $post
                 */
 
                 $user = $this->session->get('user');
-                $comment = new Comment(0, $data['comment'], $post, $user, 'Non', new \DateTime('now'),null);
+                $comment = new Comment(0, $data['comment'], $post, $user, 'Non', new \DateTime('now'), null);
                 $result = $this->commentRepository->create($comment);
 
                 if ($result) {
@@ -97,7 +98,19 @@ final class PostController
             }
         }
 
+        $nextPost = false;
+        $previousPost = false;
+
+        if ($post) {
+            $nextPost = $this->postRepository->nextPost($post->getCreatedAt());
+            $previousPost = $this->postRepository->previousPost($post->getCreatedAt());
+        }
+
         // PAGINATION
+
+        /**
+ * @var Post $post 
+*/
 
         $tableRows = $this->commentRepository->countAllCheckedComment($post->id_post);
         $this->paginator->paginate($tableRows, 4, 'post/' . $post->slugPost, $page);
@@ -109,14 +122,6 @@ final class PostController
         );
 
         // RENDER
-
-        $nextPost = false;
-        $previousPost = false;
-
-        if ($post) {
-            $nextPost = $this->postRepository->nextPost($post->getCreatedAt());
-            $previousPost = $this->postRepository->previousPost($post->getCreatedAt());
-        }
 
         return  new Response(
             $this->view->render(

@@ -98,7 +98,7 @@ final class User
         return $this;
     }
 
-    public function getIsValid(): string
+    public function getIsValid(): string|null
     {
         return $this->isValid;
     }
@@ -133,6 +133,7 @@ final class User
 
     public function __toString(): string
     {
+        $this->email = (string)$this->email;
         return $this->email;
     }
 }

@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\Service\Http\RedirectResponse;
+use App\Service\Http\Response;
+use PhpParser\Node\Expr\Cast\Object_;
 
 class Router
 {
@@ -27,6 +29,9 @@ class Router
             $lignes = file(__DIR__ . '/../../config/routes/routes.txt');
         }
 
+        /**
+ * @var array $array 
+*/
         $array = [];
         $key = 0;
 
@@ -35,7 +40,7 @@ class Router
                 $delimiteur_route = strpos($ligne, "\r\n");
 
                 if ($delimiteur_route === 0) {
-                    $array[$key++];
+                    $array[$key] = $array[$key++];
                 }
 
                 $delemiteur_position = strpos($ligne, '=');
@@ -56,7 +61,7 @@ class Router
 
             foreach ($array as $item) {
                 if (is_string($item['route']) && is_string($item['action'])) {
-                    $this->set($item['route'], $item['action'],$item['methods']);
+                    $this->set($item['route'], $item['action'], $item['methods']);
                 }
             }
         }
@@ -76,20 +81,31 @@ class Router
         $route = new Route($path, $action);
 
         foreach ($methods as $method) {
-            array_push($this->routes[$method],$route);
+            array_push($this->routes[$method], $route);
         }
     }
 
-    public function run(string $url,string $method)
+    public function run(string $url,string $method): object
     {
 
         $url = trim($url, '/');
+        $return = false;
+
         foreach ($this->routes[$method] as $route) {
             if ($route->matches($url)) {
-                return $route->execute();
+                $return = $route->execute();
+                break;
             }
         }
 
-        $this->redirect->redirect('notFound');
+        if ($return === false) {
+            $this->redirect->redirect('notFound');
+        }
+
+        /**
+ * @var Object $return 
+*/
+        return $return;
+
     }
 }

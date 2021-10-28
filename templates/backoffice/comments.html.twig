@@ -12,15 +12,15 @@
 
         <div class="table-responsive-lg">
             <table class="table table-striped text-nowrap" style="font-size: 14px;max-width: 100%;">
-                <thead class="text-nowrap">
-                <th>Contenu</th>
-                <th>Utilisateur</th>
-                <th>Post</th>
-                <th>Date de création</th>
-                <th>Validité</th>
-                <th class="text-end">Actions</th>
-                </thead>
                 <tbody>
+                <tr>
+                    <th>Contenu</th>
+                    <th>Utilisateur</th>
+                    <th>Post</th>
+                    <th>Date de création</th>
+                    <th>Validité</th>
+                    <th class="text-end">Actions</th>
+                </tr>
                 {% for comment in comments %}
                     <tr>
                         <td class="align-middle">{{ comment.comment|striptags|slice(0, 20) }} {% if comment.comment|length > 20 %}...{% endif %}</td>
@@ -43,34 +43,33 @@
                                 </form>
                             {% endif %}
                             <button type="button" data-toggle="modal" data-target="#deleteModal{{ comment.id|raw }}" class="btn btn-sm btn-danger updateBtn"><i class="fas fa-trash"></i></button>
-                        </td>
-                    </tr>
-
-                    <div class="modal fade" id="deleteModal{{ comment.id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                        <div class="modal-dialog" role="document">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title text-black" id="exampleModalLabel" style="font-size: 18px;"><i class="fas fa-exclamation-circle" style="margin-right: 5px;"></i> Confirmation</h5>
-                                </div>
-                                <div class="modal-body" style="font-size: 16px;">
-                                    <p class="text-black">Confirmez le suppression du commentaire de :</p>
-                                    <p class="text-blue" style="font-weight: bold;">
-                                        {% if comment.user.email is not null %}
-                                        {{ comment.user.firstname }} {{ comment.user.lastname }}
-                                    {% else %}
-                                        Utilisateur anonyme
-                                        {% endif %}</p>
-                                    <p class="text-dark">{{ comment.comment|striptags|slice(0, 20) }} {% if comment.comment|length > 20 %}...{% endif %}</p>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Annuler</button>
-                                    <form action="/admin/delete/comment/{{ comment.id }}" method="POST">
-                                        <button type="submit" class="btn btn-sm btn-danger">Supprimer</button>
-                                    </form>
+                            <div class="modal fade" id="deleteModal{{ comment.id }}" tabindex="-1" role="dialog" aria-label="exampleModalLabel{{ comment.id }}" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title text-black" id="exampleModalLabel{{ comment.id }}" style="font-size: 18px;"><i class="fas fa-exclamation-circle" style="margin-right: 5px;"></i> Confirmation</h5>
+                                        </div>
+                                        <div class="modal-body" style="font-size: 16px;">
+                                            <p class="text-black">Confirmez le suppression du commentaire de :</p>
+                                            <p class="text-blue" style="font-weight: bold;">
+                                                {% if comment.user.email is not null %}
+                                                    {{ comment.user.firstname }} {{ comment.user.lastname }}
+                                                {% else %}
+                                                    Utilisateur anonyme
+                                                {% endif %}</p>
+                                            <p class="text-dark">{{ comment.comment|striptags|slice(0, 20) }} {% if comment.comment|length > 20 %}...{% endif %}</p>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Annuler</button>
+                                            <form action="/admin/delete/comment/{{ comment.id }}" method="POST">
+                                                <button type="submit" class="btn btn-sm btn-danger">Supprimer</button>
+                                            </form>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
+                        </td>
+                    </tr>
                 {% endfor %}
                 </tbody>
             </table>

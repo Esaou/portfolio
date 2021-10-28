@@ -15,9 +15,9 @@
                         <li class="centrageMenu"><a href="/posts" class="subtitle"><i class="far fa-clone" style="margin-right: 7px"></i> Tous les posts</a></li>
                         {% if session.user %}
                             {% if session.user.role == 'User' %}
-                                <li class="centrageMenu"><a href="/account/{{ session.user.slugUser }}" class="subtitle"><i class="fas fa-user-cog" style="margin-right: 7px"></i></i> Mon profil</a></li>
+                                <li class="centrageMenu"><a href="/account/{{ session.user.slugUser }}" class="subtitle"><i class="fas fa-user-cog" style="margin-right: 7px"></i> Mon profil</a></li>
                             {% else %}
-                                <li class="centrageMenu"><a href="/admin/posts" class="subtitle"><i class="fas fa-user-cog" style="margin-right: 7px"></i></i> Espace administrateur</a></li>
+                                <li class="centrageMenu"><a href="/admin/posts" class="subtitle"><i class="fas fa-user-cog" style="margin-right: 7px"></i> Espace administrateur</a></li>
                             {% endif %}
                             <li class="centrageMenu"><a href="/logout" class="subtitle">Déconnexion</a></li>
                         {% else %}

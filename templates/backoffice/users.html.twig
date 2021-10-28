@@ -12,15 +12,15 @@
 
         <div class="table-responsive-lg">
             <table class="table table-striped text-nowrap" style="font-size: 14px;max-width: 100%;">
-                <thead>
-                <th>Prénom</th>
-                <th>Nom</th>
-                <th>Email</th>
-                <th>Rôle</th>
-                <th>Validité</th>
-                <th class="text-end">Actions</th>
-                </thead>
                 <tbody>
+                <tr>
+                    <th>Prénom</th>
+                    <th>Nom</th>
+                    <th>Email</th>
+                    <th>Rôle</th>
+                    <th>Validité</th>
+                    <th class="text-end">Actions</th>
+                </tr>
                 {% for user in users %}
                     <tr>
                         <td class="align-middle">{{ user.firstname }}</td>
@@ -31,28 +31,27 @@
                         <td class="text-end">
                             <a href="/admin/edit/user/{{ user.slugUser }}" class="btn btn-sm btn-primary updateBtn"><i class="fas fa-pen-square" style="margin-right: 5px;"></i> Modifier</a>
                             <button type="button" data-toggle="modal" data-target="#deleteModal{{ user.id_utilisateur }}" class="btn btn-sm btn-danger updateBtn"><i class="fas fa-trash"></i></button>
-                        </td>
-                    </tr>
-
-                    <div class="modal fade" id="deleteModal{{ user.id_utilisateur }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                        <div class="modal-dialog" role="document">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title text-black" id="exampleModalLabel" style="font-size: 18px;"><i class="fas fa-exclamation-circle" style="margin-right: 5px;"></i> Confirmation</h5>
-                                </div>
-                                <div class="modal-body" style="font-size: 16px;">
-                                    <p class="text-black">Confirmez le suppression de l'utilisateur :</p>
-                                    <p class="text-blue p-2" style="font-weight: bold;">{{ user.firstname }} {{ user.lastname }}</p>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Annuler</button>
-                                    <form action="/admin/delete/user/{{ user.id_utilisateur }}" method="POST">
-                                        <button type="submit" class="btn btn-sm btn-danger">Supprimer</button>
-                                    </form>
+                            <div class="modal fade" id="deleteModal{{ user.id_utilisateur }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel{{ user.id_utilisateur }}" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title text-black" id="exampleModalLabel{{ user.id_utilisateur }}" style="font-size: 18px;"><i class="fas fa-exclamation-circle" style="margin-right: 5px;"></i> Confirmation</h5>
+                                        </div>
+                                        <div class="modal-body" style="font-size: 16px;">
+                                            <p class="text-black">Confirmez le suppression de l'utilisateur :</p>
+                                            <p class="text-blue p-2" style="font-weight: bold;">{{ user.firstname }} {{ user.lastname }}</p>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Annuler</button>
+                                            <form action="/admin/delete/user/{{ user.id_utilisateur }}" method="POST">
+                                                <button type="submit" class="btn btn-sm btn-danger">Supprimer</button>
+                                            </form>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
+                        </td>
+                    </tr>
                 {% endfor %}
                 </tbody>
             </table>

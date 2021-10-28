@@ -92,7 +92,8 @@ final class CommentRepository implements EntityRepositoryInterface
                     $comment->content,
                     $comment->createdAt,
                     $comment->updatedAt,
-                    null
+                    null,
+                    $comment->slugPost
                 );
                 $user = new User(
                     (int)$comment->id_utilisateur,
@@ -102,7 +103,8 @@ final class CommentRepository implements EntityRepositoryInterface
                     $comment->password,
                     $comment->isValid,
                     $comment->role,
-                    $comment->token
+                    $comment->token,
+                    $comment->slugUser
                 );
                 $comments[] = new Comment(
                     (int)$comment->id,
@@ -110,7 +112,8 @@ final class CommentRepository implements EntityRepositoryInterface
                     $post,
                     $user,
                     $comment->isChecked,
-                    $comment->createdDate
+                    $comment->createdDate,
+                    $comment->slugComment
                 );
             }
         }
@@ -136,7 +139,7 @@ final class CommentRepository implements EntityRepositoryInterface
         $comment = get_object_vars($comment);
 
         foreach ($comment as $key => $value) {
-            if ($key !== 'createdDate' && $key !== 'id_user' && $key !== 'post_id' && $key !== 'id') {
+            if ($key !== 'createdDate' && $key !== 'id_user' && $key !== 'post_id' && $key !== 'id' && $key !== 'slugComment') {
                 $criteria[$key] = $value;
             } elseif ($key === 'createdDate') {
                 $criteria[$key] = $value->format('Y-m-d H:i:s');
@@ -147,8 +150,8 @@ final class CommentRepository implements EntityRepositoryInterface
             }
         }
 
-        $sql = "INSERT INTO comment (id_user,comment, post_id,isChecked,createdDate)
-                VALUES (:id_user,:comment,:post_id,:isChecked,:createdDate )";
+        $sql = "INSERT INTO comment (id_user,comment, post_id,isChecked,createdDate,slugComment)
+                VALUES (:id_user,:comment,:post_id,:isChecked,:createdDate,UUID() )";
 
         $result = $this->database->prepare($sql, $criteria);
 

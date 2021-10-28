@@ -10,7 +10,7 @@
 
         <hr>
 
-        <form action="/admin/edit/post/{{ post.id_post }}" class="formEditPost" method="POST">
+        <form action="/admin/edit/post/{{ post.slugPost }}" class="formEditPost" method="POST">
             <input type="hidden" name="token" id="token" value="{{ token }}"/>
             <div class="form-group col-6">
                 <label for="title">Titre</label>
@@ -19,6 +19,9 @@
             <div class="form-group col-6">
                 <label for="author">Auteur</label>
                 <select required class="form-control" name="author" id="author">
+                    {% if post.user.email is null %}
+                    <option value="{{ null }}" selected>Utilisateur supprimé</option>
+                    {% endif %}
                     {% for user in users %}
                         {% if user.id_utilisateur == post.user.id_utilisateur %}
                                 <option value="{{ user.id_utilisateur }}" selected>{{ user.firstname }} {{ user.lastname }}</option>

@@ -15,6 +15,7 @@ use App\Service\Http\Request;
 use App\Service\Http\Response;
 use App\Service\Http\Session\Session;
 use App\Service\Paginator;
+use App\Service\Slug;
 use App\View\View;
 use App\Model\Repository\PostRepository;
 use App\Model\Repository\CommentRepository;
@@ -97,9 +98,9 @@ final class UserAdminController
         );
     }
 
-    public function userAccount(int $idUser): Response
+    public function userAccount(Slug $slug,string $slugUser): Response
     {
-        $user = $this->userRepository->findOneBy(['id_utilisateur' => $idUser]);
+        $user = $this->userRepository->findOneBy(['slugUser' => $slugUser]);
 
         if ($this->request->getMethod() === 'POST' && $this->csrf->checkToken()) {
 
@@ -121,7 +122,8 @@ final class UserAdminController
                         $password,
                         $user->getIsValid(),
                         $user->getRole(),
-                        $user->getToken()
+                        $user->getToken(),
+                        $user->getSlugUser()
                     );
                     $resultUpdate = $this->userRepository->update($user);
 
@@ -151,13 +153,13 @@ final class UserAdminController
         );
     }
 
-    public function editUser(int $idUser): Response
+    public function editUser(string $slugUser): Response
     {
         if (!$this->security->loggedAs('Dev')) {
             $this->redirect->redirect('/forbidden');
         }
 
-        $user = $this->userRepository->findOneBy(['id_utilisateur' => $idUser]);
+        $user = $this->userRepository->findOneBy(['slugUser' => $slugUser]);
 
         if ($this->request->getMethod() === 'POST' && $this->csrf->checkToken()) {
             $role = $this->request->request()->get('role');
@@ -171,7 +173,8 @@ final class UserAdminController
                     $user->getPassword(),
                     $user->getIsValid(),
                     $role,
-                    $user->getToken()
+                    $user->getToken(),
+                    $user->getSlugUser()
                 );
                 $resultUpdate =  $this->userRepository->update($user);
 

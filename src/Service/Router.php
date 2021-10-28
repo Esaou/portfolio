@@ -9,13 +9,11 @@ use App\Service\Http\RedirectResponse;
 class Router
 {
 
-    public string $url;
     public array $routes = [];
     private RedirectResponse $redirect;
 
-    public function __construct(string $url)
+    public function __construct()
     {
-        $this->url = trim($url, '/');
         $this->redirect = new RedirectResponse();
         $this->load();
     }
@@ -58,21 +56,36 @@ class Router
 
             foreach ($array as $item) {
                 if (is_string($item['route']) && is_string($item['action'])) {
-                    $this->set($item['route'], $item['action']);
+                    $this->set($item['route'], $item['action'],$item['methods']);
                 }
             }
         }
     }
 
-    public function set(string $path, string $action):void
+    public function set(string $path, string $action,array $methods):void
     {
-        $this->routes[] = new Route($path, $action);
+
+        if (empty($this->routes['GET'])) {
+            $this->routes['GET']=[];
+        }
+
+        if (empty($this->routes['POST'])) {
+            $this->routes['POST']=[];
+        }
+
+        $route = new Route($path, $action);
+
+        foreach ($methods as $method) {
+            array_push($this->routes[$method],$route);
+        }
     }
 
-    public function run()
+    public function run(string $url,string $method)
     {
-        foreach ($this->routes as $route) {
-            if ($route->matches($this->url)) {
+
+        $url = trim($url, '/');
+        foreach ($this->routes[$method] as $route) {
+            if ($route->matches($url)) {
                 return $route->execute();
             }
         }

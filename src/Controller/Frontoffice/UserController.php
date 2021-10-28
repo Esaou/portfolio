@@ -12,6 +12,7 @@ use App\Service\FormValidator\LoginValidator;
 use App\Service\FormValidator\RegisterValidator;
 use App\Service\Http\RedirectResponse;
 use App\Service\Mailer;
+use App\Service\Slug;
 use App\View\View;
 use App\Service\Http\Request;
 use App\Service\Http\Response;
@@ -111,7 +112,7 @@ final class UserController
         );
     }
 
-    public function register(): Response
+    public function register(Slug $slug): Response
     {
         if ($this->security->isLogged()) {
             $this->redirect->redirect('home');
@@ -143,7 +144,8 @@ final class UserController
                     $password,
                     'Non',
                     'User',
-                    $tokenUser
+                    $tokenUser,
+                    null
                 );
                 $resultCreate = $this->userRepository->create($user);
 
@@ -189,7 +191,7 @@ final class UserController
         );
     }
 
-    public function userAccount(int $idUser): Response
+    public function userAccount(string $slugUser, Slug $slug): Response
     {
         if (!$this->security->loggedAs('User')) {
             $this->redirect->redirect('home');
@@ -206,7 +208,7 @@ final class UserController
             $data = $this->request->request()->all();
 
             if ($this->accountValidator->validate($data)) {
-                $user = $this->userRepository->findOneBy(['id_utilisateur' => $idUser]);
+                $user = $this->userRepository->findOneBy(['slugUser' => $slugUser]);
 
                 $password = password_hash($data['password'], PASSWORD_BCRYPT);
 
@@ -219,7 +221,8 @@ final class UserController
                         $password,
                         $user->getIsValid(),
                         $user->getRole(),
-                        $user->getToken()
+                        $user->getToken(),
+                        $user->getSlugUser()
                     );
                     $resultUpdate = $this->userRepository->update($user);
 

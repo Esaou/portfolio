@@ -24,10 +24,10 @@
                 {% endif%}
             </div>
             <div>
-                {% if post.user is not null %}
+                {% if post.user.email is not null %}
                         Publié par <span class="text-blue">{{ post.user.firstname }} {{ post.user.lastname }}</span>
                     {% else %}
-                        Publié par <span class="text-blue">Anonyme</span>
+                        Publié par <span class="text-blue">Utilisateur anonyme</span>
                 {% endif %}
                 - {% if post.updatedAt is not null %}
                 Modifié le {{ post.updatedAt|date('d/m/Y') }} à {{ post.updatedAt|date('H',"Europe/Paris") }}h{{ post.updatedAt|date('i',"Europe/Paris") }}
@@ -42,7 +42,7 @@
         <h4 class="text-left text-black mb-4">Commentaires {% if session.user is not defined %}<small style="font-size: 17px;font-weight: normal;">(connectez-vous pour laisser un commentaire)</small>{% endif %}</h4>
         <hr>
         {% if session.user %}
-        <form class="formComment mb-3" action="/post/{{ post.id_post }}#comments" method="POST">
+        <form class="formComment mb-3" action="/post/{{ post.slugPost }}#comments" method="POST">
             <input type="hidden" name="token" id="token" value="{{ token }}"/>
             <div class="form-group col-12">
                 <label for="comment">Mon commentaire</label>
@@ -56,7 +56,13 @@
         {% if comments %}
             {% for comment in comments %}
                 <div class="blocShowOneComment mb-3 pt-4">
-                    <div class="pb-3 text-blue">{{ comment.user.firstname }} {{ comment.user.lastname }}</div>
+                    <div class="pb-3 text-blue">
+                        {% if comment.user.email is not null %}
+                            {{ comment.user.firstname }} {{ comment.user.lastname }}
+                        {% else %}
+                            Utilisateur anonyme
+                        {% endif %}
+                    </div>
                     <div class="pb-3">{{ comment.comment }}</div>
                     <div class="w-100 blocBtnCreated">
                             <i class="far fa-check-circle" style="margin-right: 10px"></i>

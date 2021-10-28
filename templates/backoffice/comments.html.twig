@@ -24,7 +24,11 @@
                 {% for comment in comments %}
                     <tr>
                         <td class="align-middle">{{ comment.comment|striptags|slice(0, 20) }} {% if comment.comment|length > 20 %}...{% endif %}</td>
-                        <td class="align-middle text-nowrap">{{ comment.user.firstname }} {{ comment.user.lastname }}</td>
+                        <td class="align-middle text-nowrap">{% if comment.user.email is not null %}
+                                {{ comment.user.firstname }} {{ comment.user.lastname }}
+                            {% else %}
+                                Utilisateur anonyme
+                            {% endif %}</td>
                         <td class="align-middle text-nowrap">{{ comment.post_id.title|slice(0,20) }} {% if comment.post_id.title|length > 20 %}...{% endif %}</td>
                         <td class="align-middle">{{ comment.createdAt|date('d/m/Y') }}</td>
                         <td class="align-middle">{{ comment.isChecked }}</td>
@@ -50,7 +54,12 @@
                                 </div>
                                 <div class="modal-body" style="font-size: 16px;">
                                     <p class="text-black">Confirmez le suppression du commentaire de :</p>
-                                    <p class="text-blue" style="font-weight: bold;">{{ comment.user.firstname }} {{ comment.user.lastname }}</p>
+                                    <p class="text-blue" style="font-weight: bold;">
+                                        {% if comment.user.email is not null %}
+                                        {{ comment.user.firstname }} {{ comment.user.lastname }}
+                                    {% else %}
+                                        Utilisateur anonyme
+                                        {% endif %}</p>
                                     <p class="text-dark">{{ comment.comment|striptags|slice(0, 20) }} {% if comment.comment|length > 20 %}...{% endif %}</p>
                                 </div>
                                 <div class="modal-footer">

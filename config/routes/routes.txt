@@ -1,80 +1,107 @@
 route= /
 action= App\Controller\Frontoffice\HomeController@home
+methods= GET,POST
 
 route= /posts
 action= App\Controller\Frontoffice\PostController@displayAllAction
+methods= GET
 
 route= /posts/page/:page
 action= App\Controller\Frontoffice\PostController@displayAllAction
+methods= GET
 
 route= /post/:id
 action= App\Controller\Frontoffice\PostController@displayOneAction
+methods= GET,POST
 
 route= /post/:id/page/:page
 action= App\Controller\Frontoffice\PostController@displayOneAction
+methods= GET,POST
 
 route= /register
 action= App\Controller\Frontoffice\UserController@register
+methods= GET,POST
 
 route= /login
 action= App\Controller\Frontoffice\UserController@loginAction
+methods= GET,POST
 
 route= /logout
 action= App\Controller\Frontoffice\UserController@logoutAction
+methods= GET
 
 route= /confirm/user/:token
 action= App\Controller\Frontoffice\UserController@confirmUser
+methods= GET,POST
 
 route= /account/:id
 action= App\Controller\Frontoffice\UserController@userAccount
+methods= GET,POST
 
 route= /postNotFound
 action= App\Controller\Frontoffice\ErrorController@postNotFound
+methods= GET
 
 route= /notFound
 action= App\Controller\Frontoffice\ErrorController@notFound
+methods= GET
 
 route= /forbidden
 action= App\Controller\Frontoffice\ErrorController@forbidden
+methods= GET
 
 route= /admin/posts
 action= App\Controller\Backoffice\PostAdminController@postsList
+methods= GET
 
 route= /admin/posts/page/:page
 action= App\Controller\Backoffice\PostAdminController@postsList
+methods= GET
 
 route= /admin/add/post
 action= App\Controller\Backoffice\PostAdminController@addPost
+methods= GET,POST
 
 route= /admin/edit/post/:id
 action= App\Controller\Backoffice\PostAdminController@editPost
+methods= GET,POST
 
 route= /admin/delete/post/:id
 action= App\Controller\Backoffice\PostAdminController@deletePost
+methods= GET,POST
 
 route= /admin/comments
 action= App\Controller\Backoffice\CommentController@commentList
+methods= GET
 
 route= /admin/comments/page/:page
 action= App\Controller\Backoffice\CommentController@commentList
+methods= GET
 
 route= /admin/comment/validate/:id
 action= App\Controller\Backoffice\CommentController@validateComment
+methods= GET,POST
 
 route= /admin/delete/comment/:id
 action= App\Controller\Backoffice\CommentController@deleteComment
+methods= GET,POST
 
 route= /admin/comment/unvalidate/:id
 action= App\Controller\Backoffice\CommentController@unvalidateComment
+methods= GET,POST
 
 route= /admin/users
 action= App\Controller\Backoffice\UserAdminController@usersList
+methods= GET
 
 route= /admin/edit/user/:id
 action= App\Controller\Backoffice\UserAdminController@editUser
+methods= GET,POST
 
 route= /admin/delete/user/:id
 action= App\Controller\Backoffice\UserAdminController@deleteUser
+methods= GET,POST
 
 route= /admin/account/:id
 action= App\Controller\Backoffice\UserAdminController@userAccount
+methods= GET,POST

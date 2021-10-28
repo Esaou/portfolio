@@ -10,7 +10,7 @@
 
         <hr>
 
-        <form action="/admin/edit/user/{{ user.id_utilisateur }}" class="formEditUser" method="POST">
+        <form action="/admin/edit/user/{{ user.slugUser }}" class="formEditUser" method="POST">
             <input type="hidden" name="token" id="token" value="{{ token }}"/>
             <div class="form-group col-6">
                 <label for="role">Modifier le rôle de l'utilisateur <span class="text-blue">{{ user.firstname }} {{ user.lastname }}</span></label>

@@ -20,7 +20,7 @@ final class PostRepository implements EntityRepositoryInterface
 
     public function find(int $idPost): ?Post
     {
-        $data = $this->findBy(['id' => $idPost]);
+        $data = $this->findBy(['id_post' => $idPost]);
 
         if (!empty($data)) {
             $data = current($data);
@@ -46,7 +46,7 @@ final class PostRepository implements EntityRepositoryInterface
 
     public function findBy(array $criteria, array $orderBy = null, int $limit = null, int $offset = null): ?array
     {
-        $sql = "select * from post inner join user on post.user_id = user.id_utilisateur ";
+        $sql = "select * from post left join user on post.user_id = user.id_utilisateur ";
 
         if (!empty($criteria)) {
             $sql .= $this->database->setCondition($criteria);
@@ -86,7 +86,8 @@ final class PostRepository implements EntityRepositoryInterface
                     $post->password,
                     $post->isValid,
                     $post->role,
-                    $post->token
+                    $post->token,
+                    $post->slugUser
                 );
                 $posts[] = new Post(
                     (int)$post->id_post,
@@ -95,7 +96,8 @@ final class PostRepository implements EntityRepositoryInterface
                     $post->content,
                     $post->createdAt,
                     $post->updatedAt,
-                    $user
+                    $user,
+                    $post->slugPost
                 );
             }
         }
@@ -131,8 +133,8 @@ final class PostRepository implements EntityRepositoryInterface
         }
 
 
-        $sql = "INSERT INTO post (title,chapo,content, createdAt,updatedAt,user_id) 
-                VALUES (:title,:chapo,:content,:createdAt,:updatedAt,:user )";
+        $sql = "INSERT INTO post (title,chapo,content, createdAt,updatedAt,user_id,slugPost) 
+                VALUES (:title,:chapo,:content,:createdAt,:updatedAt,:user,:slugPost )";
 
         $result = $this->database->prepare($sql, $criteria);
 
@@ -194,7 +196,7 @@ final class PostRepository implements EntityRepositoryInterface
         return false;
     }
 
-    public function nextPost(\DateTime $createdAt): int|null
+    public function nextPost(\DateTime $createdAt): string|null
     {
         $createdAt = $createdAt->format('Y-m-d H:i:s');
 
@@ -207,14 +209,14 @@ final class PostRepository implements EntityRepositoryInterface
         );
 
         if ($nextPost !== $last && is_iterable($nextPost)) {
-            $nextPost = current($nextPost)->id_post;
-            return (int)$nextPost;
+            $nextPost = current($nextPost)->slugPost;
+            return $nextPost;
         }
 
         return null;
     }
 
-    public function previousPost(\DateTime $createdAt): int|null
+    public function previousPost(\DateTime $createdAt): string|null
     {
         $createdAt = $createdAt->format('Y-m-d H:i:s');
 
@@ -222,8 +224,8 @@ final class PostRepository implements EntityRepositoryInterface
         $previousPost = $this->database->query("SELECT * FROM post WHERE createdAt > '$createdAt' LIMIT 0,1 ");
 
         if (!empty($previousPost) && is_iterable($previousPost)) {
-            $previousPost = current($previousPost)->id_post;
-            return (int)$previousPost;
+            $previousPost = current($previousPost)->slugPost;
+            return $previousPost;
         }
 
         return null;

@@ -11,7 +11,6 @@ use App\Service\Mailer;
 use App\View\View;
 use App\Service\Http\Response;
 use App\Service\Http\Request;
-use Dotenv\Dotenv;
 
 final class HomeController
 {
@@ -45,6 +44,7 @@ final class HomeController
 
     public function home(): Response
     {
+
         if ($this->request->getMethod() === 'POST' && $this->csrf->checkToken()) {
 
             /**

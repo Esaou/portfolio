@@ -20,7 +20,7 @@ final class UserRepository implements EntityRepositoryInterface
 
     public function find(int $idUser): ?User
     {
-        $data = $this->findBy(['id' => $idUser]);
+        $data = $this->findBy(['id_utilisateur' => $idUser]);
 
         if (!empty($data)) {
             $data = current($data);
@@ -82,7 +82,8 @@ final class UserRepository implements EntityRepositoryInterface
                     $user->password,
                     $user->isValid,
                     $user->role,
-                    $user->token
+                    $user->token,
+                    $user->slugUser
                 );
             }
         }
@@ -108,11 +109,13 @@ final class UserRepository implements EntityRepositoryInterface
         $user = get_object_vars($user);
 
         foreach ($user as $key => $value) {
-            $criteria[$key] = $value;
+            if ($key !== 'slugUser') {
+                $criteria[$key] = $value;
+            }
         }
 
-        $sql = "INSERT INTO user (id_utilisateur,firstname, lastname,email,password,isValid,role,token) 
-                VALUES (:id_utilisateur,:firstname,:lastname,:email,:password,:isValid,:role,:token )";
+        $sql = "INSERT INTO user (id_utilisateur,firstname, lastname,email,password,isValid,role,token,slugUser) 
+                VALUES (:id_utilisateur,:firstname,:lastname,:email,:password,:isValid,:role,:token,UUID() )";
 
         $result = '';
 

@@ -34,11 +34,11 @@
                         <td class="align-middle">{{ comment.isChecked }}</td>
                         <td class="d-flex justify-content-end text-nowrap align-middle">
                             {% if comment.isChecked == 'Non' %}
-                                <form action="/admin/comment/validate/{{ comment.id }}" method="POST" style="margin-right: 5px">
+                                <form action="/admin/comment/validate/{{ comment.slugComment }}" method="POST" style="margin-right: 5px">
                                     <button type="submit" class="btn btn-sm btn-success updateBtn"><i class="fas fa-check-circle" style="margin-right: 5px"></i> Valider</button>
                                 </form>
                             {% else %}
-                                <form action="/admin/comment/unvalidate/{{ comment.id }}" method="POST" style="margin-right: 5px">
+                                <form action="/admin/comment/unvalidate/{{ comment.slugComment }}" method="POST" style="margin-right: 5px">
                                     <button type="submit" class="btn btn-sm btn-secondary updateBtn"><i class="far fa-times-circle" style="margin-right: 5px"></i> Invalider</button>
                                 </form>
                             {% endif %}
@@ -61,7 +61,7 @@
                                         </div>
                                         <div class="modal-footer">
                                             <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Annuler</button>
-                                            <form action="/admin/delete/comment/{{ comment.id }}" method="POST">
+                                            <form action="/admin/delete/comment/{{ comment.slugComment }}" method="POST">
                                                 <button type="submit" class="btn btn-sm btn-danger">Supprimer</button>
                                             </form>
                                         </div>

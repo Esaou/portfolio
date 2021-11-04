@@ -197,10 +197,10 @@ final class PostAdminController
         );
     }
 
-    public function deletePost(int $idPost): Response
+    public function deletePost(string $slugPost): Response
     {
 
-        $post = $this->postRepository->findOneBy(['id_post' => $idPost]);
+        $post = $this->postRepository->findOneBy(['slugPost' => $slugPost]);
 
         if ($post !== null) {
             $resultDelete = $this->postRepository->delete($post);

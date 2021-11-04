@@ -173,8 +173,10 @@ final class CommentRepository implements EntityRepositoryInterface
                 $criteria[$key] = $value;
             } elseif ($key === 'createdDate') {
                 $criteria[$key] = $value->format('Y-m-d H:i:s');
-            } elseif ($key === 'id_user') {
+            } elseif ($key === 'id_user' && $value->id_utilisateur !== 0) {
                 $criteria['id_user'] = $value->id_utilisateur;
+            } elseif ($key === 'id_user' && $value->id_utilisateur === 0) {
+                $criteria['id_user'] = null;
             } elseif ($key === 'post_id') {
                 $criteria['post_id'] = $value->id_post;
             }

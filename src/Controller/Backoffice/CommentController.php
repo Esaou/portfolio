@@ -15,6 +15,7 @@ use App\Service\Paginator;
 use App\View\View;
 use App\Model\Repository\PostRepository;
 use App\Model\Repository\CommentRepository;
+use function Couchbase\defaultDecoder;
 
 final class CommentController
 {
@@ -84,9 +85,9 @@ final class CommentController
         );
     }
 
-    public function deleteComment(int $idComment): Response
+    public function deleteComment(string $slugComment): Response
     {
-        $comment = $this->commentRepository->findOneBy(['id' => $idComment]);
+        $comment = $this->commentRepository->findOneBy(['slugComment' => $slugComment]);
 
         if ($comment !== null) {
             $resultDelete = $this->commentRepository->delete($comment);
@@ -101,9 +102,9 @@ final class CommentController
         return $this->commentList();
     }
 
-    public function validateComment(int $idComment): Response
+    public function validateComment(string $slugComment): Response
     {
-        $comment = $this->commentRepository->findOneBy(['id' => $idComment]);
+        $comment = $this->commentRepository->findOneBy(['slugComment' => $slugComment]);
 
         if ($comment !== null) {
             $comment->setIsChecked('Oui');
@@ -118,9 +119,9 @@ final class CommentController
         return $this->commentList();
     }
 
-    public function unvalidateComment(int $idComment): Response
+    public function unvalidateComment(string $slugComment): Response
     {
-        $comment = $this->commentRepository->findOneBy(['id' => $idComment]);
+        $comment = $this->commentRepository->findOneBy(['slugComment' => $slugComment]);
 
         if ($comment !== null) {
             $comment->setIsChecked('Non');

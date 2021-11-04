@@ -204,13 +204,13 @@ final class UserAdminController
         );
     }
 
-    public function deleteUser(int $idUser): Response
+    public function deleteUser(string $slugUser): Response
     {
         if (!$this->security->loggedAs('Dev')) {
             $this->redirect->redirect('/forbidden');
         }
 
-        $user = $this->userRepository->findOneBy(['id_utilisateur' => $idUser]);
+        $user = $this->userRepository->findOneBy(['slugUser' => $slugUser]);
 
         if ($user !== null) {
             $resultDelete = $this->userRepository->delete($user);
